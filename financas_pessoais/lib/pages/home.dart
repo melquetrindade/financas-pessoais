@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border:
-                            Border.all(color: AppColors.azulPrimario, width: 2),
+                            Border.all(color: Colors.white, width: 2),
                       ),
                       child: const Icon(Icons.person,
                           color: Colors.white, size: 30),
@@ -65,13 +65,85 @@ class _HomeState extends State<Home> {
           ),
         )),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Text(
-            'HOME',
-            style: TextStyle(
-                color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                constraints: BoxConstraints(
+                  minHeight: 300, // Define uma altura mínima
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            //mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Saldo geral"),
+                              Text("R\$ 1.000,00"),
+                            ],
+                          ),
+                          Icon(Icons.visibility_off_outlined)
+                        ],
+                      ),
+                      Divider(
+                        color: AppColors.azulPrimario, 
+                        thickness: 1,
+                        height: 20,
+                      ),
+                      Text("Minhas contas"),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(Icons.credit_card),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00"),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(Icons.credit_card),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00"),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(Icons.credit_card),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00"),
+                      ),
+                    ],
+                  ),
+                )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 200,
+                color: Colors.white,
+                child: Center(
+                  child: Text(
+                    'HOME',
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 177, 136, 136), fontSize: 17, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
           ),
         ),
       ),
