@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Container(
@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(10)
                 ),
                 constraints: BoxConstraints(
-                  minHeight: 300, // Define uma altura mínima
+                  minHeight: 200,
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(20),
@@ -88,10 +88,131 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
-                            //mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Saldo geral"),
+                              Text("Saldo geral", style: TextStyle(
+                                fontSize: 13
+                              ),),
+                              Text("R\$ 1.000,00", style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18
+                              ),),
+                            ],
+                          ),
+                          Icon(Icons.visibility_off_outlined)
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Divider(
+                          color: AppColors.azulPrimario, 
+                          thickness: 1,
+                          height: 20,
+                        ),
+                      ),
+                      Text("Minhas contas", style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 17
+                      ),),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundImage: AssetImage("assets/bb.png")
+                          )
+                        ),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00", style: TextStyle(
+                          fontSize: 15,
+                          color: AppColors.azulPrimario
+                        ),),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundImage: AssetImage("assets/nubank.png")
+                          )
+                        ),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00", style: TextStyle(
+                          fontSize: 15,
+                          color: AppColors.azulPrimario
+                        ),),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundImage: AssetImage("assets/itau.jpg")
+                          )
+                        ),
+                        title: Text("Nubank"),
+                        trailing: Text("R\$ 1.000,00", style: TextStyle(
+                          fontSize: 15,
+                          color: AppColors.azulPrimario
+                        ),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 13),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                side: BorderSide(
+                                  color: AppColors.azulPrimario,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              'Gerenciar contas',
+                              style: TextStyle(color: AppColors.azulPrimario, fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                constraints: BoxConstraints(
+                  minHeight: 200,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Todas as faturas"),
                               Text("R\$ 1.000,00"),
                             ],
                           ),
@@ -103,42 +224,10 @@ class _HomeState extends State<Home> {
                         thickness: 1,
                         height: 20,
                       ),
-                      Text("Minhas contas"),
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(Icons.credit_card),
-                        title: Text("Nubank"),
-                        trailing: Text("R\$ 1.000,00"),
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(Icons.credit_card),
-                        title: Text("Nubank"),
-                        trailing: Text("R\$ 1.000,00"),
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(Icons.credit_card),
-                        title: Text("Nubank"),
-                        trailing: Text("R\$ 1.000,00"),
-                      ),
+                      Text("Minhas cartões"),
                     ],
                   ),
                 )
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                height: 200,
-                color: Colors.white,
-                child: Center(
-                  child: Text(
-                    'HOME',
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 177, 136, 136), fontSize: 17, fontWeight: FontWeight.w500),
-                  ),
-                ),
               ),
               SizedBox(
                 height: 20,
