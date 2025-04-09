@@ -175,7 +175,7 @@ class _HomeState extends State<Home> {
                                   radius: 15,
                                   backgroundImage:
                                       AssetImage("assets/bb.png"))),
-                          title: Text("Nubank"),
+                          title: Text("Banco do Brasil"),
                           trailing: Text(
                             "R\$ 1.000,00",
                             style: TextStyle(
@@ -207,7 +207,7 @@ class _HomeState extends State<Home> {
                                   radius: 15,
                                   backgroundImage:
                                       AssetImage("assets/itau.jpg"))),
-                          title: Text("Nubank"),
+                          title: Text("Itaú"),
                           trailing: Text(
                             "R\$ 1.000,00",
                             style: TextStyle(
