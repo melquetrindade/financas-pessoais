@@ -12,6 +12,36 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final RepositoryCategorias repositoryCategorias = RepositoryCategorias();
 
+  void mostarModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Permite ocupar a altura total
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20)), // Bordas arredondadas no topo
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height - 50,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Bottom Sheet Tela Cheia",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Fechar"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,13 +93,30 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
+              InkWell(
+                child: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.blue.shade300,
+                    child: Icon(
+                      Icons.notifications_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  print("Mostar tela de notificações");
+                },
+              )
             ],
           ),
         )),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 13),
           child: Column(
             children: [
               Container(
@@ -170,14 +217,17 @@ class _HomeState extends State<Home> {
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           leading: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: CircleAvatar(
-                                radius: 15, 
-                                backgroundColor: repositoryCategorias.categorias[0].cor,
-                                child: Icon(repositoryCategorias.categorias[0].icon, color: Colors.white,),
-                            )
-                          ),
+                              width: 40,
+                              height: 40,
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor:
+                                    repositoryCategorias.categorias[0].cor,
+                                child: Icon(
+                                  repositoryCategorias.categorias[0].icon,
+                                  color: Colors.white,
+                                ),
+                              )),
                           title: Text(repositoryCategorias.categorias[0].nome),
                           trailing: Text(
                             "R\$ 1.000,00",
@@ -200,7 +250,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                //mostarModal(context);
+                                Navigator.pushNamed(context, '/gerenciaConta');
+                              },
                               child: Text(
                                 'Gerenciar contas',
                                 style: TextStyle(
