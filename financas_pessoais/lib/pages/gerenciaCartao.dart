@@ -1,17 +1,17 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
-import 'package:financas_pessoais/repository/contas.dart';
-import 'package:financas_pessoais/widgets/gerenciarConta/cardContas.dart';
+import 'package:financas_pessoais/repository/cartao.dart';
+import 'package:financas_pessoais/widgets/gerenciarCartao/cardCartao.dart';
 import 'package:flutter/material.dart';
 
-class GerenciarContaPage extends StatefulWidget {
-  const GerenciarContaPage({super.key});
+class GerenciarCartaoPage extends StatefulWidget {
+  const GerenciarCartaoPage({super.key});
 
   @override
-  State<GerenciarContaPage> createState() => _GerenciarContaPageState();
+  State<GerenciarCartaoPage> createState() => _GerenciarCartaoPageState();
 }
 
-class _GerenciarContaPageState extends State<GerenciarContaPage> {
-  final RepositoryContas repositoryContas = RepositoryContas();
+class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
+  final RepositoryCartao repositoryCartao = RepositoryCartao();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: const Text(
-            'Contas',
+            'Cartões',
             style: TextStyle(
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
           ),
@@ -31,7 +31,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
               padding: const EdgeInsets.only(right: 20),
               child: IconButton(
                   onPressed: () {
-                    print("add nova conta");
+                    print("add novo cartão");
                   },
                   icon: Icon(
                     Icons.add_circle_outline,
@@ -59,7 +59,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                         ),
                         Expanded(
                           child: Text(
-                            "Aqui estão todas as suas contas. Você pode editá-las e ajustar o saldo de cada conta caso haja necessidade.",
+                            "Aqui estão todos os seus cartões. Você pode editá-los caso haja necessidade.",
                             softWrap: true,
                             textAlign: TextAlign.start,
                           ),
@@ -70,7 +70,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                 ),
                 Column(
                   children: [
-                    CardGerenciaConta(listContas: repositoryContas.contas)
+                    CardGerenciaCartao(listCartao: repositoryCartao.cartoes,)
                   ],
                 ),
                 

@@ -74,7 +74,6 @@ class _CardcontasState extends State<Cardcontas> {
                       ),
                     ),
                     onPressed: () {
-                      //mostarModal(context);
                       Navigator.pushNamed(context, '/gerenciaConta');
                     },
                     child: Text(
@@ -106,76 +105,3 @@ class _CardcontasState extends State<Cardcontas> {
     );
   }
 }
-
-
-/* 
-ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                      radius: 15,
-                      backgroundImage:
-                          AssetImage("assets/bb.png"))),
-              title: Text("Banco do Brasil"),
-              trailing: Text(
-                "R\$ 1.000,00",
-                style: TextStyle(
-                    fontSize: 15, color: AppColors.azulPrimario),
-              ),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                      radius: 15,
-                      backgroundImage:
-                          AssetImage("assets/nubank.png"))),
-              title: Text("Nubank"),
-              trailing: Text(
-                "R\$ 1.000,00",
-                style: TextStyle(
-                    fontSize: 15, color: AppColors.azulPrimario),
-              ),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                      radius: 15,
-                      backgroundImage:
-                          AssetImage("assets/itau.jpg"))),
-              title: Text("Itaú"),
-              trailing: Text(
-                "R\$ 1.000,00",
-                style: TextStyle(
-                    fontSize: 15, color: AppColors.azulPrimario),
-              ),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor:
-                        repositoryCategorias.categorias[0].cor,
-                    child: Icon(
-                      repositoryCategorias.categorias[0].icon,
-                      color: Colors.white,
-                    ),
-                  )),
-              title: Text(repositoryCategorias.categorias[0].nome),
-              trailing: Text(
-                "R\$ 1.000,00",
-                style: TextStyle(
-                    fontSize: 15, color: AppColors.azulPrimario),
-              ),
-            ),
-*/

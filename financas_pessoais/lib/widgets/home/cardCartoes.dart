@@ -75,6 +75,7 @@ class _CardcartoesState extends State<Cardcartoes> {
                     ),
                     onPressed: () {
                       print("Vai para tela de gerenciar cartões");
+                      Navigator.pushNamed(context, '/gerenciaCartao');
                     },
                     child: Text(
                       'Gerenciar cartões',

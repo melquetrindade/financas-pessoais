@@ -14,7 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  //final RepositoryCategorias repositoryCategorias = RepositoryCategorias();
   final RepositoryContas repositoryContas = RepositoryContas();
   final RepositoryCartao repositoryCartao = RepositoryCartao();
 
