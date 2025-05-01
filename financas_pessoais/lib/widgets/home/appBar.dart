@@ -70,6 +70,7 @@ class _MyAppBarState extends State<MyAppBar> {
             ),
             onTap: () {
               print("Mostar tela de notificações");
+              Navigator.pushNamed(context, '/onboardingOne');
             },
           )
         ],
