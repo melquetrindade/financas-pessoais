@@ -2,14 +2,14 @@ import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class OnborardingOnePage extends StatefulWidget {
-  const OnborardingOnePage({super.key});
+class OnborardingTwoPage extends StatefulWidget {
+  const OnborardingTwoPage({super.key});
 
   @override
-  State<OnborardingOnePage> createState() => _OnborardingOnePageState();
+  State<OnborardingTwoPage> createState() => _OnborardingTwoPageState();
 }
 
-class _OnborardingOnePageState extends State<OnborardingOnePage> {
+class _OnborardingTwoPageState extends State<OnborardingTwoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +21,7 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
               flex: 2,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                //child: Lottie.network("https://lottie.host/7ecb960b-afd0-4342-8681-6243e3332276/EXOkq18myv.json")
-                child: Lottie.asset("assets/onboardingOne.json"),
+                child: Lottie.asset("assets/onboardingTwo.json"),
               ),
             ),
             Expanded(
@@ -40,7 +39,7 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                                 fontWeight: FontWeight.w500), // estilo base
                             children: [
                               const TextSpan(
-                                text: 'Gerencie suas finanças com o ',
+                                text: 'Receba alertas sobre limites de gastos com o ',
                                 style: TextStyle(color: Colors.white),
                               ),
                               const TextSpan(
@@ -54,7 +53,7 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                           padding: const EdgeInsets.only(top: 30),
                           child: Container(
                             child: Text(
-                              "Uma maneira conveniente de gerenciar seu dinheiro com segurança pelo celular.",
+                              "Mantenha o controle do seu dinheiro com alertas em tempo real sobre seus limites de gastos.",
                               softWrap: true,
                               textAlign: TextAlign.start,
                               style: TextStyle(
@@ -77,20 +76,20 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        color: Colors.white,
+                                        color: Colors.white38,
                                       ),
                                       height: 6,
-                                      width: 65,
+                                      width: 35,
                                     ), 
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.all(Radius.circular(10)),
-                                          color: Colors.white38,
+                                          color: Colors.white,
                                         ),
                                         height: 6,
-                                        width: 35,
+                                        width: 65,
                                       ),
                                     )
                                   ],
@@ -99,7 +98,6 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                               ElevatedButton(
                                   onPressed: () {
                                     print("Próxima onboarding");
-                                    Navigator.pushNamed(context, '/onboardingTwo');
                                   },
                                   child: Text("Skip")
                               )
@@ -110,11 +108,6 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                     )),
               ),
             ),
-            /*
-            Container(
-              color: Colors.green.shade100,
-              child: Text("Uma maneira conveniente de gerenciar seu dinheiro com segurança pelo celular."),
-            )*/
           ],
         ),
       ),
@@ -125,30 +118,3 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
 //https://lottie.host/9bf012a8-c912-4c60-a3a5-b15faa07e0c3/7xK8AIzC9C.json
 //https://lottie.host/7ecb960b-afd0-4342-8681-6243e3332276/EXOkq18myv.json
 //https://lottie.host/ab413e64-e9c2-4637-b0f0-663541dcb137/WRvkySGpPj.json
-
-/*
-Row(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Expanded(
-                      child: Text("Gerencie suas finanças com o", softWrap: true, style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                      ),),
-                    ),
-                    
-                    Text("finanças com o", style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600
-                    ),),
-                    Text("Walletfy", style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600
-                    ),),
-                  ],
-                ),
- */
