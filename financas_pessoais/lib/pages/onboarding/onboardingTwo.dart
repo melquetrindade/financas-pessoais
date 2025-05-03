@@ -98,6 +98,7 @@ class _OnborardingTwoPageState extends State<OnborardingTwoPage> {
                               ElevatedButton(
                                   onPressed: () {
                                     print("Próxima onboarding");
+                                    Navigator.pushReplacementNamed(context, '/home');
                                   },
                                   child: Text("Skip")
                               )
