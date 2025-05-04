@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/pages/autentica%C3%A7%C3%A3o/loginPage.dart';
+import 'package:financas_pessoais/pages/autentica%C3%A7%C3%A3o/signupPage.dart';
 import 'package:financas_pessoais/pages/gerenciaCartao.dart';
 import 'package:financas_pessoais/pages/gerenciarConta.dart';
 import 'package:financas_pessoais/pages/home.dart';
@@ -18,6 +19,7 @@ class Routes {
     '/onboardingOne': (_) => const OnborardingOnePage(),
     '/onboardingTwo': (_) => const OnborardingTwoPage(),
     '/login': (_) => const LoginPage(),
+    '/signUp': (_) => const SignUpPage(),
   };
   static String initial = '/home';
   
