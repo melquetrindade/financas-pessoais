@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: const Color.fromARGB(255, 0, 44, 165),
       backgroundColor: AppColors.azulPrimario,
       body: Center(
         child: SingleChildScrollView(
@@ -77,12 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     labelText: 'Email'),
                                 keyboardType: TextInputType.emailAddress,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Informe o email corretamente!';
-                                  }
-                                  return null;
-                                },
+                                validator: (value) => Validador.validatorEmail(value),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
@@ -105,14 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       labelText: 'Senha'),
                                   obscureText: visibilitySenha,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Informe sua senha!';
-                                    } else if (value.length < 8) {
-                                      return 'A senha deve ter pelo menos 8 caracteres, 1 letra maiúscula e 1 número';
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => Validador.validatorSenha(value),
                                 ),
                               ),
                             ],

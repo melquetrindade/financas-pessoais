@@ -97,12 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Email'),
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Informe o email corretamente!';
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => Validador.validatorEmail(value),
                                 ),
                               ),
                               Padding(
@@ -130,14 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Senha'),
                                   obscureText: visibilitySenha,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Informe sua senha!';
-                                    } else if (value.length < 8) {
-                                      return 'A senha deve ter pelo menos 8 caracteres, 1 letra maiúscula e 1 número';
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => Validador.validatorSenha(value),
                                 ),
                               ),
                               Padding(
@@ -162,17 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Confirme sua senha'),
                                   obscureText: visibilityConfSenha,
-                                  validator: (value) {
-                                    print(
-                                        "senha: ${senha.text} e conf: ${confirmeSenha.text}");
-                                    if (value!.isEmpty) {
-                                      return 'Informe sua senha!';
-                                    } else if (senha.text !=
-                                        confirmeSenha.text) {
-                                      return "Error, as senhas são diferentes!";
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => Validador.validatorConfirmeSenha(value, senha.text),
                                 ),
                               ),
                             ],

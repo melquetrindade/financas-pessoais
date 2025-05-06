@@ -13,142 +13,99 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: AppColors.azulPrimario,
+      backgroundColor: AppColors.azulPrimario,
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                //child: Lottie.network("https://lottie.host/7ecb960b-afd0-4342-8681-6243e3332276/EXOkq18myv.json")
-                child: Lottie.asset("assets/onboardingOne.json"),
-              ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              child: Lottie.asset("assets/onboardingOne.json"),
             ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w500), // estilo base
-                            children: [
-                              const TextSpan(
-                                text: 'Gerencie suas finanças com o ',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              const TextSpan(
-                                text: 'Walletfy',
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ],
-                          ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w500), // estilo base
+                          children: [
+                            const TextSpan(
+                              text: 'Gerencie suas finanças com o ',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            const TextSpan(
+                              text: 'Walletfy',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Container(
-                            child: Text(
-                              "Uma maneira conveniente de gerenciar seu dinheiro com segurança pelo celular.",
-                              softWrap: true,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white70,
-                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Container(
+                          child: Text(
+                            "Uma maneira conveniente de gerenciar seu dinheiro com segurança pelo celular.",
+                            softWrap: true,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white70,
                             ),
                           ),
                         ),
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 50),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Row(
-                                  children: [
-                                    Container(
+                      ),
+                      const SizedBox(height: 100),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 50),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      color: Colors.white,
+                                    ),
+                                    height: 6,
+                                    width: 65,
+                                  ), 
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        color: Colors.white,
+                                        color: Colors.white38,
                                       ),
                                       height: 6,
-                                      width: 65,
-                                    ), 
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                          color: Colors.white38,
-                                        ),
-                                        height: 6,
-                                        width: 35,
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                      width: 35,
+                                    ),
+                                  )
+                                ],
                               ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    print("Próxima onboarding");
-                                    Navigator.pushNamed(context, '/onboardingTwo');
-                                  },
-                                  child: Text("Skip")
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    )),
-              ),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  print("Próxima onboarding");
+                                  Navigator.pushNamed(context, '/onboardingTwo');
+                                },
+                                child: Text("Skip")
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  )),
             ),
-            /*
-            Container(
-              color: Colors.green.shade100,
-              child: Text("Uma maneira conveniente de gerenciar seu dinheiro com segurança pelo celular."),
-            )*/
           ],
         ),
       ),
     );
   }
 }
-
-//https://lottie.host/9bf012a8-c912-4c60-a3a5-b15faa07e0c3/7xK8AIzC9C.json
-//https://lottie.host/7ecb960b-afd0-4342-8681-6243e3332276/EXOkq18myv.json
-//https://lottie.host/ab413e64-e9c2-4637-b0f0-663541dcb137/WRvkySGpPj.json
-
-/*
-Row(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Expanded(
-                      child: Text("Gerencie suas finanças com o", softWrap: true, style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                      ),),
-                    ),
-                    
-                    Text("finanças com o", style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600
-                    ),),
-                    Text("Walletfy", style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600
-                    ),),
-                  ],
-                ),
- */
