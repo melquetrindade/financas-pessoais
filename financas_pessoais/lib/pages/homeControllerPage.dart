@@ -47,9 +47,9 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
           width: 50,
           height: 50,
           child: FloatingActionButton(
-            onPressed: () {
-              print("pag 2");
-            },
+            onPressed: () => pc.animateToPage(
+              2, duration: Duration(milliseconds: 400), curve: Curves.ease
+            ),
             shape: CircleBorder(),
             backgroundColor: AppColors.azulPrimario,
             child: Icon(
@@ -68,35 +68,31 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () {
-                  print("Pag 0");
-                },
-                //onPressed: () => pc.jumpToPage(0),
+                icon: Icon(Icons.home, color: paginaAtual == 0 ? AppColors.azulPrimario : Colors.black,),
+                onPressed: () => pc.animateToPage(
+                  0, duration: Duration(milliseconds: 400), curve: Curves.ease
+                ),
               ),
               IconButton(
-                icon: Icon(Icons.loop),
-                //onPressed: () => pc.jumpToPage(1),
-                onPressed: () {
-                  print("Pag 1");
-                },
+                icon: Icon(Icons.loop, color: paginaAtual == 1 ? AppColors.azulPrimario : Colors.black,),
+                onPressed: () => pc.animateToPage(
+                  1, duration: Duration(milliseconds: 400), curve: Curves.ease
+                ),
               ),
               SizedBox(
                 width: 50,
               ),
               IconButton(
-                icon: Icon(Icons.bar_chart_rounded),
-                //onPressed: () => pc.jumpToPage(3),
-                onPressed: () {
-                  print("Pag 3");
-                },
+                icon: Icon(Icons.bar_chart_rounded, color: paginaAtual == 3 ? AppColors.azulPrimario : Colors.black,),
+                onPressed: () => pc.animateToPage(
+                  3, duration: Duration(milliseconds: 400), curve: Curves.ease
+                ),
               ),
               IconButton(
-                icon: Icon(Icons.data_usage_outlined),
-                //onPressed: () => pc.jumpToPage(4),
-                onPressed: () {
-                  print("Pag 4");
-                },
+                icon: Icon(Icons.data_usage_outlined, color: paginaAtual == 4 ? AppColors.azulPrimario : Colors.black,),
+                onPressed: () => pc.animateToPage(
+                  4, duration: Duration(milliseconds: 400), curve: Curves.ease
+                ),
               )
             ],
           ),
