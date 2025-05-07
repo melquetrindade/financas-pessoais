@@ -12,7 +12,7 @@ class RepositoryBanco {
     Banco(nome: "Banco BV", img: "assets/bv.jpg"),
     Banco(nome: "Caixa", img: "assets/caixa.jpg"),
     Banco(nome: "Hipercard", img: "assets/hipercard.png"),
-    Banco(nome: "Inter", img: "assets/inter.jpg"),
+    Banco(nome: "Inter", img: "assets/inter1.png"),
     Banco(nome: "Itaú", img: "assets/itau.jpg"),
     Banco(nome: "Banco Modal", img: "assets/modal.jpg"),
     Banco(nome: "Next", img: "assets/next.jpg"),
