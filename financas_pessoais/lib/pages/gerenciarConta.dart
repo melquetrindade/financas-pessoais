@@ -16,7 +16,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.azulPrimario,
+        backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
           backgroundColor: AppColors.azulPrimario,
           iconTheme: IconThemeData(color: Colors.white),
@@ -53,7 +53,7 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, size: 37,),
+                        Icon(Icons.info_outline, size: 37, color: Colors.black54,),
                         SizedBox(
                           width: 15,
                         ),

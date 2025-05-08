@@ -20,12 +20,36 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.azulPrimario,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: MyAppBar()
+      backgroundColor: AppColors.backgroundClaro,
+      body: CustomScrollView(
+        slivers: [
+          MyAppBar(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+              child: Column(
+                children: [
+                  Cardcontas(listContas: repositoryContas.contas),
+                  const SizedBox(height: 20),
+                  Cardcartoes(listCartao: repositoryCartao.cartoes),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
+    );
+  }
+}
+
+/*
+  backgroundColor: Colors.grey.shade50,
+  appBar: PreferredSize(
+    preferredSize: const Size.fromHeight(100),
+    child: MyAppBar()
+  ),*/
+/*SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13),
           child: Column(
@@ -41,7 +65,4 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
+      ),*/

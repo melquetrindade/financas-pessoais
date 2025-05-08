@@ -46,20 +46,20 @@ class _CriarContaPageState extends State<CriarContaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+        backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
           backgroundColor: AppColors.azulPrimario,
           centerTitle: true,
-          title: Text("Criar conta", style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w700
-          ),),
+          title: Text(
+            "Criar conta",
+            style: TextStyle(
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+          ),
           iconTheme: IconThemeData(color: Colors.white),
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 19),
             child: Column(
               children: [
                 Padding(
@@ -83,11 +83,11 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.black54),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.black54),
                     ),
                   ),
@@ -113,21 +113,25 @@ class _CriarContaPageState extends State<CriarContaPage> {
                         width: 37,
                         height: 37,
                         child: CircleAvatar(
-                          radius: 15,
-                          backgroundColor: AppColors.azulPrimario,
-                          child: IconButton(
-                            onPressed: () {
-                              mostarModal(context);
-                            },
-                            icon: Icon(Icons.add, color: Colors.white,)),
-                        ),
+                            radius: 15,
+                            backgroundColor: AppColors.azulPrimario,
+                            child: InkWell(
+                                onTap: () {
+                                  mostarModal(context);
+                                },
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ))),
                       ),
                     ),
-                    Text("Selecione um ícone", style: TextStyle(
-                      color: Colors.black45,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700
-                    ),)
+                    Text(
+                      "Selecione um ícone",
+                      style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700),
+                    )
                   ],
                 ),
                 Padding(
@@ -146,18 +150,24 @@ class _CriarContaPageState extends State<CriarContaPage> {
                 TextFormField(
                   decoration: InputDecoration(
                     hintText: '0,00',
-                    prefixText: "R\$",
-                    prefixStyle: TextStyle(color: Colors.white54),
+                    prefixIcon: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 12),
+                      child: Text(
+                        'R\$',
+                        style: TextStyle(color: Colors.black, fontSize: 17),
+                      ),
+                    ),
                     hintStyle: TextStyle(
                         fontWeight: FontWeight.w400, color: Colors.black54),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.black54),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.black54),
                     ),
                   ),
@@ -178,11 +188,10 @@ class _CriarContaPageState extends State<CriarContaPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: BorderSide(
-                              color: AppColors.azulPrimario, 
+                              color: AppColors.azulPrimario,
                               width: 1,
                             ),
                           ),
-                          
                         ),
                         child: Text("Criar Conta")),
                   ),
@@ -238,13 +247,14 @@ class _CriarContaPageState extends State<CriarContaPage> {
               hintStyle:
                   TextStyle(fontWeight: FontWeight.w400, color: Colors.black54),
               suffixIcon: IconButton(
-                onPressed: (){
-                  print("Pesquisar ícone");
-                },
-                icon: Icon(Icons.search,
-                  color: Colors.black54,
-                  size: 27,)
-              ),
+                  onPressed: () {
+                    print("Pesquisar ícone");
+                  },
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.black54,
+                    size: 27,
+                  )),
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               border: OutlineInputBorder(
