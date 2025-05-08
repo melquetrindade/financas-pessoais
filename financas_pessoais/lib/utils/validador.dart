@@ -40,4 +40,27 @@ class Validador {
     }
     return null;
   }
+
+  static String? validatorNomeConta(String? value) {
+    final condition = RegExp(r"^[a-zA-Z0-9áÁéÉíÍóÓúÚâÂêÊîÎôÔûÛãÃõÕçÇäÄëËïÏöÖüÜàÀèÈìÌòÒùÙñÑ]+$");
+    if (value!.isEmpty) {
+      return "Informe o nome da conta!";
+    } else if (condition.hasMatch(value) == false) {
+      return "Nome inválido, apenas letras e números!";
+    }
+    return null;
+  }
+
+  static String? validatorSaldoConta(String? value) {
+    final condition = RegExp(r'^[0-9]+$');
+    if (value!.isEmpty) {
+      return "Informe o saldo da conta!";
+    } else if (condition.hasMatch(value) == false) {
+      return "Nome inválido, tente novamente!";
+    }
+    return null;
+  }
+
+  //final condition = RegExp(r'^[0-9]+$');
+
 }

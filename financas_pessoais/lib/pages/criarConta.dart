@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 
 class CriarContaPage extends StatefulWidget {
@@ -11,11 +12,14 @@ class CriarContaPage extends StatefulWidget {
 
 class _CriarContaPageState extends State<CriarContaPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
+  final formKey = GlobalKey<FormState>();
+  final nome = TextEditingController();
+  final saldo = TextEditingController();
 
   void mostarModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // importante para permitir altura maior que 50%
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return DraggableScrollableSheet(
@@ -29,8 +33,7 @@ class _CriarContaPageState extends State<CriarContaPage> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: SingleChildScrollView(
-                controller:
-                    scrollController, // importante para scroll funcionar
+                controller: scrollController,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: modal(),
@@ -62,114 +65,128 @@ class _CriarContaPageState extends State<CriarContaPage> {
             padding: const EdgeInsets.symmetric(horizontal: 19),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Nome da conta",
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Digite o nome da conta',
-                    hintStyle: TextStyle(
-                        fontWeight: FontWeight.w400, color: Colors.black54),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black54),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black54),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Escolha um ícone",
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: SizedBox(
-                        width: 37,
-                        height: 37,
-                        child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: AppColors.azulPrimario,
-                            child: InkWell(
-                                onTap: () {
-                                  mostarModal(context);
-                                },
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ))),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Nome da conta",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17),
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Selecione um ícone",
-                      style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Saldo da conta",
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: '0,00',
-                    prefixIcon: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 12, top: 12),
-                      child: Text(
-                        'R\$',
-                        style: TextStyle(color: Colors.black, fontSize: 17),
+                      TextFormField(
+                        controller: nome,
+                        decoration: InputDecoration(
+                          hintText: 'Digite o nome da conta',
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black54),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.black54),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.black54),
+                          ),
+                        ),
+                        validator: (value) => Validador.validatorNomeConta(value)
                       ),
-                    ),
-                    hintStyle: TextStyle(
-                        fontWeight: FontWeight.w400, color: Colors.black54),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black54),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black54),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Escolha um ícone",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: SizedBox(
+                              width: 37,
+                              height: 37,
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: AppColors.azulPrimario,
+                                  child: InkWell(
+                                      onTap: () {
+                                        mostarModal(context);
+                                      },
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ))),
+                            ),
+                          ),
+                          Text(
+                            "Selecione um ícone",
+                            style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Saldo da conta",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17),
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        controller: saldo,
+                        decoration: InputDecoration(
+                          hintText: '0,00',
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 12, top: 12),
+                            child: Text(
+                              'R\$',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 17),
+                            ),
+                          ),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black54),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.black54),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.black54),
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) => Validador.validatorSaldoConta(value)
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -179,6 +196,11 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           print("Cadastrar");
+                          if (formKey.currentState!.validate()) {
+                            print("tudo ok");
+                          } else {
+                            print("error");
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,

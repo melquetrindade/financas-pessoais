@@ -1,5 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
-import 'package:financas_pessoais/pages/contaPage.dart';
+import 'package:financas_pessoais/pages/lancamentosPage.dart';
 import 'package:financas_pessoais/pages/fluxoCaixaPage.dart';
 import 'package:financas_pessoais/pages/gastosPage.dart';
 import 'package:financas_pessoais/pages/home.dart';
@@ -37,7 +37,7 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
           children: [
             Home(),
             FluxoCaixaPage(),
-            ContasPage(),
+            LancamentosPage(),
             RelatoriosPage(),
             GastosPage()
           ],
@@ -99,23 +99,3 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
         ));
   }
 }
-
-/*
-bottomNavigationBar: BottomNavigationBar(
-  currentIndex: paginaAtual,
-  type: BottomNavigationBarType.fixed,
-  items: [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: "teste"),
-    BottomNavigationBarItem(icon: Icon(Icons.loop), label: "teste"),
-    //BottomNavigationBarItem(icon: Icon(Icons.add), label: "teste"),
-    BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: "teste"),
-    BottomNavigationBarItem(icon: Icon(Icons.data_usage_outlined), label: "teste"),
-  ],
-  onTap: (pagina) {
-    pc.animateToPage(
-      pagina,
-      duration: Duration(milliseconds: 400),
-      curve: Curves.ease,
-    );
-  },
-),*/
