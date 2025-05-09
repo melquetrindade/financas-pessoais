@@ -17,8 +17,9 @@ class _CriarContaPageState extends State<CriarContaPage> {
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
+  String imgIcone = "";
 
-  void mostarModal(BuildContext context) {
+  void mostrarModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -90,6 +91,30 @@ class _CriarContaPageState extends State<CriarContaPage> {
     super.dispose();
   }
 
+  Widget? iconeConta() {
+    return imgIcone == ""
+        ? Icon(
+            Icons.add,
+            color: Colors.white,
+          )
+        : imgIcone == "Carteira"
+            ? Icon(
+                Icons.account_balance_wallet,
+                color: Colors.white,
+              )
+            : imgIcone == "Banco"
+                ? Icon(
+                    Icons.account_balance_rounded,
+                    color: Colors.white,
+                  )
+                : imgIcone == "Cofrinho"
+                    ? Icon(
+                        Icons.savings,
+                        color: Colors.white,
+                      )
+                    : null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,34 +184,34 @@ class _CriarContaPageState extends State<CriarContaPage> {
                           ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: SizedBox(
-                              width: 37,
-                              height: 37,
-                              child: CircleAvatar(
+                      InkWell(
+                        onTap: () {
+                          mostrarModal(context);
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: SizedBox(
+                                width: 37,
+                                height: 37,
+                                child: CircleAvatar(
                                   radius: 15,
-                                  backgroundColor: AppColors.azulPrimario,
-                                  child: InkWell(
-                                      onTap: () {
-                                        mostarModal(context);
-                                      },
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      ))),
+                                  backgroundImage: imgIcone == "" || imgIcone == "Carteira" || imgIcone == "Banco" || imgIcone == "Cofrinho" ? null : AssetImage(imgIcone),
+                                  backgroundColor: imgIcone == "" || imgIcone == "Carteira" || imgIcone == "Banco" || imgIcone == "Cofrinho" ? AppColors.azulPrimario : null, 
+                                  child: iconeConta(),
+                                ),
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Selecione um ícone",
-                            style: TextStyle(
-                                color: Colors.black45,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700),
-                          )
-                        ],
+                            Text(
+                              "Selecione um ícone",
+                              style: TextStyle(
+                                  color: Colors.black45,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700),
+                            )
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
@@ -240,9 +265,19 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           print("Cadastrar");
-                          if (formKey.currentState!.validate()) {
+                          if (formKey.currentState!.validate() &&
+                              imgIcone != "") {
                             print("tudo ok");
                           } else {
+                            if (imgIcone == "") {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Erro, selecione um ícone para prosseguir!'),
+                                  duration: Duration(seconds: 20),
+                                ),
+                              );
+                            }
                             print("error");
                           }
                         },
@@ -287,7 +322,7 @@ class _CriarContaPageState extends State<CriarContaPage> {
               Spacer(),
               SizedBox(
                 width: 45,
-              ), // empurra o texto para o centro
+              ),
               Text(
                 'Selecionar um ícone',
                 style: TextStyle(
@@ -295,16 +330,22 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     fontWeight: FontWeight.w600,
                     color: Colors.black54),
               ),
-              Spacer(), // empurra o botão pro canto
+              Spacer(),
               IconButton(
                   icon: Icon(
-                    Icons.close,
+                    Icons.search,
                     color: Colors.black54,
                   ),
-                  onPressed: () => Navigator.pop(context)),
+                  onPressed: () {
+                    showSearch(
+                        context: context,
+                        delegate:
+                            SearchIcone(objtsBancos: repositoryBanco.bancos));
+                  }),
             ],
           ),
         ),
+        /*
         Padding(
           padding: const EdgeInsets.only(bottom: 15),
           child: TextFormField(
@@ -337,20 +378,25 @@ class _CriarContaPageState extends State<CriarContaPage> {
               ),
             ),
           ),
-        ),
+        ),*/
         Align(
           alignment: Alignment.topLeft,
           child: Text(
             "Ícones genéricos",
             style: TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.w700, fontSize: 16),
+                color: Colors.black54,
+                fontWeight: FontWeight.w700,
+                fontSize: 16),
           ),
         ),
         Column(
           children: [
             InkWell(
               onTap: () {
-                print("Carteira");
+                setState(() {
+                  imgIcone = "Carteira";
+                });
+                Navigator.pop(context);
               },
               child: ListTile(
                 leading: SizedBox(
@@ -381,7 +427,10 @@ class _CriarContaPageState extends State<CriarContaPage> {
           children: [
             InkWell(
               onTap: () {
-                print("Banco");
+                setState(() {
+                  imgIcone = "Banco";
+                });
+                Navigator.pop(context);
               },
               child: ListTile(
                 leading: SizedBox(
@@ -410,7 +459,10 @@ class _CriarContaPageState extends State<CriarContaPage> {
         ),
         InkWell(
           onTap: () {
-            print("Cofrinho");
+            setState(() {
+              imgIcone = "Cofrinho";
+            });
+            Navigator.pop(context);
           },
           child: ListTile(
             leading: SizedBox(
@@ -454,7 +506,11 @@ class _CriarContaPageState extends State<CriarContaPage> {
       children: [
         InkWell(
           onTap: () {
+            setState(() {
+              imgIcone = "${repositoryBanco.bancos[i].img}";
+            });
             print("${repositoryBanco.bancos[i].nome}");
+            Navigator.pop(context);
           },
           child: ListTile(
             leading: SizedBox(

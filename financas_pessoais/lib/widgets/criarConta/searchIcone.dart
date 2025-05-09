@@ -2,6 +2,7 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:flutter/material.dart';
 
 class SearchIcone extends SearchDelegate {
+  //passar uma função como argumento que vai setar o icone
   final List<Banco> objtsBancos;
 
   SearchIcone({required this.objtsBancos});

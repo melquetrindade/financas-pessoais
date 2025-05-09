@@ -60,7 +60,4 @@ class Validador {
     }
     return null;
   }
-
-  //final condition = RegExp(r'^[0-9]+$');
-
 }
