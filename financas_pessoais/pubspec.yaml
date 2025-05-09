@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   lottie:
-  flutter_multi_formatter: ^2.13.7
+  intl: ^0.20.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -1,7 +1,9 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
 import 'package:financas_pessoais/utils/validador.dart';
+import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CriarContaPage extends StatefulWidget {
   const CriarContaPage({super.key});
@@ -47,6 +49,48 @@ class _CriarContaPageState extends State<CriarContaPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    saldo.addListener(_formatSaldo);
+  }
+
+  void _formatSaldo() {
+    String text = saldo.text;
+
+    // Remove tudo que não for dígito
+    String onlyDigits = text.replaceAll(RegExp(r'[^\d]'), '');
+
+    if (onlyDigits.isEmpty) {
+      saldo.value = TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+      return;
+    }
+
+    // Interpreta como valor monetário
+    double value = double.parse(onlyDigits) / 100;
+
+    // Formata usando intl
+    final formatter =
+        NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
+    String newText = formatter.format(value).trim();
+
+    // Mantém a posição do cursor
+    saldo.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+
+  @override
+  void dispose() {
+    saldo.removeListener(_formatSaldo);
+    saldo.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -83,25 +127,25 @@ class _CriarContaPageState extends State<CriarContaPage> {
                         ),
                       ),
                       TextFormField(
-                        controller: nome,
-                        decoration: InputDecoration(
-                          hintText: 'Digite o nome da conta',
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black54),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.black54),
+                          controller: nome,
+                          decoration: InputDecoration(
+                            hintText: 'Digite o nome da conta',
+                            hintStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black54),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.black54),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.black54),
+                            ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.black54),
-                          ),
-                        ),
-                        validator: (value) => Validador.validatorNomeConta(value)
-                      ),
+                          validator: (value) =>
+                              Validador.validatorNomeConta(value)),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Align(
@@ -158,34 +202,34 @@ class _CriarContaPageState extends State<CriarContaPage> {
                         ),
                       ),
                       TextFormField(
-                        controller: saldo,
-                        decoration: InputDecoration(
-                          hintText: '0,00',
-                          prefixIcon: Padding(
-                            padding: const EdgeInsets.only(left: 12, top: 12),
-                            child: Text(
-                              'R\$',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 17),
+                          controller: saldo,
+                          decoration: InputDecoration(
+                            hintText: '0,00',
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(left: 12, top: 12),
+                              child: Text(
+                                'R\$',
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 17),
+                              ),
+                            ),
+                            hintStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black54),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.black54),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.black54),
                             ),
                           ),
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black54),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.black54),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.black54),
-                          ),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) => Validador.validatorSaldoConta(value)
-                      ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) =>
+                              Validador.validatorSaldoConta(value)),
                     ],
                   ),
                 ),
@@ -271,6 +315,10 @@ class _CriarContaPageState extends State<CriarContaPage> {
               suffixIcon: IconButton(
                   onPressed: () {
                     print("Pesquisar ícone");
+                    showSearch(
+                        context: context,
+                        delegate:
+                            SearchIcone(objtsBancos: repositoryBanco.bancos));
                   },
                   icon: Icon(
                     Icons.search,
@@ -295,29 +343,32 @@ class _CriarContaPageState extends State<CriarContaPage> {
           child: Text(
             "Ícones genéricos",
             style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.w700,
-                fontSize: 16),
+                color: Colors.black54, fontWeight: FontWeight.w700, fontSize: 16),
           ),
         ),
         Column(
           children: [
-            ListTile(
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: AppColors.azulPrimario,
-                    child: Icon(
-                      Icons.account_balance_wallet,
-                      color: Colors.white,
-                    ),
-                  )),
-              title: Text(
-                "Cearteira",
-                style: TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w700),
+            InkWell(
+              onTap: () {
+                print("Carteira");
+              },
+              child: ListTile(
+                leading: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: AppColors.azulPrimario,
+                      child: Icon(
+                        Icons.account_balance_wallet,
+                        color: Colors.white,
+                      ),
+                    )),
+                title: Text(
+                  "Carteira",
+                  style: TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.w700),
+                ),
               ),
             ),
             Padding(
@@ -328,22 +379,27 @@ class _CriarContaPageState extends State<CriarContaPage> {
         ),
         Column(
           children: [
-            ListTile(
-              leading: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: AppColors.azulPrimario,
-                    child: Icon(
-                      Icons.account_balance_rounded,
-                      color: Colors.white,
-                    ),
-                  )),
-              title: Text(
-                "Banco",
-                style: TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w700),
+            InkWell(
+              onTap: () {
+                print("Banco");
+              },
+              child: ListTile(
+                leading: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: AppColors.azulPrimario,
+                      child: Icon(
+                        Icons.account_balance_rounded,
+                        color: Colors.white,
+                      ),
+                    )),
+                title: Text(
+                  "Banco",
+                  style: TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.w700),
+                ),
               ),
             ),
             Padding(
@@ -352,22 +408,27 @@ class _CriarContaPageState extends State<CriarContaPage> {
             )
           ],
         ),
-        ListTile(
-          leading: SizedBox(
-              width: 40,
-              height: 40,
-              child: CircleAvatar(
-                radius: 15,
-                backgroundColor: AppColors.azulPrimario,
-                child: Icon(
-                  Icons.savings,
-                  color: Colors.white,
-                ),
-              )),
-          title: Text(
-            "Cofrinho",
-            style:
-                TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+        InkWell(
+          onTap: () {
+            print("Cofrinho");
+          },
+          child: ListTile(
+            leading: SizedBox(
+                width: 40,
+                height: 40,
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundColor: AppColors.azulPrimario,
+                  child: Icon(
+                    Icons.savings,
+                    color: Colors.white,
+                  ),
+                )),
+            title: Text(
+              "Cofrinho",
+              style:
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+            ),
           ),
         ),
         Padding(
@@ -391,18 +452,23 @@ class _CriarContaPageState extends State<CriarContaPage> {
   Widget iconesBancos(int i) {
     return Column(
       children: [
-        ListTile(
-          leading: SizedBox(
-              width: 40,
-              height: 40,
-              child: CircleAvatar(
-                  radius: 15,
-                  backgroundImage:
-                      AssetImage("${repositoryBanco.bancos[i].img}"))),
-          title: Text(
-            "${repositoryBanco.bancos[i].nome}",
-            style:
-                TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+        InkWell(
+          onTap: () {
+            print("${repositoryBanco.bancos[i].nome}");
+          },
+          child: ListTile(
+            leading: SizedBox(
+                width: 40,
+                height: 40,
+                child: CircleAvatar(
+                    radius: 15,
+                    backgroundImage:
+                        AssetImage("${repositoryBanco.bancos[i].img}"))),
+            title: Text(
+              "${repositoryBanco.bancos[i].nome}",
+              style:
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+            ),
           ),
         ),
         Padding(
