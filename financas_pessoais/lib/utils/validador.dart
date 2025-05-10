@@ -2,7 +2,8 @@ class Validador {
   Validador._();
 
   static String? validatorNome(String? value) {
-    final condition = RegExp(r"^[a-zA-ZáÁéÉíÍóÓúÚâÂêÊîÎôÔûÛãÃõÕçÇäÄëËïÏöÖüÜàÀèÈìÌòÒùÙñÑ]+$");
+    final condition =
+        RegExp(r"^[a-zA-ZáÁéÉíÍóÓúÚâÂêÊîÎôÔûÛãÃõÕçÇäÄëËïÏöÖüÜàÀèÈìÌòÒùÙñÑ]+$");
     if (value!.isEmpty) {
       return "Informe o nome corretamente!";
     } else if (condition.hasMatch(value) == false) {
@@ -42,7 +43,9 @@ class Validador {
   }
 
   static String? validatorNomeConta(String? value) {
-    final condition = RegExp(r"^[a-zA-Z0-9áÁéÉíÍóÓúÚâÂêÊîÎôÔûÛãÃõÕçÇäÄëËïÏöÖüÜàÀèÈìÌòÒùÙñÑ]+$");
+    print("nome conta: ${value}");
+    final condition = RegExp(
+        r"^[a-zA-Z0-9áÁéÉíÍóÓúÚâÂêÊîÎôÔûÛãÃõÕçÇäÄëËïÏöÖüÜàÀèÈìÌòÒùÙñÑ ]+$");
     if (value!.isEmpty) {
       return "Informe o nome da conta!";
     } else if (condition.hasMatch(value) == false) {
@@ -52,11 +55,8 @@ class Validador {
   }
 
   static String? validatorSaldoConta(String? value) {
-    final condition = RegExp(r'^[0-9]+$');
     if (value!.isEmpty) {
       return "Informe o saldo da conta!";
-    } else if (condition.hasMatch(value) == false) {
-      return "Nome inválido, tente novamente!";
     }
     return null;
   }

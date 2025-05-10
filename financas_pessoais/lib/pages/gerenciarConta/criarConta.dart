@@ -115,6 +115,14 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     : null;
   }
 
+  void setarImgIcone(String icone) {
+    setState(() {
+      imgIcone = icone;
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,8 +205,18 @@ class _CriarContaPageState extends State<CriarContaPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: imgIcone == "" || imgIcone == "Carteira" || imgIcone == "Banco" || imgIcone == "Cofrinho" ? null : AssetImage(imgIcone),
-                                  backgroundColor: imgIcone == "" || imgIcone == "Carteira" || imgIcone == "Banco" || imgIcone == "Cofrinho" ? AppColors.azulPrimario : null, 
+                                  backgroundImage: imgIcone == "" ||
+                                          imgIcone == "Carteira" ||
+                                          imgIcone == "Banco" ||
+                                          imgIcone == "Cofrinho"
+                                      ? null
+                                      : AssetImage(imgIcone),
+                                  backgroundColor: imgIcone == "" ||
+                                          imgIcone == "Carteira" ||
+                                          imgIcone == "Banco" ||
+                                          imgIcone == "Cofrinho"
+                                      ? AppColors.azulPrimario
+                                      : null,
                                   child: iconeConta(),
                                 ),
                               ),
@@ -268,13 +286,15 @@ class _CriarContaPageState extends State<CriarContaPage> {
                           if (formKey.currentState!.validate() &&
                               imgIcone != "") {
                             print("tudo ok");
+                            print(
+                                "dados da conta=> nome: ${nome.text} - ícone: ${imgIcone} - saldo: ${saldo.text}");
                           } else {
                             if (imgIcone == "") {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                       'Erro, selecione um ícone para prosseguir!'),
-                                  duration: Duration(seconds: 20),
+                                  duration: Duration(seconds: 10),
                                 ),
                               );
                             }
@@ -339,8 +359,9 @@ class _CriarContaPageState extends State<CriarContaPage> {
                   onPressed: () {
                     showSearch(
                         context: context,
-                        delegate:
-                            SearchIcone(objtsBancos: repositoryBanco.bancos));
+                        delegate: SearchIcone(
+                            objtsBancos: repositoryBanco.bancos,
+                            funcao: setarImgIcone));
                   }),
             ],
           ),

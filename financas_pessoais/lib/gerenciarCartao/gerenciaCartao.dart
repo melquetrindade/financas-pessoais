@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/gerenciarCartao/criarCartao.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/widgets/gerenciarCartao/cardCartao.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.azulPrimario,
+        backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
           backgroundColor: AppColors.azulPrimario,
           iconTheme: IconThemeData(color: Colors.white),
@@ -32,6 +33,10 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
               child: IconButton(
                   onPressed: () {
                     print("add novo cartão");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CriarCartaoPage()));
                   },
                   icon: Icon(
                     Icons.add_circle_outline,
@@ -50,10 +55,14 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
                   width: MediaQuery.of(context).size.width,
                   height: 100,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, size: 37,),
+                        Icon(
+                          Icons.info_outline,
+                          size: 37,
+                        ),
                         SizedBox(
                           width: 15,
                         ),
@@ -70,10 +79,11 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
                 ),
                 Column(
                   children: [
-                    CardGerenciaCartao(listCartao: repositoryCartao.cartoes,)
+                    CardGerenciaCartao(
+                      listCartao: repositoryCartao.cartoes,
+                    )
                   ],
                 ),
-                
               ],
             ),
           ),

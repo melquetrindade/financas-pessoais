@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 class SearchIcone extends SearchDelegate {
   //passar uma função como argumento que vai setar o icone
+  final Function funcao;
   final List<Banco> objtsBancos;
 
-  SearchIcone({required this.objtsBancos});
+  SearchIcone({required this.objtsBancos, required this.funcao});
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -87,8 +88,9 @@ class SearchIcone extends SearchDelegate {
         return Column(
           children: [
             InkWell(
-              onTap: (){
+              onTap: () {
                 print("${matchQuery[i].nome}");
+                funcao(matchQuery[i].img);
               },
               child: ListTile(
                 leading: SizedBox(
@@ -132,6 +134,7 @@ class SearchIcone extends SearchDelegate {
             InkWell(
               onTap: () {
                 print("${matchQuery[i].nome}");
+                funcao(matchQuery[i].img);
               },
               child: ListTile(
                 leading: SizedBox(

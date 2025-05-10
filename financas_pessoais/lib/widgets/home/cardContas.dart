@@ -90,13 +90,50 @@ class _CardcontasState extends State<Cardcontas> {
   }
 
   Widget cardConta(int i) {
+    String imgIcone = widget.listContas[i].icone;
+
+    Widget? iconeConta() {
+      return imgIcone == ""
+          ? Icon(
+              Icons.add,
+              color: Colors.white,
+            )
+          : imgIcone == "Carteira"
+              ? Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.white,
+                )
+              : imgIcone == "Banco"
+                  ? Icon(
+                      Icons.account_balance_rounded,
+                      color: Colors.white,
+                    )
+                  : imgIcone == "Cofrinho"
+                      ? Icon(
+                          Icons.savings,
+                          color: Colors.white,
+                        )
+                      : null;
+    }
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: SizedBox(
           width: 40,
           height: 40,
           child: CircleAvatar(
-              radius: 15, backgroundImage: AssetImage(widget.listContas[i].icone))),
+            radius: 15,
+            backgroundImage: widget.listContas[i].icone == "Carteira" ||
+                    widget.listContas[i].icone == "Banco" ||
+                    widget.listContas[i].icone == "Cofrinho"
+                ? null : AssetImage(widget.listContas[i].icone),
+            backgroundColor: widget.listContas[i].icone == "Carteira" ||
+                    widget.listContas[i].icone == "Banco" ||
+                    widget.listContas[i].icone == "Cofrinho"
+                ? AppColors.azulPrimario
+                : null,
+            child: iconeConta(),
+          )),
       title: Text(widget.listContas[i].nome),
       trailing: Text(
         "R\$ ${widget.listContas[i].saldo}",

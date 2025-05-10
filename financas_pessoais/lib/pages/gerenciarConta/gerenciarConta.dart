@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/pages/gerenciarConta/criarConta.dart';
 import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/widgets/gerenciarConta/cardContas.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,8 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
               child: IconButton(
                   onPressed: () {
                     print("add nova conta");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CriarContaPage()),
+                  );
                   },
                   icon: Icon(
                     Icons.add_circle_outline,

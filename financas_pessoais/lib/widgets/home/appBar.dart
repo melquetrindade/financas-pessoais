@@ -1,5 +1,4 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
-import 'package:financas_pessoais/pages/criarConta.dart';
 import 'package:flutter/material.dart';
 
 class MyAppBar extends StatefulWidget {
@@ -77,10 +76,6 @@ class _MyAppBarState extends State<MyAppBar> {
                 ),
                 onTap: () {
                   print("Mostar tela de notificações");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CriarContaPage()),
-                  );
                 },
               )
             ],

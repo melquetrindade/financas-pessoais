@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/conta.dart';
+import 'package:financas_pessoais/pages/gerenciarConta/editarConta.dart';
 import 'package:flutter/material.dart';
 
 class CardGerenciaConta extends StatefulWidget {
@@ -21,6 +22,32 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
   }
 
   Widget cardConta(int i) {
+    String icone = widget.listContas[i].icone;
+
+    Widget? iconeConta() {
+      return icone == ""
+          ? Icon(
+              Icons.add,
+              color: Colors.white,
+            )
+          : icone == "Carteira"
+              ? Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.white,
+                )
+              : icone == "Banco"
+                  ? Icon(
+                      Icons.account_balance_rounded,
+                      color: Colors.white,
+                    )
+                  : icone == "Cofrinho"
+                      ? Icon(
+                          Icons.savings,
+                          color: Colors.white,
+                        )
+                      : null;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, top: 20),
       child: Container(
@@ -38,15 +65,37 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
                       width: 40,
                       height: 40,
                       child: CircleAvatar(
-                          radius: 15,
-                          backgroundImage:
-                              AssetImage(widget.listContas[i].icone))),
+                        radius: 15,
+                        backgroundImage: icone == "Carteira" ||
+                                icone == "Banco" ||
+                                icone == "Cofrinho"
+                            ? null
+                            : AssetImage(widget.listContas[i].icone),
+                        backgroundColor: icone == "Carteira" ||
+                                icone == "Banco" ||
+                                icone == "Cofrinho"
+                            ? AppColors.azulPrimario
+                            : null,
+                        child: iconeConta(),
+                      )),
                   title: Text(widget.listContas[i].nome),
                   trailing: IconButton(
                       onPressed: () {
-                        print("Ir para a página de edição da ${widget.listContas[i].nome}");
+                        print(
+                            "Ir para a página de edição da ${widget.listContas[i].nome}");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditarContaPage(
+                                  nomeConta: widget.listContas[i].nome, 
+                                  imgConta: widget.listContas[i].icone, 
+                                  saldo: widget.listContas[i].saldo))
+                        );
                       },
-                      icon: Icon(Icons.edit, color: Colors.black54,))),
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.black54,
+                      ))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Divider(
