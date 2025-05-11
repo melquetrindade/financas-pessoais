@@ -1,5 +1,8 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/model/bancos.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +17,16 @@ class CriarCartaoPage extends StatefulWidget {
 
 class _CriarCartaoPageState extends State<CriarCartaoPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
+  final RepositoryContas repositoryContas = RepositoryContas();
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
-  String imgIcone = "";
+  final diaFecha = TextEditingController();
+  final diaVencimento = TextEditingController();
+  Banco infoBanco = Banco(nome: "", img: "");
+  Conta infoContaPag = Conta(icone: "", nome: "", saldo: "");
 
-  void mostrarModal(BuildContext context) {
+  void mostrarModal(BuildContext context, int modalTipo) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -39,7 +46,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                 controller: scrollController,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: modal(),
+                  child: modalTipo == 1 ? modalCartao() : modalConta(),
                 ),
               ),
             );
@@ -57,8 +64,6 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
 
   void _formatSaldo() {
     String text = saldo.text;
-
-    // Remove tudo que não for dígito
     String onlyDigits = text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (onlyDigits.isEmpty) {
@@ -68,16 +73,12 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
       );
       return;
     }
-
-    // Interpreta como valor monetário
     double value = double.parse(onlyDigits) / 100;
 
-    // Formata usando intl
     final formatter =
         NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
     String newText = formatter.format(value).trim();
 
-    // Mantém a posição do cursor
     saldo.value = TextEditingValue(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
@@ -91,23 +92,39 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
     super.dispose();
   }
 
-  Widget? iconeConta() {
-    return imgIcone == ""
+  Widget? iconeCartao() {
+    print("Nome do cartão: ${infoBanco.nome}");
+    return infoBanco.img == ""
         ? Icon(
             Icons.add,
             color: Colors.white,
           )
-        : imgIcone == "Carteira"
+        : infoBanco.img == "Cartão"
+            ? Icon(
+                Icons.credit_card,
+                color: Colors.white,
+              )
+            : null;
+  }
+
+  Widget? iconeContaPag() {
+    print("Nome da conta de pag: ${infoContaPag.nome}");
+    return infoContaPag.icone == ""
+        ? Icon(
+            Icons.add,
+            color: Colors.white,
+          )
+        : infoContaPag.icone == "Carteira"
             ? Icon(
                 Icons.account_balance_wallet,
                 color: Colors.white,
               )
-            : imgIcone == "Banco"
+            : infoContaPag.icone == "Banco"
                 ? Icon(
                     Icons.account_balance_rounded,
                     color: Colors.white,
                   )
-                : imgIcone == "Cofrinho"
+                : infoContaPag.icone == "Cofrinho"
                     ? Icon(
                         Icons.savings,
                         color: Colors.white,
@@ -115,9 +132,30 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                     : null;
   }
 
-  void setarImgIcone(String icone) {
+  Widget? iconeContaPag2(Conta conta) {
+    return conta.icone == "Carteira"
+        ? Icon(
+            Icons.account_balance_wallet,
+            color: Colors.white,
+          )
+        : conta.icone == "Banco"
+            ? Icon(
+                Icons.account_balance_rounded,
+                color: Colors.white,
+              )
+            : conta.icone == "Cofrinho"
+                ? Icon(
+                    Icons.savings,
+                    color: Colors.white,
+                  )
+                : null;
+  }
+
+  void setarInfoBanco(Banco setBanco) {
     setState(() {
-      imgIcone = icone;
+      infoBanco = setBanco;
+      //infoBanco.img = setBanco.img;
+      //infoBanco.nome = setBanco.nome;
       Navigator.pop(context);
       Navigator.pop(context);
     });
@@ -174,7 +212,8 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.black54),
+                              borderSide:
+                                  BorderSide(color: AppColors.azulPrimario),
                             ),
                           ),
                           validator: (value) =>
@@ -194,7 +233,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          mostrarModal(context);
+                          mostrarModal(context, 1);
                         },
                         child: Row(
                           children: [
@@ -205,19 +244,15 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                  backgroundImage: infoBanco.img == "" ||
+                                          infoBanco.img == "Cartão"
                                       ? null
-                                      : AssetImage(imgIcone),
-                                  backgroundColor: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                      : AssetImage(infoBanco.img),
+                                  backgroundColor: infoBanco.img == "" ||
+                                          infoBanco.img == "Cartão"
                                       ? AppColors.azulPrimario
                                       : null,
-                                  child: iconeConta(),
+                                  child: iconeCartao(),
                                 ),
                               ),
                             ),
@@ -267,72 +302,166 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.black54),
+                              borderSide:
+                                  BorderSide(color: AppColors.azulPrimario),
                             ),
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) =>
                               Validador.validatorSaldoConta(value)),
-                      Row(
-                        children: [
-                          // Campo Fechamento
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Fechamento',
-                                  style: TextStyle(color: Colors.white), // ou sua cor desejada
-                                ),
-                                const SizedBox(height: 4),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Dia',
-                                    hintStyle: TextStyle(color: Colors.white54),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.green),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.green),
-                                      borderRadius: BorderRadius.circular(8),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Fechamento',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 17),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  TextFormField(
+                                    controller: diaFecha,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12, top: 12),
+                                        child: Text(
+                                          'Dia',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 17),
+                                        ),
+                                      ),
+                                      hintText: '24',
+                                      hintStyle: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide:
+                                            BorderSide(color: Colors.black54),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: AppColors.azulPrimario),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
                                   ),
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16), // Espaçamento entre os campos
-
-                          // Campo Vencimento
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Vencimento',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                const SizedBox(height: 4),
-                                TextFormField(
-                                  initialValue: 'Dia 05',
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Vencimento',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 17),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  TextFormField(
+                                    controller: diaVencimento,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12, top: 12),
+                                        child: Text(
+                                          'Dia',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 17),
+                                        ),
+                                      ),
+                                      hintText: '31',
+                                      hintStyle: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide:
+                                            BorderSide(color: Colors.black54),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: AppColors.azulPrimario),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
                                   ),
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Conta de pagamento",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17),
                           ),
-                        ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          mostrarModal(context, 2);
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: SizedBox(
+                                width: 37,
+                                height: 37,
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundImage: infoContaPag.icone == "" ||
+                                          infoContaPag.icone == "Carteira" ||
+                                          infoContaPag.icone == "Banco" ||
+                                          infoContaPag.icone == "Cofrinho"
+                                      ? null
+                                      : AssetImage(infoContaPag.icone),
+                                  backgroundColor: infoContaPag.icone == "" ||
+                                          infoContaPag.icone == "Carteira" ||
+                                          infoContaPag.icone == "Banco" ||
+                                          infoContaPag.icone == "Cofrinho"
+                                      ? AppColors.azulPrimario
+                                      : null,
+                                  child: iconeContaPag(),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "Selecione uma conta",
+                              style: TextStyle(
+                                  color: Colors.black45,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700),
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -345,12 +474,12 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                         onPressed: () {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
-                              imgIcone != "") {
+                              infoBanco.img != "") {
                             print("tudo ok");
                             print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${imgIcone} - saldo: ${saldo.text}");
+                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
                           } else {
-                            if (imgIcone == "") {
+                            if (infoBanco.img == "") {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -375,7 +504,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                             ),
                           ),
                         ),
-                        child: Text("Criar Conta")),
+                        child: Text("Criar cartão de crédito")),
                   ),
                 ),
               ],
@@ -384,7 +513,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
         ));
   }
 
-  Widget modal() {
+  Widget modalCartao() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -422,45 +551,11 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                         context: context,
                         delegate: SearchIcone(
                             objtsBancos: repositoryBanco.bancos,
-                            funcao: setarImgIcone));
+                            funcao: setarInfoBanco));
                   }),
             ],
           ),
         ),
-        /*
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Buscar um ícone',
-              hintStyle:
-                  TextStyle(fontWeight: FontWeight.w400, color: Colors.black54),
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    print("Pesquisar ícone");
-                    showSearch(
-                        context: context,
-                        delegate:
-                            SearchIcone(objtsBancos: repositoryBanco.bancos));
-                  },
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black54,
-                    size: 27,
-                  )),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-            ),
-          ),
-        ),*/
         Align(
           alignment: Alignment.topLeft,
           child: Text(
@@ -476,7 +571,8 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  imgIcone = "Carteira";
+                  infoBanco.img = "Cartão";
+                  infoBanco.nome = "Cartão";
                 });
                 Navigator.pop(context);
               },
@@ -488,12 +584,12 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                       radius: 15,
                       backgroundColor: AppColors.azulPrimario,
                       child: Icon(
-                        Icons.account_balance_wallet,
+                        Icons.credit_card,
                         color: Colors.white,
                       ),
                     )),
                 title: Text(
-                  "Carteira",
+                  "Cartão",
                   style: TextStyle(
                       color: Colors.black54, fontWeight: FontWeight.w700),
                 ),
@@ -504,66 +600,6 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
               child: Divider(),
             )
           ],
-        ),
-        Column(
-          children: [
-            InkWell(
-              onTap: () {
-                setState(() {
-                  imgIcone = "Banco";
-                });
-                Navigator.pop(context);
-              },
-              child: ListTile(
-                leading: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: AppColors.azulPrimario,
-                      child: Icon(
-                        Icons.account_balance_rounded,
-                        color: Colors.white,
-                      ),
-                    )),
-                title: Text(
-                  "Banco",
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.w700),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(),
-            )
-          ],
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              imgIcone = "Cofrinho";
-            });
-            Navigator.pop(context);
-          },
-          child: ListTile(
-            leading: SizedBox(
-                width: 40,
-                height: 40,
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundColor: AppColors.azulPrimario,
-                  child: Icon(
-                    Icons.savings,
-                    color: Colors.white,
-                  ),
-                )),
-            title: Text(
-              "Cofrinho",
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
-            ),
-          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15),
@@ -583,15 +619,110 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
     );
   }
 
+  Widget modalConta() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black,
+          ),
+          height: 3,
+          width: 130,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: Row(
+            children: [
+              Spacer(),
+              SizedBox(
+                width: 45,
+              ),
+              Text(
+                'Selecionar uma conta',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54),
+              ),
+              Spacer(),
+              IconButton(
+                  icon: Icon(
+                    Icons.clear_rounded,
+                    color: Colors.black54,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          ),
+        ),
+        for (var i = 0; i < repositoryContas.contas.length; i++)
+          iconesContas(i),
+      ],
+    );
+  }
+
+  Widget iconesContas(int i) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            setState(() {
+              infoContaPag.icone = "${repositoryContas.contas[i].icone}";
+              infoContaPag.nome = "${repositoryContas.contas[i].nome}";
+            });
+            Navigator.pop(context);
+          },
+          child: ListTile(
+            leading: SizedBox(
+                width: 40,
+                height: 40,
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundImage:
+                      repositoryContas.contas[i].icone == "Carteira" ||
+                              repositoryContas.contas[i].icone == "Banco" ||
+                              repositoryContas.contas[i].icone == "Cofrinho"
+                          ? null
+                          : AssetImage("${repositoryContas.contas[i].icone}"),
+                  backgroundColor:
+                      repositoryContas.contas[i].icone == "Carteira" ||
+                              repositoryContas.contas[i].icone == "Banco" ||
+                              repositoryContas.contas[i].icone == "Cofrinho"
+                          ? AppColors.azulPrimario
+                          : null,
+                  child: repositoryContas.contas[i].icone == "Carteira" ||
+                          repositoryContas.contas[i].icone == "Banco" ||
+                          repositoryContas.contas[i].icone == "Cofrinho"
+                      ? iconeContaPag2(repositoryContas.contas[i])
+                      : null,
+                )),
+            title: Text(
+              "${repositoryContas.contas[i].nome}",
+              style:
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Divider(),
+        )
+      ],
+    );
+  }
+
   Widget iconesBancos(int i) {
     return Column(
       children: [
         InkWell(
           onTap: () {
             setState(() {
-              imgIcone = "${repositoryBanco.bancos[i].img}";
+              infoBanco.img = "${repositoryBanco.bancos[i].img}";
+              infoBanco.nome = "${repositoryBanco.bancos[i].nome}";
             });
-            print("${repositoryBanco.bancos[i].nome}");
             Navigator.pop(context);
           },
           child: ListTile(

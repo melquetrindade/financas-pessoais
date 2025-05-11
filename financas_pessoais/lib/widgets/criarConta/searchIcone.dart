@@ -90,7 +90,7 @@ class SearchIcone extends SearchDelegate {
             InkWell(
               onTap: () {
                 print("${matchQuery[i].nome}");
-                funcao(matchQuery[i].img);
+                funcao(Banco(nome: matchQuery[i].nome, img: matchQuery[i].img));
               },
               child: ListTile(
                 leading: SizedBox(
@@ -134,7 +134,7 @@ class SearchIcone extends SearchDelegate {
             InkWell(
               onTap: () {
                 print("${matchQuery[i].nome}");
-                funcao(matchQuery[i].img);
+                funcao(Banco(nome: matchQuery[i].nome, img: matchQuery[i].img));
               },
               child: ListTile(
                 leading: SizedBox(
