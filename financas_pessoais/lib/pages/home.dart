@@ -4,6 +4,7 @@ import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/widgets/home/appBar.dart';
 import 'package:financas_pessoais/widgets/home/cardCartoes.dart';
 import 'package:financas_pessoais/widgets/home/cardContas.dart';
+import 'package:financas_pessoais/widgets/home/myHeaderDrawer.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -39,30 +40,18 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+      drawer: Drawer(
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: [
+                  MyHeaderDrawser(),
+                  
+                ],
+              ),
+            ),
+          ),
+        ),
     );
   }
 }
-
-/*
-  backgroundColor: Colors.grey.shade50,
-  appBar: PreferredSize(
-    preferredSize: const Size.fromHeight(100),
-    child: MyAppBar()
-  ),*/
-/*SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          child: Column(
-            children: [
-              Cardcontas(listContas: RepositoryContas().contas),
-              SizedBox(
-                height: 20,
-              ),
-              Cardcartoes(listCartao: repositoryCartao.cartoes),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        ),
-      ),*/

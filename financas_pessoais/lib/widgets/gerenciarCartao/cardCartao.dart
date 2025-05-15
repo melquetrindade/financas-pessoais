@@ -40,7 +40,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                       height: 40,
                       child: CircleAvatar(
                           radius: 15,
-                          backgroundImage: AssetImage(widget.listCartao[i].icone.img),
+                          backgroundImage:  widget.listCartao[i].icone.img == "Cartão" ? null : AssetImage(widget.listCartao[i].icone.img),
                           backgroundColor: widget.listCartao[i].icone.img == "Cartão" ? AppColors.azulPrimario : null,
                           child: widget.listCartao[i].icone.img == "Cartão" ? Icon(Icons.credit_card, color: Colors.white,) : null,
                       )),

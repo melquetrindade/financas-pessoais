@@ -137,7 +137,7 @@ class _CardcontasState extends State<Cardcontas> {
       title: Text(widget.listContas[i].nome),
       trailing: Text(
         "R\$ ${widget.listContas[i].saldo}",
-        style: TextStyle(fontSize: 15, color: Colors.blue.shade600),
+        style: TextStyle(fontSize: 15, color: AppColors.azulPrimario),
       ),
     );
   }

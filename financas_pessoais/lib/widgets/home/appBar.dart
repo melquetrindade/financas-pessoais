@@ -15,6 +15,7 @@ class _MyAppBarState extends State<MyAppBar> {
       backgroundColor: AppColors.azulPrimario,
       floating: true,
       snap: true,
+      automaticallyImplyLeading: false,
       expandedHeight: 100,
       flexibleSpace: FlexibleSpaceBar(
         background: Padding(
@@ -37,6 +38,7 @@ class _MyAppBarState extends State<MyAppBar> {
                     ),
                     onTap: () {
                       print("Tocou no perfil");
+                      Scaffold.of(context).openDrawer();
                     },
                   ),
                   const SizedBox(width: 25),
