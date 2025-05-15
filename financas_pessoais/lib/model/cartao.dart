@@ -1,8 +1,9 @@
+import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/conta.dart';
 
 class Cartao {
   String nome;
-  String icone;
+  Banco icone;
   String limite;
   String diaFechamento;
   String diaVencimento;

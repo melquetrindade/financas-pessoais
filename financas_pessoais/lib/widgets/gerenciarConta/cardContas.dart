@@ -99,7 +99,7 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Divider(
-                  color: Colors.grey.shade200,
+                  color: AppColors.azulPrimario,
                   height: 0.3,
                 ),
               ),

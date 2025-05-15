@@ -1,6 +1,6 @@
-import 'package:financas_pessoais/gerenciarCartao/gerenciaCartao.dart';
 import 'package:financas_pessoais/pages/autenticacao/loginPage.dart';
 import 'package:financas_pessoais/pages/autenticacao/signupPage.dart';
+import 'package:financas_pessoais/pages/gerenciarCartao/gerenciaCartao.dart';
 import 'package:financas_pessoais/pages/gerenciarConta/gerenciarConta.dart';
 import 'package:financas_pessoais/pages/home.dart';
 import 'package:financas_pessoais/pages/homeControllerPage.dart';

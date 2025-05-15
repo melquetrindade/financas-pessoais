@@ -1,5 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
-import 'package:financas_pessoais/gerenciarCartao/criarCartao.dart';
+import 'package:financas_pessoais/pages/gerenciarCartao/criarCartao.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/widgets/gerenciarCartao/cardCartao.dart';
 import 'package:flutter/material.dart';

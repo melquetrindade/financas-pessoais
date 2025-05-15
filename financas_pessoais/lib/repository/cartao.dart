@@ -1,3 +1,4 @@
+import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 
@@ -5,7 +6,7 @@ class RepositoryCartao {
   final List<Cartao> _cartoes = [
     Cartao(
         nome: "Banco do Brasil",
-        icone: "assets/bb.png",
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
@@ -15,7 +16,7 @@ class RepositoryCartao {
             saldo: "1.567,90")),
     Cartao(
         nome: "Banco PAN",
-        icone: "assets/pan.png",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
@@ -23,12 +24,20 @@ class RepositoryCartao {
             nome: "Banco PAN", icone: "assets/pan.png", saldo: "10.000,00")),
     Cartao(
         nome: "Caixa",
-        icone: "assets/caixa.jpg",
+        icone: Banco(nome: "Caixa", img: "assets/caixa.jpg"),
         limite: "1.500,00",
         diaFechamento: "03",
         diaVencimento: "31",
         conta:
             Conta(nome: "Caixa", icone: "assets/caixa.jpg", saldo: "5.633,90")),
+    Cartao(
+        nome: "Next",
+        icone: Banco(nome: "Cartão", img: "Cartão"),
+        limite: "500,00",
+        diaFechamento: "08",
+        diaVencimento: "15",
+        conta:
+            Conta(nome: "Next", icone: "assets/next.jpg", saldo: "2.003,90")),
   ];
 
   List<Cartao> get cartoes => _cartoes;

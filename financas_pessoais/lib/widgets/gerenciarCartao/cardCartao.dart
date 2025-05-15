@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/cartao.dart';
+import 'package:financas_pessoais/pages/gerenciarCartao/editarCartao.dart';
 import 'package:flutter/material.dart';
 
 class CardGerenciaCartao extends StatefulWidget {
@@ -39,26 +40,40 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                       height: 40,
                       child: CircleAvatar(
                           radius: 15,
-                          backgroundImage: AssetImage(widget.listCartao[i].icone))),
+                          backgroundImage: AssetImage(widget.listCartao[i].icone.img),
+                          backgroundColor: widget.listCartao[i].icone.img == "Cartão" ? AppColors.azulPrimario : null,
+                          child: widget.listCartao[i].icone.img == "Cartão" ? Icon(Icons.credit_card, color: Colors.white,) : null,
+                      )),
                   title: Text(widget.listCartao[i].nome),
                   subtitle: Text("Fecha dia: ${widget.listCartao[i].diaFechamento} - Vence dia: ${widget.listCartao[i].diaVencimento}", style: TextStyle(
                     fontSize: 13,
                   ),),
                   trailing: IconButton(
                       onPressed: () {
-                        print("Ir para a página de edição do cartão: ${widget.listCartao[i].nome}");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditarCartaoPage(
+                                  banco: widget.listCartao[i].icone,
+                                  conta: widget.listCartao[i].conta,
+                                  diaFecha: widget.listCartao[i].diaFechamento,
+                                  diaVencimento: widget.listCartao[i].diaVencimento,
+                                  limite: widget.listCartao[i].limite,
+                                  nomeCartao: widget.listCartao[i].nome,
+                                ))
+                        );
                       },
                       icon: Icon(Icons.edit)),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Divider(
                     color: AppColors.azulPrimario,
-                    thickness: 2,
+                    height: 0.3,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 7),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 7),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,

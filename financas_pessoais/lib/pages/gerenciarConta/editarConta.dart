@@ -67,8 +67,6 @@ class _EditarContaPageState extends State<EditarContaPage> {
 
   void _formatSaldo() {
     String text = saldo.text;
-
-    // Remove tudo que não for dígito
     String onlyDigits = text.replaceAll(RegExp(r'[^\d]'), '');
 
     if (onlyDigits.isEmpty) {
@@ -79,15 +77,10 @@ class _EditarContaPageState extends State<EditarContaPage> {
       return;
     }
 
-    // Interpreta como valor monetário
     double value = double.parse(onlyDigits) / 100;
-
-    // Formata usando intl
-    final formatter =
-        NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
+    final formatter = NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
     String newText = formatter.format(value).trim();
 
-    // Mantém a posição do cursor
     saldo.value = TextEditingValue(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),

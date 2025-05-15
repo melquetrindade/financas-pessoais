@@ -93,7 +93,6 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
   }
 
   Widget? iconeCartao() {
-    print("Nome do cartão: ${infoBanco.nome}");
     return infoBanco.img == ""
         ? Icon(
             Icons.add,
@@ -154,8 +153,6 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
   void setarInfoBanco(Banco setBanco) {
     setState(() {
       infoBanco = setBanco;
-      //infoBanco.img = setBanco.img;
-      //infoBanco.nome = setBanco.nome;
       Navigator.pop(context);
       Navigator.pop(context);
     });
@@ -217,7 +214,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                             ),
                           ),
                           validator: (value) =>
-                              Validador.validatorNomeConta(value)),
+                              Validador.validatorNomeCartao(value)),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Align(
@@ -257,7 +254,9 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                               ),
                             ),
                             Text(
-                              "Selecione um ícone",
+                              infoBanco.nome != ""
+                                  ? "${infoBanco.nome}"
+                                  : "Selecione um ícone",
                               style: TextStyle(
                                   color: Colors.black45,
                                   fontSize: 15,
@@ -308,7 +307,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) =>
-                              Validador.validatorSaldoConta(value)),
+                              Validador.validatorSaldoCartao(value)),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Row(
@@ -328,6 +327,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                   TextFormField(
                                     controller: diaFecha,
                                     decoration: InputDecoration(
+                                      errorMaxLines: 3,
                                       prefixIcon: Padding(
                                         padding: const EdgeInsets.only(
                                             left: 12, top: 12),
@@ -356,6 +356,12 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      Validador.formatFechaDia(value, diaFecha);
+                                    },
+                                    validator: (value) =>
+                                        Validador.validatorDia(value, true),
                                   ),
                                 ],
                               ),
@@ -376,6 +382,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                   TextFormField(
                                     controller: diaVencimento,
                                     decoration: InputDecoration(
+                                      errorMaxLines: 3,
                                       prefixIcon: Padding(
                                         padding: const EdgeInsets.only(
                                             left: 12, top: 12),
@@ -404,6 +411,13 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      Validador.formatFechaDia(
+                                          value, diaVencimento);
+                                    },
+                                    validator: (value) =>
+                                        Validador.validatorDia(value, false),
                                   ),
                                 ],
                               ),
@@ -454,7 +468,9 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                               ),
                             ),
                             Text(
-                              "Selecione uma conta",
+                              infoContaPag.nome != ""
+                                  ? "${infoContaPag.nome}"
+                                  : "Selecione uma conta",
                               style: TextStyle(
                                   color: Colors.black45,
                                   fontSize: 15,
@@ -474,21 +490,19 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                         onPressed: () {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
-                              infoBanco.img != "") {
+                              infoBanco.img != "" &&
+                              infoContaPag.icone != "") {
                             print("tudo ok");
                             print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
+                                "dados do cartão: \n\t nome: ${nome.text} \n\t ícone: img => ${infoBanco.img} - nome => ${infoBanco.nome} \n\t saldo: ${saldo.text} \n\t fechamento: ${diaFecha.text} - vencimento ${diaVencimento.text} \n\t Conta: img => ${infoContaPag.icone} - nome => ${infoContaPag.nome}");
                           } else {
-                            if (infoBanco.img == "") {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Erro, selecione um ícone para prosseguir!'),
-                                  duration: Duration(seconds: 10),
-                                ),
-                              );
-                            }
-                            print("error");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Erro, preencha os campos corretamente!'),
+                                duration: Duration(seconds: 10),
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(

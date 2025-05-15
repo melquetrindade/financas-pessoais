@@ -91,6 +91,7 @@ class _CardcartoesState extends State<Cardcartoes> {
   }
 
   Widget cardCartao(int i) {
+
     return Column(
       children: [
         ListTile(
@@ -100,7 +101,10 @@ class _CardcartoesState extends State<Cardcartoes> {
               height: 40,
               child: CircleAvatar(
                   radius: 15,
-                  backgroundImage: AssetImage(widget.listCartao[i].icone))),
+                  backgroundColor: widget.listCartao[i].icone.img == "Cartão" ? AppColors.azulPrimario : null,
+                  backgroundImage: widget.listCartao[i].icone.img == "Cartão" ? null : AssetImage(widget.listCartao[i].icone.img),
+                  child: widget.listCartao[i].icone.img == "Cartão" ? Icon(Icons.credit_card, color: Colors.white,) : null,
+          )),
           title: Text(widget.listCartao[i].nome),
         ),
         Padding(
