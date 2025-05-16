@@ -22,11 +22,16 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
             children: [
               Container(
                 margin: EdgeInsets.only(bottom: 10),
-                height: 65,
+                width: 70,
+                height: 70,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 1),
-                    image: DecorationImage(image: AssetImage("assets/next.jpg"))),
+                ),
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundImage: AssetImage("assets/melque.png"),
+                )
               ),
               Container(
                 width: double.infinity,

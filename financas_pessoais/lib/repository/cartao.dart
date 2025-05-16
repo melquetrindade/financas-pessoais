@@ -10,6 +10,7 @@ class RepositoryCartao {
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
+        fatura: "0,00",
         conta: Conta(
             nome: "Banco do Brasil",
             icone: "assets/bb.png",
@@ -20,6 +21,7 @@ class RepositoryCartao {
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
+        fatura: "-100,00",
         conta: Conta(
             nome: "Banco PAN", icone: "assets/pan.png", saldo: "10.000,00")),
     Cartao(
@@ -28,6 +30,7 @@ class RepositoryCartao {
         limite: "1.500,00",
         diaFechamento: "03",
         diaVencimento: "31",
+        fatura: "-200,00",
         conta:
             Conta(nome: "Caixa", icone: "assets/caixa.jpg", saldo: "5.633,90")),
     Cartao(
@@ -36,6 +39,7 @@ class RepositoryCartao {
         limite: "500,00",
         diaFechamento: "08",
         diaVencimento: "15",
+        fatura: "0,00",
         conta:
             Conta(nome: "Next", icone: "assets/next.jpg", saldo: "2.003,90")),
   ];

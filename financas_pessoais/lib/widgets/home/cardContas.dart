@@ -11,6 +11,8 @@ class Cardcontas extends StatefulWidget {
 }
 
 class _CardcontasState extends State<Cardcontas> {
+  bool showSaldo = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,13 +38,23 @@ class _CardcontasState extends State<Cardcontas> {
                         style: TextStyle(fontSize: 13),
                       ),
                       Text(
-                        "R\$ 1.000,00",
+                        showSaldo ? "R\$ 1.000,00" : "R\$ ---",
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 18),
+                            fontWeight: FontWeight.w600, 
+                            fontSize: 18,
+                            color: showSaldo ? Colors.black : Colors.black54
+                        ),
                       ),
                     ],
                   ),
-                  Icon(Icons.visibility_off_outlined)
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showSaldo = !showSaldo;
+                      });
+                    },
+                    icon: Icon(showSaldo ? Icons.visibility_off_outlined : Icons.visibility),
+                  )
                 ],
               ),
               Padding(
@@ -126,7 +138,8 @@ class _CardcontasState extends State<Cardcontas> {
             backgroundImage: widget.listContas[i].icone == "Carteira" ||
                     widget.listContas[i].icone == "Banco" ||
                     widget.listContas[i].icone == "Cofrinho"
-                ? null : AssetImage(widget.listContas[i].icone),
+                ? null
+                : AssetImage(widget.listContas[i].icone),
             backgroundColor: widget.listContas[i].icone == "Carteira" ||
                     widget.listContas[i].icone == "Banco" ||
                     widget.listContas[i].icone == "Cofrinho"
@@ -136,8 +149,11 @@ class _CardcontasState extends State<Cardcontas> {
           )),
       title: Text(widget.listContas[i].nome),
       trailing: Text(
-        "R\$ ${widget.listContas[i].saldo}",
-        style: TextStyle(fontSize: 15, color: AppColors.azulPrimario),
+        showSaldo ? "R\$ ${widget.listContas[i].saldo}" : "R\$ ---",
+        style: TextStyle(
+          fontSize: 15, 
+          color: showSaldo ? AppColors.azulPrimario : Colors.black54
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:financas_pessoais/pages/gerenciarCartao/gerenciaCartao.dart';
 import 'package:financas_pessoais/pages/gerenciarConta/gerenciarConta.dart';
 import 'package:financas_pessoais/pages/home.dart';
 import 'package:financas_pessoais/pages/homeControllerPage.dart';
+import 'package:financas_pessoais/pages/notificacaoPage.dart';
 import 'package:financas_pessoais/pages/onboarding/onboardingTwo.dart';
 import 'package:financas_pessoais/pages/onboarding/onborardingOne.dart';
 import 'package:financas_pessoais/pages/splash/splashPage.dart';
@@ -20,6 +21,7 @@ class Routes {
     '/onboardingTwo': (_) => const OnborardingTwoPage(),
     '/login': (_) => const LoginPage(),
     '/signUp': (_) => const SignUpPage(),
+    '/notificacaoPage': (_) => const NotificacaoPage(),
   };
   static String initial = '/homeController';
   

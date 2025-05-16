@@ -33,8 +33,10 @@ class _MyAppBarState extends State<MyAppBar> {
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 2),
                       ),
-                      child: const Icon(Icons.person,
-                          color: Colors.white, size: 30),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: AssetImage("assets/melque.png"),
+                      )
                     ),
                     onTap: () {
                       print("Tocou no perfil");
@@ -78,6 +80,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 ),
                 onTap: () {
                   print("Mostar tela de notificações");
+                  Navigator.pushNamed(context, '/notificacaoPage');
                 },
               )
             ],

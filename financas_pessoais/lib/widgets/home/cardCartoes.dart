@@ -11,6 +11,8 @@ class Cardcartoes extends StatefulWidget {
 }
 
 class _CardcartoesState extends State<Cardcartoes> {
+  bool showSaldo = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,13 +38,22 @@ class _CardcartoesState extends State<Cardcartoes> {
                         style: TextStyle(fontSize: 13),
                       ),
                       Text(
-                        "R\$ 1.000,00",
+                        showSaldo ? "R\$ 1.000,00" : "R\$ ---",
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 18),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: showSaldo ? Colors.black : Colors.black54),
                       ),
                     ],
                   ),
-                  Icon(Icons.visibility_off_outlined)
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showSaldo = !showSaldo;
+                      });
+                    }, 
+                    icon: Icon(showSaldo ? Icons.visibility_off_outlined : Icons.visibility),
+                  )
                 ],
               ),
               Padding(
@@ -74,7 +85,6 @@ class _CardcartoesState extends State<Cardcartoes> {
                       ),
                     ),
                     onPressed: () {
-                      print("Vai para tela de gerenciar cartões");
                       Navigator.pushNamed(context, '/gerenciaCartao');
                     },
                     child: Text(
@@ -91,6 +101,13 @@ class _CardcartoesState extends State<Cardcartoes> {
   }
 
   Widget cardCartao(int i) {
+    String faturaFormatado =
+        widget.listCartao[i].fatura.replaceAll(".", "").replaceAll(",", ".");
+    double fatura = double.parse(faturaFormatado);
+
+    Color corFatura() {
+      return fatura >= 0 ? AppColors.azulPrimario : Colors.red;
+    }
 
     return Column(
       children: [
@@ -100,20 +117,28 @@ class _CardcartoesState extends State<Cardcartoes> {
               width: 40,
               height: 40,
               child: CircleAvatar(
-                  radius: 15,
-                  backgroundColor: widget.listCartao[i].icone.img == "Cartão" ? AppColors.azulPrimario : null,
-                  backgroundImage: widget.listCartao[i].icone.img == "Cartão" ? null : AssetImage(widget.listCartao[i].icone.img),
-                  child: widget.listCartao[i].icone.img == "Cartão" ? Icon(Icons.credit_card, color: Colors.white,) : null,
-          )),
+                radius: 15,
+                backgroundColor: widget.listCartao[i].icone.img == "Cartão"
+                    ? AppColors.azulPrimario
+                    : null,
+                backgroundImage: widget.listCartao[i].icone.img == "Cartão"
+                    ? null
+                    : AssetImage(widget.listCartao[i].icone.img),
+                child: widget.listCartao[i].icone.img == "Cartão"
+                    ? Icon(
+                        Icons.credit_card,
+                        color: Colors.white,
+                      )
+                    : null,
+              )),
           title: Text(widget.listCartao[i].nome),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(25)
-            ),
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(25)),
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Row(
@@ -122,30 +147,42 @@ class _CardcartoesState extends State<Cardcartoes> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Disponível",style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade800
-                      ),),
-                      Text("R\$ ${widget.listCartao[i].limite}", style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500
-                      ),)
+                      Text(
+                        "Disponível",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade800),
+                      ),
+                      Text(
+                        showSaldo
+                            ? "R\$ ${widget.listCartao[i].limite}"
+                            : "R\$ ---",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: showSaldo ? Colors.black : Colors.black54),
+                      )
                     ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text("Fatura Atual", style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade800
-                      ),),
-                      Text("R\$ ${widget.listCartao[i].limite}", style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: i == 1 ? Colors.red : i == 0 ? AppColors.azulPrimario : Colors.black
-                      ),)
+                      Text(
+                        "Fatura Atual",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade800),
+                      ),
+                      Text(
+                          showSaldo
+                              ? "R\$ ${widget.listCartao[i].fatura}"
+                              : "R\$ ---",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: showSaldo ? corFatura() : Colors.black45))
                     ],
                   )
                 ],

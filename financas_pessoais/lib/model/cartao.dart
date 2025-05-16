@@ -7,6 +7,7 @@ class Cartao {
   String limite;
   String diaFechamento;
   String diaVencimento;
+  String fatura;
   Conta conta;
 
   Cartao(
@@ -15,5 +16,6 @@ class Cartao {
       required this.limite,
       required this.diaFechamento,
       required this.diaVencimento,
+      required this.fatura,
       required this.conta});
 }
