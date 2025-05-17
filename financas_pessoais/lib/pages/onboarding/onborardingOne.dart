@@ -19,7 +19,7 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              child: Lottie.asset("assets/onboardingOne.json"),
+              child: Lottie.asset("assets/animacoes/onboardingOne.json"),
             ),
             Container(
               width: MediaQuery.of(context).size.width,

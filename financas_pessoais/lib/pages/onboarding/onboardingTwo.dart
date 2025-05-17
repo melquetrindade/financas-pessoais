@@ -19,7 +19,7 @@ class _OnborardingTwoPageState extends State<OnborardingTwoPage> {
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              child: Lottie.asset("assets/onboardingTwo.json"),
+              child: Lottie.asset("assets/animacoes/onboardingTwo.json"),
             ),
             Container(
               width: MediaQuery.of(context).size.width,

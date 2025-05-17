@@ -109,7 +109,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                               Text("R\$ ${widget.listCartao[i].limite}", style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: i == 1 ? Colors.red : i == 0 ? Colors.blue.shade600 : Colors.black
+                                color: i == 1 ? Colors.red : i == 0 ? AppColors.azulPrimario : Colors.black
                               ),)
                             ],
                           )
