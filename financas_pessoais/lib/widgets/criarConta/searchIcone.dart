@@ -2,7 +2,6 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:flutter/material.dart';
 
 class SearchIcone extends SearchDelegate {
-  //passar uma função como argumento que vai setar o icone
   final Function funcao;
   final List<Banco> objtsBancos;
 
@@ -89,7 +88,7 @@ class SearchIcone extends SearchDelegate {
           children: [
             InkWell(
               onTap: () {
-                print("${matchQuery[i].nome}");
+                print("${matchQuery[i].nome} -- ${matchQuery[i].img}");
                 funcao(Banco(nome: matchQuery[i].nome, img: matchQuery[i].img));
               },
               child: ListTile(
@@ -133,7 +132,8 @@ class SearchIcone extends SearchDelegate {
           children: [
             InkWell(
               onTap: () {
-                print("${matchQuery[i].nome}");
+                //print("${matchQuery[i].nome}");
+                print("${matchQuery[i].nome} -- ${matchQuery[i].img}");
                 funcao(Banco(nome: matchQuery[i].nome, img: matchQuery[i].img));
               },
               child: ListTile(

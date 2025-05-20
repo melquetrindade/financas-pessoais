@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
@@ -7,12 +8,12 @@ import 'package:intl/intl.dart';
 
 class EditarContaPage extends StatefulWidget {
   final String nomeConta;
-  final String imgConta;
   final String saldo;
+  final Banco banco;
   const EditarContaPage(
       {super.key,
       required this.nomeConta,
-      required this.imgConta,
+      required this.banco,
       required this.saldo});
 
   @override
@@ -24,7 +25,7 @@ class _EditarContaPageState extends State<EditarContaPage> {
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
-  String imgIcone = "";
+  Banco infoBanco = Banco(nome: "", img: "");
 
   void mostrarModal(BuildContext context) {
     showModalBottomSheet(
@@ -60,7 +61,7 @@ class _EditarContaPageState extends State<EditarContaPage> {
   void initState() {
     super.initState();
     nome.text = widget.nomeConta;
-    imgIcone = widget.imgConta;
+    infoBanco = widget.banco;
     saldo.text = widget.saldo;
     saldo.addListener(_formatSaldo);
   }
@@ -78,7 +79,8 @@ class _EditarContaPageState extends State<EditarContaPage> {
     }
 
     double value = double.parse(onlyDigits) / 100;
-    final formatter = NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
+    final formatter =
+        NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
     String newText = formatter.format(value).trim();
 
     saldo.value = TextEditingValue(
@@ -95,22 +97,22 @@ class _EditarContaPageState extends State<EditarContaPage> {
   }
 
   Widget? iconeConta() {
-    return imgIcone == ""
+    return infoBanco.img == ""
         ? Icon(
             Icons.add,
             color: Colors.white,
           )
-        : imgIcone == "Carteira"
+        : infoBanco.img == "Carteira"
             ? Icon(
                 Icons.account_balance_wallet,
                 color: Colors.white,
               )
-            : imgIcone == "Banco"
+            : infoBanco.img == "Banco"
                 ? Icon(
                     Icons.account_balance_rounded,
                     color: Colors.white,
                   )
-                : imgIcone == "Cofrinho"
+                : infoBanco.img == "Cofrinho"
                     ? Icon(
                         Icons.savings,
                         color: Colors.white,
@@ -118,12 +120,13 @@ class _EditarContaPageState extends State<EditarContaPage> {
                     : null;
   }
 
-  void setarImgIcone(String icone) {
+  void setarImgIcone(Banco banco) {
+    print("${banco.img} - ${banco.nome}");
     setState(() {
-      imgIcone = icone;
-      Navigator.pop(context);
-      Navigator.pop(context);
+      infoBanco = banco;
     });
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
@@ -139,6 +142,12 @@ class _EditarContaPageState extends State<EditarContaPage> {
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           ),
           iconTheme: IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/gerenciaConta');
+            },
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
@@ -221,16 +230,16 @@ class _EditarContaPageState extends State<EditarContaPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                  backgroundImage: infoBanco.img == "" ||
+                                          infoBanco.img == "Carteira" ||
+                                          infoBanco.img == "Banco" ||
+                                          infoBanco.img == "Cofrinho"
                                       ? null
-                                      : AssetImage(imgIcone),
-                                  backgroundColor: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                      : AssetImage(infoBanco.img),
+                                  backgroundColor: infoBanco.img == "" ||
+                                          infoBanco.img == "Carteira" ||
+                                          infoBanco.img == "Banco" ||
+                                          infoBanco.img == "Cofrinho"
                                       ? AppColors.azulPrimario
                                       : null,
                                   child: iconeConta(),
@@ -238,7 +247,9 @@ class _EditarContaPageState extends State<EditarContaPage> {
                               ),
                             ),
                             Text(
-                              "Selecione um ícone",
+                              infoBanco.nome == ""
+                                  ? "Selecione um ícone"
+                                  : infoBanco.nome,
                               style: TextStyle(
                                   color: Colors.black45,
                                   fontSize: 15,
@@ -300,12 +311,12 @@ class _EditarContaPageState extends State<EditarContaPage> {
                         onPressed: () {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
-                              imgIcone != "") {
+                              infoBanco.img != "") {
                             print("tudo ok");
                             print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${imgIcone} - saldo: ${saldo.text}");
+                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
                           } else {
-                            if (imgIcone == "") {
+                            if (infoBanco.img == "") {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -382,40 +393,6 @@ class _EditarContaPageState extends State<EditarContaPage> {
             ],
           ),
         ),
-        /*
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Buscar um ícone',
-              hintStyle:
-                  TextStyle(fontWeight: FontWeight.w400, color: Colors.black54),
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    print("Pesquisar ícone");
-                    showSearch(
-                        context: context,
-                        delegate:
-                            SearchIcone(objtsBancos: repositoryBanco.bancos));
-                  },
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black54,
-                    size: 27,
-                  )),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-            ),
-          ),
-        ),*/
         Align(
           alignment: Alignment.topLeft,
           child: Text(
@@ -431,7 +408,8 @@ class _EditarContaPageState extends State<EditarContaPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  imgIcone = "Carteira";
+                  infoBanco.img = "Carteira";
+                  infoBanco.nome = "Carteira";
                 });
                 Navigator.pop(context);
               },
@@ -465,7 +443,8 @@ class _EditarContaPageState extends State<EditarContaPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  imgIcone = "Banco";
+                  infoBanco.img = "Banco";
+                  infoBanco.nome = "Banco";
                 });
                 Navigator.pop(context);
               },
@@ -497,7 +476,8 @@ class _EditarContaPageState extends State<EditarContaPage> {
         InkWell(
           onTap: () {
             setState(() {
-              imgIcone = "Cofrinho";
+              infoBanco.img = "Cofrinho";
+              infoBanco.nome = "Cofrinho";
             });
             Navigator.pop(context);
           },
@@ -544,7 +524,8 @@ class _EditarContaPageState extends State<EditarContaPage> {
         InkWell(
           onTap: () {
             setState(() {
-              imgIcone = "${repositoryBanco.bancos[i].img}";
+              infoBanco.img = "${repositoryBanco.bancos[i].img}";
+              infoBanco.nome = "${repositoryBanco.bancos[i].nome}";
             });
             print("${repositoryBanco.bancos[i].nome}");
             Navigator.pop(context);

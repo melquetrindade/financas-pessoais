@@ -12,7 +12,7 @@ class GerenciarContaPage extends StatefulWidget {
 }
 
 class _GerenciarContaPageState extends State<GerenciarContaPage> {
-  final RepositoryContas repositoryContas = RepositoryContas();
+  RepositoryContas repositoryContas = RepositoryContas();
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +33,10 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
               child: IconButton(
                   onPressed: () {
                     print("add nova conta");
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CriarContaPage()),
-                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CriarContaPage()),
+                    );
                   },
                   icon: Icon(
                     Icons.add_circle_outline,
@@ -53,10 +55,15 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                   width: MediaQuery.of(context).size.width,
                   height: 100,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, size: 37, color: Colors.black54,),
+                        Icon(
+                          Icons.info_outline,
+                          size: 37,
+                          color: Colors.black54,
+                        ),
                         SizedBox(
                           width: 15,
                         ),
@@ -76,7 +83,6 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                     CardGerenciaConta(listContas: repositoryContas.contas)
                   ],
                 ),
-                
               ],
             ),
           ),

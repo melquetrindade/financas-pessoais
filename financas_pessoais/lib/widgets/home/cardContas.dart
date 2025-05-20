@@ -15,6 +15,7 @@ class _CardcontasState extends State<Cardcontas> {
 
   @override
   Widget build(BuildContext context) {
+    print("rendenziou o card conta00");
     return Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -102,7 +103,7 @@ class _CardcontasState extends State<Cardcontas> {
   }
 
   Widget cardConta(int i) {
-    String imgIcone = widget.listContas[i].icone;
+    String imgIcone = widget.listContas[i].banco.img;
 
     Widget? iconeConta() {
       return imgIcone == ""
@@ -135,14 +136,14 @@ class _CardcontasState extends State<Cardcontas> {
           height: 40,
           child: CircleAvatar(
             radius: 15,
-            backgroundImage: widget.listContas[i].icone == "Carteira" ||
-                    widget.listContas[i].icone == "Banco" ||
-                    widget.listContas[i].icone == "Cofrinho"
+            backgroundImage: widget.listContas[i].banco.img == "Carteira" ||
+                    widget.listContas[i].banco.img == "Banco" ||
+                    widget.listContas[i].banco.img == "Cofrinho"
                 ? null
-                : AssetImage(widget.listContas[i].icone),
-            backgroundColor: widget.listContas[i].icone == "Carteira" ||
-                    widget.listContas[i].icone == "Banco" ||
-                    widget.listContas[i].icone == "Cofrinho"
+                : AssetImage(widget.listContas[i].banco.img),
+            backgroundColor: widget.listContas[i].banco.img == "Carteira" ||
+                    widget.listContas[i].banco.img == "Banco" ||
+                    widget.listContas[i].banco.img == "Cofrinho"
                 ? AppColors.azulPrimario
                 : null,
             child: iconeConta(),

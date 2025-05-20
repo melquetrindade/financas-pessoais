@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
@@ -17,7 +18,7 @@ class _CriarContaPageState extends State<CriarContaPage> {
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
-  String imgIcone = "";
+  Banco infoBanco = Banco(img: "", nome: "");
 
   void mostrarModal(BuildContext context) {
     showModalBottomSheet(
@@ -92,22 +93,22 @@ class _CriarContaPageState extends State<CriarContaPage> {
   }
 
   Widget? iconeConta() {
-    return imgIcone == ""
+    return infoBanco.img == ""
         ? Icon(
             Icons.add,
             color: Colors.white,
           )
-        : imgIcone == "Carteira"
+        : infoBanco.img == "Carteira"
             ? Icon(
                 Icons.account_balance_wallet,
                 color: Colors.white,
               )
-            : imgIcone == "Banco"
+            : infoBanco.img == "Banco"
                 ? Icon(
                     Icons.account_balance_rounded,
                     color: Colors.white,
                   )
-                : imgIcone == "Cofrinho"
+                : infoBanco.img == "Cofrinho"
                     ? Icon(
                         Icons.savings,
                         color: Colors.white,
@@ -115,12 +116,13 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     : null;
   }
 
-  void setarImgIcone(String icone) {
+  void setarImgIcone(Banco banco) {
+    print("${banco.img} - ${banco.nome}");
     setState(() {
-      imgIcone = icone;
-      Navigator.pop(context);
-      Navigator.pop(context);
+      infoBanco = banco;
     });
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
@@ -205,16 +207,16 @@ class _CriarContaPageState extends State<CriarContaPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                  backgroundImage: infoBanco.img == "" ||
+                                          infoBanco.img == "Carteira" ||
+                                          infoBanco.img == "Banco" ||
+                                          infoBanco.img == "Cofrinho"
                                       ? null
-                                      : AssetImage(imgIcone),
-                                  backgroundColor: imgIcone == "" ||
-                                          imgIcone == "Carteira" ||
-                                          imgIcone == "Banco" ||
-                                          imgIcone == "Cofrinho"
+                                      : AssetImage(infoBanco.img),
+                                  backgroundColor: infoBanco.img == "" ||
+                                          infoBanco.img == "Carteira" ||
+                                          infoBanco.img == "Banco" ||
+                                          infoBanco.img == "Cofrinho"
                                       ? AppColors.azulPrimario
                                       : null,
                                   child: iconeConta(),
@@ -222,7 +224,9 @@ class _CriarContaPageState extends State<CriarContaPage> {
                               ),
                             ),
                             Text(
-                              "Selecione um ícone",
+                              infoBanco.nome == ""
+                                  ? "Selecione um ícone"
+                                  : infoBanco.nome,
                               style: TextStyle(
                                   color: Colors.black45,
                                   fontSize: 15,
@@ -284,12 +288,12 @@ class _CriarContaPageState extends State<CriarContaPage> {
                         onPressed: () {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
-                              imgIcone != "") {
+                              infoBanco.img != "") {
                             print("tudo ok");
                             print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${imgIcone} - saldo: ${saldo.text}");
+                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
                           } else {
-                            if (imgIcone == "") {
+                            if (infoBanco.img == "") {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -366,40 +370,6 @@ class _CriarContaPageState extends State<CriarContaPage> {
             ],
           ),
         ),
-        /*
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Buscar um ícone',
-              hintStyle:
-                  TextStyle(fontWeight: FontWeight.w400, color: Colors.black54),
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    print("Pesquisar ícone");
-                    showSearch(
-                        context: context,
-                        delegate:
-                            SearchIcone(objtsBancos: repositoryBanco.bancos));
-                  },
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black54,
-                    size: 27,
-                  )),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black54),
-              ),
-            ),
-          ),
-        ),*/
         Align(
           alignment: Alignment.topLeft,
           child: Text(
@@ -415,7 +385,8 @@ class _CriarContaPageState extends State<CriarContaPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  imgIcone = "Carteira";
+                  infoBanco.img = "Carteira";
+                  infoBanco.nome = "Carteira";
                 });
                 Navigator.pop(context);
               },
@@ -449,7 +420,8 @@ class _CriarContaPageState extends State<CriarContaPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  imgIcone = "Banco";
+                  infoBanco.img = "Banco";
+                  infoBanco.nome = "Banco";
                 });
                 Navigator.pop(context);
               },
@@ -481,7 +453,8 @@ class _CriarContaPageState extends State<CriarContaPage> {
         InkWell(
           onTap: () {
             setState(() {
-              imgIcone = "Cofrinho";
+              infoBanco.img = "Cofrinho";
+              infoBanco.nome = "Cofrinho";
             });
             Navigator.pop(context);
           },
@@ -528,7 +501,8 @@ class _CriarContaPageState extends State<CriarContaPage> {
         InkWell(
           onTap: () {
             setState(() {
-              imgIcone = "${repositoryBanco.bancos[i].img}";
+              infoBanco.img = "${repositoryBanco.bancos[i].img}";
+              infoBanco.nome = "${repositoryBanco.bancos[i].nome}";
             });
             print("${repositoryBanco.bancos[i].nome}");
             Navigator.pop(context);

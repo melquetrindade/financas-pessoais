@@ -51,8 +51,10 @@ class _CardcartoesState extends State<Cardcartoes> {
                       setState(() {
                         showSaldo = !showSaldo;
                       });
-                    }, 
-                    icon: Icon(showSaldo ? Icons.visibility_off_outlined : Icons.visibility),
+                    },
+                    icon: Icon(showSaldo
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility),
                   )
                 ],
               ),
@@ -133,59 +135,66 @@ class _CardcartoesState extends State<Cardcartoes> {
               )),
           title: Text(widget.listCartao[i].nome),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(25)),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Disponível",
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade800),
-                      ),
-                      Text(
-                        showSaldo
-                            ? "R\$ ${widget.listCartao[i].limite}"
-                            : "R\$ ---",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: showSaldo ? Colors.black : Colors.black54),
-                      )
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Fatura Atual",
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade800),
-                      ),
-                      Text(
+        InkWell(
+          onTap: () {
+            print(
+                "abrir pag de detalhes do cartão: ${widget.listCartao[i].nome}");
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(25)),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Disponível",
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade800),
+                        ),
+                        Text(
                           showSaldo
-                              ? "R\$ ${widget.listCartao[i].fatura}"
+                              ? "R\$ ${widget.listCartao[i].limite}"
                               : "R\$ ---",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: showSaldo ? corFatura() : Colors.black45))
-                    ],
-                  )
-                ],
+                              color: showSaldo ? Colors.black : Colors.black54),
+                        )
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Fatura Atual",
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade800),
+                        ),
+                        Text(
+                            showSaldo
+                                ? "R\$ ${widget.listCartao[i].fatura}"
+                                : "R\$ ---",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    showSaldo ? corFatura() : Colors.black45))
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

@@ -55,6 +55,7 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
               InkWell(
                 onTap: () {
                   print("abrir pag de editar perfil");
+                  Navigator.pushNamed(context, "/onboardingTwo");
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -84,6 +85,7 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
                 onTap: () {
                   //authService.logout();
                   print("Fazer logout");
+                  Navigator.pushNamed(context, "/onboardingOne");
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -92,6 +94,64 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
                       Expanded(
                           child: Icon(
                         Icons.logout,
+                        size: 23,
+                        color: AppColors.azulPrimario,
+                      )),
+                      Expanded(
+                          flex: 3,
+                          child: Text(
+                            'Sair',
+                            style: TextStyle(
+                                color: AppColors.azulPrimario,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600),
+                          ))
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  //authService.logout();
+                  print("Fazer logout");
+                  Navigator.pushNamed(context, "/signUp");
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Icon(
+                        Icons.access_time_rounded,
+                        size: 23,
+                        color: AppColors.azulPrimario,
+                      )),
+                      Expanded(
+                          flex: 3,
+                          child: Text(
+                            'Sair',
+                            style: TextStyle(
+                                color: AppColors.azulPrimario,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600),
+                          ))
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  //authService.logout();
+                  print("Fazer logout");
+                  Navigator.pushNamed(context, "/login");
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Icon(
+                        Icons.mail,
                         size: 23,
                         color: AppColors.azulPrimario,
                       )),

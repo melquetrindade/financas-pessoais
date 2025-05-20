@@ -12,8 +12,7 @@ class GerenciarCartaoPage extends StatefulWidget {
 }
 
 class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
-  final RepositoryCartao repositoryCartao = RepositoryCartao();
-
+  RepositoryCartao repositoryCartao = RepositoryCartao();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -6,7 +6,6 @@ import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../widgets/criarConta/searchIcone.dart';
 
 class EditarCartaoPage extends StatefulWidget {
@@ -38,7 +37,8 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   final diaFecha = TextEditingController();
   final diaVencimento = TextEditingController();
   Banco infoBanco = Banco(nome: "", img: "");
-  Conta infoContaPag = Conta(icone: "", nome: "", saldo: "");
+  Conta infoContaPag =
+      Conta(nome: "", saldo: "", banco: Banco(nome: "", img: ""));
 
   @override
   void initState() {
@@ -127,22 +127,22 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   }
 
   Widget? iconeContaPag() {
-    return infoContaPag.icone == ""
+    return infoContaPag.banco.img == ""
         ? Icon(
             Icons.add,
             color: Colors.white,
           )
-        : infoContaPag.icone == "Carteira"
+        : infoContaPag.banco.img == "Carteira"
             ? Icon(
                 Icons.account_balance_wallet,
                 color: Colors.white,
               )
-            : infoContaPag.icone == "Banco"
+            : infoContaPag.banco.img == "Banco"
                 ? Icon(
                     Icons.account_balance_rounded,
                     color: Colors.white,
                   )
-                : infoContaPag.icone == "Cofrinho"
+                : infoContaPag.banco.img == "Cofrinho"
                     ? Icon(
                         Icons.savings,
                         color: Colors.white,
@@ -151,17 +151,17 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   }
 
   Widget? iconeContaPag2(Conta conta) {
-    return conta.icone == "Carteira"
+    return conta.banco.img == "Carteira"
         ? Icon(
             Icons.account_balance_wallet,
             color: Colors.white,
           )
-        : conta.icone == "Banco"
+        : conta.banco.img == "Banco"
             ? Icon(
                 Icons.account_balance_rounded,
                 color: Colors.white,
               )
-            : conta.icone == "Cofrinho"
+            : conta.banco.img == "Cofrinho"
                 ? Icon(
                     Icons.savings,
                     color: Colors.white,
@@ -179,6 +179,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
@@ -190,6 +191,12 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           ),
           iconTheme: IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/gerenciaCartao');
+            },
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
@@ -483,16 +490,20 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: infoContaPag.icone == "" ||
-                                          infoContaPag.icone == "Carteira" ||
-                                          infoContaPag.icone == "Banco" ||
-                                          infoContaPag.icone == "Cofrinho"
+                                  backgroundImage: infoContaPag.banco.img ==
+                                              "" ||
+                                          infoContaPag.banco.img ==
+                                              "Carteira" ||
+                                          infoContaPag.banco.img == "Banco" ||
+                                          infoContaPag.banco.img == "Cofrinho"
                                       ? null
-                                      : AssetImage(infoContaPag.icone),
-                                  backgroundColor: infoContaPag.icone == "" ||
-                                          infoContaPag.icone == "Carteira" ||
-                                          infoContaPag.icone == "Banco" ||
-                                          infoContaPag.icone == "Cofrinho"
+                                      : AssetImage(infoContaPag.banco.img),
+                                  backgroundColor: infoContaPag.banco.img ==
+                                              "" ||
+                                          infoContaPag.banco.img ==
+                                              "Carteira" ||
+                                          infoContaPag.banco.img == "Banco" ||
+                                          infoContaPag.banco.img == "Cofrinho"
                                       ? AppColors.azulPrimario
                                       : null,
                                   child: iconeContaPag(),
@@ -523,10 +534,10 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "" &&
-                              infoContaPag.icone != "") {
+                              infoContaPag.banco.img != "") {
                             print("tudo ok");
                             print(
-                                "dados do cartão: \n\t nome: ${nome.text} \n\t ícone: img => ${infoBanco.img} - nome => ${infoBanco.nome} \n\t saldo: ${limite.text} \n\t fechamento: ${diaFecha.text} - vencimento ${diaVencimento.text} \n\t Conta: img => ${infoContaPag.icone} - nome => ${infoContaPag.nome}");
+                                "dados do cartão: \n\t nome: ${nome.text} \n\t ícone: img => ${infoBanco.img} - nome => ${infoBanco.nome} \n\t saldo: ${limite.text} \n\t fechamento: ${diaFecha.text} - vencimento ${diaVencimento.text} \n\t Conta: img => ${infoContaPag.banco.img} - nome => ${infoContaPag.nome}");
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -716,7 +727,8 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
         InkWell(
           onTap: () {
             setState(() {
-              infoContaPag.icone = "${repositoryContas.contas[i].icone}";
+              infoContaPag.banco.img =
+                  "${repositoryContas.contas[i].banco.img}";
               infoContaPag.nome = "${repositoryContas.contas[i].nome}";
             });
             Navigator.pop(context);
@@ -727,21 +739,21 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                 height: 40,
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage:
-                      repositoryContas.contas[i].icone == "Carteira" ||
-                              repositoryContas.contas[i].icone == "Banco" ||
-                              repositoryContas.contas[i].icone == "Cofrinho"
-                          ? null
-                          : AssetImage("${repositoryContas.contas[i].icone}"),
+                  backgroundImage: repositoryContas.contas[i].banco.img ==
+                              "Carteira" ||
+                          repositoryContas.contas[i].banco.img == "Banco" ||
+                          repositoryContas.contas[i].banco.img == "Cofrinho"
+                      ? null
+                      : AssetImage("${repositoryContas.contas[i].banco.img}"),
                   backgroundColor:
-                      repositoryContas.contas[i].icone == "Carteira" ||
-                              repositoryContas.contas[i].icone == "Banco" ||
-                              repositoryContas.contas[i].icone == "Cofrinho"
+                      repositoryContas.contas[i].banco.img == "Carteira" ||
+                              repositoryContas.contas[i].banco.img == "Banco" ||
+                              repositoryContas.contas[i].banco.img == "Cofrinho"
                           ? AppColors.azulPrimario
                           : null,
-                  child: repositoryContas.contas[i].icone == "Carteira" ||
-                          repositoryContas.contas[i].icone == "Banco" ||
-                          repositoryContas.contas[i].icone == "Cofrinho"
+                  child: repositoryContas.contas[i].banco.img == "Carteira" ||
+                          repositoryContas.contas[i].banco.img == "Banco" ||
+                          repositoryContas.contas[i].banco.img == "Cofrinho"
                       ? iconeContaPag2(repositoryContas.contas[i])
                       : null,
                 )),

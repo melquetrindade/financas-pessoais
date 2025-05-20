@@ -22,7 +22,7 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
   }
 
   Widget cardConta(int i) {
-    String icone = widget.listContas[i].icone;
+    String icone = widget.listContas[i].banco.img;
 
     Widget? iconeConta() {
       return icone == ""
@@ -70,7 +70,7 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
                                 icone == "Banco" ||
                                 icone == "Cofrinho"
                             ? null
-                            : AssetImage(widget.listContas[i].icone),
+                            : AssetImage(widget.listContas[i].banco.img),
                         backgroundColor: icone == "Carteira" ||
                                 icone == "Banco" ||
                                 icone == "Cofrinho"
@@ -83,14 +83,13 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
                       onPressed: () {
                         print(
                             "Ir para a página de edição da ${widget.listContas[i].nome}");
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EditarContaPage(
-                                  nomeConta: widget.listContas[i].nome, 
-                                  imgConta: widget.listContas[i].icone, 
-                                  saldo: widget.listContas[i].saldo))
-                        );
+                                builder: (_) => EditarContaPage(
+                                    nomeConta: widget.listContas[i].nome,
+                                    banco: widget.listContas[i].banco,
+                                    saldo: widget.listContas[i].saldo)));
                       },
                       icon: Icon(
                         Icons.edit,
