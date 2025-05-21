@@ -43,6 +43,7 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
           ],
           onPageChanged: setPaginaAtual,
         ),
+        resizeToAvoidBottomInset: false, 
         floatingActionButton: SizedBox(
           width: 50,
           height: 50,
