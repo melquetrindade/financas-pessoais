@@ -2,7 +2,7 @@ import 'package:financas_pessoais/model/categoria.dart';
 import 'package:flutter/material.dart';
 
 class RepositoryCategorias {
-  final List<Categorias> _categorias = [
+  final List<Categorias> _categoriasDespesa = [
     Categorias(nome: "Alimentação", cor: Colors.pink.shade400, icon: Icons.restaurant),
     Categorias(
         nome: "Assinaturas e serviços", cor: Colors.purpleAccent.shade700, icon: Icons.credit_score),
@@ -27,5 +27,14 @@ class RepositoryCategorias {
     Categorias(nome: "Viagem", cor: Colors.deepOrange.shade300, icon: Icons.airplanemode_active),
   ];
 
-  List<Categorias> get categorias => _categorias;
+  final List<Categorias> _categoriasReceita = [
+    Categorias(nome: "Empréstimos", cor: Colors.teal.shade400, icon: Icons.attach_money_outlined),
+    Categorias(
+        nome: "Investimentos", cor: Colors.tealAccent, icon: Icons.list_sharp),
+    Categorias(nome: "Outras Receitas", cor: Colors.teal.shade700, icon: Icons.show_chart_sharp),
+    Categorias(nome: "Salário", cor: Colors.tealAccent.shade400, icon: Icons.star_rounded)
+  ];
+
+  List<Categorias> get categoriasDespesas => _categoriasDespesa;
+  List<Categorias> get categoriasReceitas => _categoriasReceita;
 }
