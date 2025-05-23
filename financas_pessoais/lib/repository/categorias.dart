@@ -30,7 +30,7 @@ class RepositoryCategorias {
   final List<Categorias> _categoriasReceita = [
     Categorias(nome: "Empréstimos", cor: Colors.teal.shade400, icon: Icons.attach_money_outlined),
     Categorias(
-        nome: "Investimentos", cor: Colors.tealAccent, icon: Icons.list_sharp),
+        nome: "Investimentos", cor: Colors.tealAccent.shade700, icon: Icons.list_sharp),
     Categorias(nome: "Outras Receitas", cor: Colors.teal.shade700, icon: Icons.show_chart_sharp),
     Categorias(nome: "Salário", cor: Colors.tealAccent.shade400, icon: Icons.star_rounded)
   ];

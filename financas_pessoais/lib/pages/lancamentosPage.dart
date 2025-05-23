@@ -5,6 +5,7 @@ import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/categorias.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:financas_pessoais/model/categoria.dart';
@@ -23,6 +24,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
   final formKey = GlobalKey<FormState>();
   final valor = TextEditingController();
   final descricao = TextEditingController();
+  DateTime? data;
   bool eDespesa = true;
   Categorias categoriaEscolhida = Categorias(
       nome: "", cor: Colors.deepPurple.shade800, icon: Icons.wine_bar);
@@ -37,7 +39,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
       fatura: "",
       conta: Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: ""));
 
-  void mostrarModal(BuildContext context) {
+  void mostrarModal(BuildContext context, int tipoModal) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -57,7 +59,8 @@ class _LancamentosPageState extends State<LancamentosPage> {
                 controller: scrollController,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: modal(),
+                  child:
+                      tipoModal == 0 ? modalCategorias() : modalContasCartoes(),
                 ),
               ),
             );
@@ -70,9 +73,78 @@ class _LancamentosPageState extends State<LancamentosPage> {
   AssetImage? setBackgroundPag() {
     if (contaEscolhida.nome != "" || cartaoEscolhido.nome != "") {
       if (contaEscolhida.nome != "") {
+        if (contaEscolhida.banco.img == "Carteira" ||
+            contaEscolhida.banco.img == "Cofrinho" ||
+            contaEscolhida.banco.img == "Banco") {
+          return null;
+        }
         return AssetImage(contaEscolhida.banco.img);
       }
+      if (cartaoEscolhido.icone.img == "Cartão") {
+        return null;
+      }
       return AssetImage(cartaoEscolhido.icone.img);
+    }
+    return null;
+  }
+
+  bool setBackgroundColorPag() {
+    if (contaEscolhida.nome == "" && cartaoEscolhido.nome == "") {
+      return true;
+    }
+    if (contaEscolhida.nome != "" || cartaoEscolhido.nome != "") {
+      if (contaEscolhida.nome != "") {
+        if (contaEscolhida.banco.img == "Carteira" ||
+            contaEscolhida.banco.img == "Cofrinho" ||
+            contaEscolhida.banco.img == "Banco") {
+          return true;
+        }
+        return false;
+      }
+      if (cartaoEscolhido.icone.img == "Cartão") {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  Icon? setIconPag() {
+    if (contaEscolhida.nome != "" || cartaoEscolhido.nome != "") {
+      if (contaEscolhida.nome != "") {
+        if (contaEscolhida.banco.img == "Cofrinho") {
+          return Icon(
+            Icons.savings,
+            color: Colors.white,
+          );
+        }
+        if (contaEscolhida.banco.img == "Carteira") {
+          return Icon(
+            Icons.account_balance_wallet,
+            color: Colors.white,
+          );
+        }
+        if (contaEscolhida.banco.img == "Banco") {
+          return Icon(
+            Icons.account_balance_rounded,
+            color: Colors.white,
+          );
+        }
+        return null;
+      }
+      if (cartaoEscolhido.icone.img == "Cartão") {
+        return Icon(
+          Icons.credit_card,
+          color: Colors.white,
+        );
+      }
+      return null;
+    }
+    if (contaEscolhida.nome == "" && cartaoEscolhido.nome == "") {
+      return Icon(
+        Icons.add,
+        color: Colors.white,
+      );
     }
     return null;
   }
@@ -132,6 +204,9 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
     if (dataSelecionada != null) {
       print('Data escolhida: $dataSelecionada');
+      setState(() {
+        data = dataSelecionada;
+      });
     } else {
       print('O usuário cancelou a seleção.');
     }
@@ -330,6 +405,8 @@ class _LancamentosPageState extends State<LancamentosPage> {
                           focusedBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
                         ),
+                        validator: (value) =>
+                            Validador.validatorNomeCartao(value),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 7),
@@ -354,7 +431,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       InkWell(
                         onTap: () {
                           print("Abrir modal de categorias");
-                          mostrarModal(context);
+                          mostrarModal(context, 0);
                         },
                         child: ListTile(
                           leading: SizedBox(
@@ -410,6 +487,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       InkWell(
                         onTap: () {
                           print("Abrir modal com bancos e cartões");
+                          mostrarModal(context, 1);
                         },
                         child: ListTile(
                           leading: SizedBox(
@@ -418,15 +496,10 @@ class _LancamentosPageState extends State<LancamentosPage> {
                             child: CircleAvatar(
                                 radius: 15,
                                 backgroundImage: setBackgroundPag(),
-                                backgroundColor: setBackgroundPag() == null
+                                backgroundColor: setBackgroundColorPag()
                                     ? AppColors.azulPrimario
                                     : null,
-                                child: setBackgroundPag() == null
-                                    ? Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      )
-                                    : null),
+                                child: setIconPag()),
                           ),
                           title: Text(
                             setNomePag(),
@@ -502,6 +575,27 @@ class _LancamentosPageState extends State<LancamentosPage> {
                             ),
                             onPressed: () {
                               print("Confitmar lançamento");
+                              if (formKey.currentState!.validate() &&
+                                  categoriaEscolhida.nome != "" &&
+                                  data != null &&
+                                  (contaEscolhida.nome != "" ||
+                                      cartaoEscolhido.nome != "")) {
+                                print("tudo ok");
+                                print(
+                                    "dados do lançamento: \t\n Valor: ${valor.text} \t\n Descrição: ${descricao.text} \t\n Categoria: ${categoriaEscolhida.nome} \t\n Pago com: ${contaEscolhida.nome != "" ? contaEscolhida.nome : cartaoEscolhido.nome} \t\n Data: ${data}");
+                              } else {
+                                /*
+                                if (infoBanco.img == "") {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Erro, selecione um ícone para prosseguir!'),
+                                      duration: Duration(seconds: 10),
+                                    ),
+                                  );
+                                }*/
+                                print("error");
+                              }
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -534,7 +628,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
     );
   }
 
-  Widget modal() {
+  Widget modalCategorias() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -562,15 +656,70 @@ class _LancamentosPageState extends State<LancamentosPage> {
     );
   }
 
+  Widget modalContasCartoes() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black,
+          ),
+          height: 3,
+          width: 130,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: Text(
+            'Selecione uma conta ou cartão de crédito',
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            "Suas contas bancárias",
+            style: TextStyle(
+                color: Colors.black54,
+                fontWeight: FontWeight.w700,
+                fontSize: 16),
+          ),
+        ),
+        for (var i = 0; i < repositoryContas.contas.length; i++)
+          iconesContasCartoes(i, true),
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "Seus cartões de crédito",
+              style: TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16),
+            ),
+          ),
+        ),
+        for (var i = 0; i < repositoryCartao.cartoes.length; i++)
+          iconesContasCartoes(i, false),
+      ],
+    );
+  }
+
   Widget iconesCategorias(int i, List<Categorias> categorias) {
     return Column(
       children: [
         InkWell(
           onTap: () {
             setState(() {
+              categoriaEscolhida = categorias[i];
+              /*
               categoriaEscolhida.nome = categorias[i].nome;
               categoriaEscolhida.cor = categorias[i].cor;
-              categoriaEscolhida.icon = categorias[i].icon;
+              categoriaEscolhida.icon = categorias[i].icon;*/
             });
             print(categorias[i].nome);
             Navigator.pop(context);
@@ -582,10 +731,138 @@ class _LancamentosPageState extends State<LancamentosPage> {
                 child: CircleAvatar(
                   radius: 15,
                   backgroundColor: categorias[i].cor,
-                  child: Icon(categorias[i].icon, color: Colors.white,),
+                  child: Icon(
+                    categorias[i].icon,
+                    color: Colors.white,
+                  ),
                 )),
             title: Text(
               categorias[i].nome,
+              style:
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Divider(),
+        )
+      ],
+    );
+  }
+
+  Widget iconesContasCartoes(int i, bool eConta) {
+    void setValores() {
+      if (eConta) {
+        setState(() {
+          contaEscolhida = repositoryContas.contas[i];
+          cartaoEscolhido = Cartao(
+              nome: "",
+              icone: Banco(nome: "", img: ""),
+              limite: "",
+              diaFechamento: "",
+              diaVencimento: "",
+              fatura: "",
+              conta:
+                  Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: ""));
+        });
+      } else {
+        setState(() {
+          cartaoEscolhido = repositoryCartao.cartoes[i];
+          contaEscolhida =
+              Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: "");
+        });
+      }
+    }
+
+    bool temImg() {
+      if (eConta) {
+        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
+            repositoryContas.contas[i].banco.img == "Carteira" ||
+            repositoryContas.contas[i].banco.img == "Banco") {
+          return false;
+        }
+        return true;
+      }
+      if (repositoryCartao.cartoes[i].icone.img == "Cartão") {
+        return false;
+      }
+      return true;
+    }
+
+    AssetImage? imgContaCartao() {
+      if (eConta) {
+        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
+            repositoryContas.contas[i].banco.img == "Carteira" ||
+            repositoryContas.contas[i].banco.img == "Banco") {
+          return null;
+        }
+        return AssetImage(repositoryContas.contas[i].banco.img);
+      }
+      if (repositoryCartao.cartoes[i].icone.img == "Cartão") {
+        return null;
+      }
+      return AssetImage(repositoryCartao.cartoes[i].icone.img);
+    }
+
+    Icon? iconContaCartao() {
+      if (eConta) {
+        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
+            repositoryContas.contas[i].banco.img == "Carteira" ||
+            repositoryContas.contas[i].banco.img == "Banco") {
+          if (repositoryContas.contas[i].banco.img == "Cofrinho") {
+            return Icon(
+              Icons.savings,
+              color: Colors.white,
+            );
+          }
+          if (repositoryContas.contas[i].banco.img == "Carteira") {
+            return Icon(
+              Icons.account_balance_wallet,
+              color: Colors.white,
+            );
+          }
+          return Icon(
+            Icons.account_balance_rounded,
+            color: Colors.white,
+          );
+        }
+        return null;
+      }
+      if (repositoryCartao.cartoes[i].icone.img == "Cartão") {
+        return Icon(
+          Icons.credit_card,
+          color: Colors.white,
+        );
+      }
+      return null;
+    }
+
+    String nomeContaCartao() {
+      if (eConta) {
+        return repositoryContas.contas[i].nome;
+      }
+      return repositoryCartao.cartoes[i].nome;
+    }
+
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            setValores();
+            Navigator.pop(context);
+          },
+          child: ListTile(
+            leading: SizedBox(
+                width: 40,
+                height: 40,
+                child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: temImg() ? null : AppColors.azulPrimario,
+                    backgroundImage: imgContaCartao(),
+                    child: iconContaCartao())),
+            title: Text(
+              nomeContaCartao(),
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
             ),
