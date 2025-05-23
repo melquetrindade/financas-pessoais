@@ -55,7 +55,7 @@ class RepositoryFatura {
                         Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
-            valor: "85,00",
+            valor: "585,00",
             descricao: "Fifa 25",
             data: "23/05/2025",
             eDespesa: true,

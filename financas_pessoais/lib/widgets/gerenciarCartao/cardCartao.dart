@@ -3,6 +3,7 @@ import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/fatura.dart';
 import 'package:financas_pessoais/pages/gerenciarCartao/editarCartao.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CardGerenciaCartao extends StatefulWidget {
   final List<Cartao> listCartao;
@@ -24,6 +25,16 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
     return DateTime(ano, mes, dia);
   }
 
+  String formatarParaReal(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+      decimalDigits: 2,
+    );
+
+    return formatter.format(valor);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -35,7 +46,9 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
 
   Widget cardCartao(int i) {
     List<Fatura> faturasFiltradas = [];
-    double faturaTotal = 0;
+    double faturaDespesaTotal = 0;
+    double faturaReceitaTotal = 0;
+    double disponivelTotal = 0;
 
     void filtrarFaturasPorCartaoEMes(Cartao cartao) {
       DateTime hoje = DateTime.now();
@@ -56,13 +69,27 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
         if(lancamento.eDespesa){
           String valorFormatado = lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
           double fatura = double.parse(valorFormatado);
-          faturaTotal += fatura*-1;
-        } 
+          faturaDespesaTotal += fatura*-1;
+        } else {
+          String valorFormatado =
+              lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+          double fatura = double.parse(valorFormatado);
+          faturaReceitaTotal += fatura;
+        }
       }
     }
 
+    void calcDisponivelTotal() {
+      double disponivel = 0;
+      String valorFormatado =
+          widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
+      disponivel = double.parse(valorFormatado);
+      disponivelTotal =
+          (disponivel + (faturaReceitaTotal + faturaDespesaTotal));
+    }
+
     Color corFatura() {
-      return faturaTotal >= 0 ? AppColors.azulPrimario : Colors.red;
+      return (faturaReceitaTotal + faturaDespesaTotal) >= 0 ? AppColors.azulPrimario : Colors.red;
     }
 
     filtrarFaturasPorCartaoEMes(widget.listCartao[i]);
@@ -70,6 +97,8 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
       calcFaturaTotal();
     }
 
+    calcDisponivelTotal();
+    
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, top: 20),
       child: Container(
@@ -150,8 +179,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey.shade800),
                             ),
-                            Text(
-                              "R\$ ${widget.listCartao[i].limite}",
+                            Text("R\$ ${formatarParaReal(disponivelTotal)}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             )
@@ -168,7 +196,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   color: Colors.grey.shade800),
                             ),
                             Text(
-                              "R\$ ${faturaTotal}",
+                              "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal)}",
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
