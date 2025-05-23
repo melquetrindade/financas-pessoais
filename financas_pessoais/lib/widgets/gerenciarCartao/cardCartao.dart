@@ -1,17 +1,28 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/cartao.dart';
+import 'package:financas_pessoais/model/fatura.dart';
 import 'package:financas_pessoais/pages/gerenciarCartao/editarCartao.dart';
 import 'package:flutter/material.dart';
 
 class CardGerenciaCartao extends StatefulWidget {
   final List<Cartao> listCartao;
-  const CardGerenciaCartao({super.key, required this.listCartao});
+  final List<Fatura> listaFatura;
+  const CardGerenciaCartao(
+      {super.key, required this.listCartao, required this.listaFatura});
 
   @override
   State<CardGerenciaCartao> createState() => _CardGerenciaCartaoState();
 }
 
 class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
+  DateTime _converterStringParaDateTime(String data) {
+    List<String> partes = data.split('/');
+    int dia = int.parse(partes[0]);
+    int mes = int.parse(partes[1]);
+    int ano = int.parse(partes[2]);
+
+    return DateTime(ano, mes, dia);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +34,40 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
   }
 
   Widget cardCartao(int i) {
-    String faturaFormatado =
-        widget.listCartao[i].fatura.replaceAll(".", "").replaceAll(",", ".");
-    double fatura = double.parse(faturaFormatado);
+    List<Fatura> faturasFiltradas = [];
+    double faturaTotal = 0;
+
+    void filtrarFaturasPorCartaoEMes(Cartao cartao) {
+      DateTime hoje = DateTime.now();
+
+      for (var fatura in widget.listaFatura) {
+        if (fatura.cartao.nome == cartao.nome) {
+          DateTime dataFatura = _converterStringParaDateTime(fatura.data);
+
+          if (dataFatura.month == hoje.month && dataFatura.year == hoje.year) {
+            faturasFiltradas.add(fatura);
+          }
+        }
+      }
+    }
+
+    void calcFaturaTotal() {
+      for (var lancamento in faturasFiltradas[0].lancamentos) {
+        if(lancamento.eDespesa){
+          String valorFormatado = lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+          double fatura = double.parse(valorFormatado);
+          faturaTotal += fatura*-1;
+        } 
+      }
+    }
 
     Color corFatura() {
-      return fatura >= 0 ? AppColors.azulPrimario : Colors.red;
+      return faturaTotal >= 0 ? AppColors.azulPrimario : Colors.red;
+    }
+
+    filtrarFaturasPorCartaoEMes(widget.listCartao[i]);
+    if(faturasFiltradas.length != 0){
+      calcFaturaTotal();
     }
 
     return Padding(
@@ -49,12 +88,14 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                     height: 40,
                     child: CircleAvatar(
                       radius: 15,
-                      backgroundImage: widget.listCartao[i].icone.img == "Cartão"
-                          ? null
-                          : AssetImage(widget.listCartao[i].icone.img),
-                      backgroundColor: widget.listCartao[i].icone.img == "Cartão"
-                          ? AppColors.azulPrimario
-                          : null,
+                      backgroundImage:
+                          widget.listCartao[i].icone.img == "Cartão"
+                              ? null
+                              : AssetImage(widget.listCartao[i].icone.img),
+                      backgroundColor:
+                          widget.listCartao[i].icone.img == "Cartão"
+                              ? AppColors.azulPrimario
+                              : null,
                       child: widget.listCartao[i].icone.img == "Cartão"
                           ? Icon(
                               Icons.credit_card,
@@ -75,12 +116,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                           context,
                           MaterialPageRoute(
                               builder: (_) => EditarCartaoPage(
-                                    banco: widget.listCartao[i].icone,
-                                    conta: widget.listCartao[i].conta,
-                                    diaFecha: widget.listCartao[i].diaFechamento,
-                                    diaVencimento: widget.listCartao[i].diaVencimento,
-                                    limite: widget.listCartao[i].limite,
-                                    nomeCartao: widget.listCartao[i].nome,
+                                    cartao: widget.listCartao[i],
                                   )));
                     },
                     icon: Icon(Icons.edit)),
@@ -132,7 +168,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   color: Colors.grey.shade800),
                             ),
                             Text(
-                              "R\$ ${widget.listCartao[i].fatura}",
+                              "R\$ ${faturaTotal}",
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

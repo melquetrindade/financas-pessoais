@@ -9,8 +9,49 @@ import '../model/bancos.dart';
 class RepositoryLancamentos {
   final List<Lancamentos> _lancamentos = [
     Lancamentos(
-      valor: "100,00", 
-      descricao: "Compra de Fone", 
+      valor: "200,00", 
+      descricao: "Controle do PS4", 
+      data: "02/04/2025", 
+      eDespesa: true, 
+      categoria: Categorias(nome: "Compras ", cor: Colors.pink, icon: Icons.shopping_bag_outlined), 
+      conta: null, 
+      cartao: Cartao(
+        nome: "Banco do Brasil",
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        limite: "1.000,00",
+        diaFechamento: "01",
+        diaVencimento: "30",
+        conta: Conta(
+          nome: "Banco do Brasil",
+          saldo: "1.567,90",
+          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+        )),
+    ),
+    Lancamentos(
+      valor: "85,00",
+      descricao: "Fifa 25",
+      data: "23/05/2025",
+      eDespesa: true,
+      categoria: Categorias(
+          nome: "Compras ",
+          cor: Colors.pink,
+          icon: Icons.shopping_bag_outlined),
+      conta: null,
+      cartao: Cartao(
+          nome: "Banco do Brasil",
+          icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+          limite: "1.000,00",
+          diaFechamento: "01",
+          diaVencimento: "30",
+          conta: Conta(
+              nome: "Banco do Brasil",
+              saldo: "1.567,90",
+              banco:
+                  Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+    ),
+    Lancamentos(
+      valor: "150,00", 
+      descricao: "Compra do Red Dead", 
       data: "23/04/2025", 
       eDespesa: true, 
       categoria: Categorias(nome: "Compras ", cor: Colors.pink, icon: Icons.shopping_bag_outlined), 
@@ -21,7 +62,25 @@ class RepositoryLancamentos {
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
-        fatura: "70,00",
+        conta: Conta(
+          nome: "Banco do Brasil",
+          saldo: "1.567,90",
+          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+        )),
+    ),
+    Lancamentos(
+      valor: "100,00", 
+      descricao: "Compra de Fone", 
+      data: "23/05/2025", 
+      eDespesa: true, 
+      categoria: Categorias(nome: "Compras ", cor: Colors.pink, icon: Icons.shopping_bag_outlined), 
+      conta: null, 
+      cartao: Cartao(
+        nome: "Banco do Brasil",
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        limite: "1.000,00",
+        diaFechamento: "01",
+        diaVencimento: "30",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
@@ -41,7 +100,6 @@ class RepositoryLancamentos {
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
-        fatura: "-100,00",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
@@ -79,7 +137,6 @@ class RepositoryLancamentos {
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
-        fatura: "70,00",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
@@ -99,7 +156,6 @@ class RepositoryLancamentos {
         limite: "500,00",
         diaFechamento: "08",
         diaVencimento: "15",
-        fatura: "0,00",
         conta:
           Conta(
             nome: "Next",

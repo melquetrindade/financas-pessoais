@@ -1,6 +1,7 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/pages/gerenciarCartao/criarCartao.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
+import 'package:financas_pessoais/repository/fatura.dart';
 import 'package:financas_pessoais/widgets/gerenciarCartao/cardCartao.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +14,12 @@ class GerenciarCartaoPage extends StatefulWidget {
 
 class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
   RepositoryCartao repositoryCartao = RepositoryCartao();
+  late RepositoryFatura repositoryFatura;
+
   @override
   Widget build(BuildContext context) {
+    repositoryFatura = RepositoryFatura();
+
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
@@ -80,6 +85,7 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
                   children: [
                     CardGerenciaCartao(
                       listCartao: repositoryCartao.cartoes,
+                      listaFatura: repositoryFatura.faturas,
                     )
                   ],
                 ),

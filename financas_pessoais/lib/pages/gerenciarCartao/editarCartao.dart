@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/bancos.dart';
+import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
 import 'package:financas_pessoais/repository/contas.dart';
@@ -9,20 +10,10 @@ import 'package:intl/intl.dart';
 import '../../widgets/criarConta/searchIcone.dart';
 
 class EditarCartaoPage extends StatefulWidget {
-  final String nomeCartao;
-  final Banco banco;
-  final String limite;
-  final String diaFecha;
-  final String diaVencimento;
-  final Conta conta;
+  final Cartao cartao;
   const EditarCartaoPage(
       {super.key,
-      required this.nomeCartao,
-      required this.banco,
-      required this.limite,
-      required this.diaFecha,
-      required this.diaVencimento,
-      required this.conta});
+      required this.cartao});
 
   @override
   State<EditarCartaoPage> createState() => _EditarCartaoPageState();
@@ -43,12 +34,12 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   @override
   void initState() {
     super.initState();
-    nome.text = widget.nomeCartao;
-    limite.text = widget.limite;
-    diaFecha.text = widget.diaFecha;
-    diaVencimento.text = widget.diaVencimento;
-    infoBanco = widget.banco;
-    infoContaPag = widget.conta;
+    nome.text = widget.cartao.nome;
+    limite.text = widget.cartao.limite;
+    diaFecha.text = widget.cartao.diaFechamento;
+    diaVencimento.text = widget.cartao.diaVencimento;
+    infoBanco = widget.cartao.icone;
+    infoContaPag = widget.cartao.conta;
     limite.addListener(_formatSaldo);
   }
 
@@ -179,7 +170,6 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(

@@ -36,7 +36,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
       limite: "",
       diaFechamento: "",
       diaVencimento: "",
-      fatura: "",
       conta: Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: ""));
 
   void mostrarModal(BuildContext context, int tipoModal) {
@@ -774,7 +773,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
               limite: "",
               diaFechamento: "",
               diaVencimento: "",
-              fatura: "",
               conta:
                   Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: ""));
         });
