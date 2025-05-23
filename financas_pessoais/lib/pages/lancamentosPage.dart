@@ -203,7 +203,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
     );
 
     if (dataSelecionada != null) {
-      print('Data escolhida: $dataSelecionada');
       setState(() {
         data = dataSelecionada;
       });
@@ -216,6 +215,18 @@ class _LancamentosPageState extends State<LancamentosPage> {
     return eDespesa
         ? repositoryCategorias.categoriasDespesas
         : repositoryCategorias.categoriasReceitas;
+  }
+
+  bool formatValor(String valorTexto) {
+    if (valorTexto != "") {
+      String valorFormt = valorTexto.replaceAll('.', '').replaceAll(',', '.');
+      double valorNumber = double.parse(valorFormt);
+      if (valorNumber > 0) {
+        return true;
+      }
+      return false;
+    }
+    return false;
   }
 
   @override
@@ -246,6 +257,10 @@ class _LancamentosPageState extends State<LancamentosPage> {
                             onTap: () {
                               setState(() {
                                 eDespesa = !eDespesa;
+                                categoriaEscolhida = Categorias(
+                                    nome: "",
+                                    cor: Colors.deepPurple.shade800,
+                                    icon: Icons.wine_bar);
                               });
                             },
                             child: Column(
@@ -279,6 +294,10 @@ class _LancamentosPageState extends State<LancamentosPage> {
                             onTap: () {
                               setState(() {
                                 eDespesa = !eDespesa;
+                                categoriaEscolhida = Categorias(
+                                    nome: "",
+                                    cor: Colors.deepPurple.shade800,
+                                    icon: Icons.wine_bar);
                               });
                             },
                             child: Column(
@@ -430,7 +449,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          print("Abrir modal de categorias");
                           mostrarModal(context, 0);
                         },
                         child: ListTile(
@@ -486,7 +504,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          print("Abrir modal com bancos e cartões");
                           mostrarModal(context, 1);
                         },
                         child: ListTile(
@@ -532,7 +549,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          print("Abrir calendário");
                           selecionarData(context);
                         },
                         child: ListTile(
@@ -550,7 +566,9 @@ class _LancamentosPageState extends State<LancamentosPage> {
                             ),
                           ),
                           title: Text(
-                            "Hoje",
+                            data == null
+                                ? "Hoje"
+                                : "${data!.day}/${data!.month}/${data!.year}",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Colors.black54,
@@ -574,27 +592,22 @@ class _LancamentosPageState extends State<LancamentosPage> {
                               ),
                             ),
                             onPressed: () {
-                              print("Confitmar lançamento");
                               if (formKey.currentState!.validate() &&
                                   categoriaEscolhida.nome != "" &&
                                   data != null &&
+                                  formatValor(valor.text) &&
                                   (contaEscolhida.nome != "" ||
                                       cartaoEscolhido.nome != "")) {
-                                print("tudo ok");
                                 print(
-                                    "dados do lançamento: \t\n Valor: ${valor.text} \t\n Descrição: ${descricao.text} \t\n Categoria: ${categoriaEscolhida.nome} \t\n Pago com: ${contaEscolhida.nome != "" ? contaEscolhida.nome : cartaoEscolhido.nome} \t\n Data: ${data}");
+                                    "dados do lançamento: \t\n É despesa: ${eDespesa} \t\n Valor: ${valor.text} \t\n Descrição: ${descricao.text} \t\n Categoria: ${categoriaEscolhida.nome} \t\n Pago com: ${contaEscolhida.nome != "" ? contaEscolhida.nome : cartaoEscolhido.nome} \t\n Data: ${data!}");
                               } else {
-                                /*
-                                if (infoBanco.img == "") {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Erro, selecione um ícone para prosseguir!'),
-                                      duration: Duration(seconds: 10),
-                                    ),
-                                  );
-                                }*/
-                                print("error");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Erro, preencha corretamente as informações!'),
+                                    duration: Duration(seconds: 10),
+                                  ),
+                                );
                               }
                             },
                             child: Row(
@@ -669,7 +682,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
           width: 130,
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.only(top: 15, bottom: 20),
           child: Text(
             'Selecione uma conta ou cartão de crédito',
             style: TextStyle(
@@ -678,20 +691,23 @@ class _LancamentosPageState extends State<LancamentosPage> {
                 color: Colors.black54),
           ),
         ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: Text(
-            "Suas contas bancárias",
-            style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.w700,
-                fontSize: 16),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "Suas contas bancárias",
+              style: TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16),
+            ),
           ),
         ),
         for (var i = 0; i < repositoryContas.contas.length; i++)
           iconesContasCartoes(i, true),
         Padding(
-          padding: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.only(top: 15, bottom: 10),
           child: Align(
             alignment: Alignment.topLeft,
             child: Text(
@@ -716,10 +732,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
           onTap: () {
             setState(() {
               categoriaEscolhida = categorias[i];
-              /*
-              categoriaEscolhida.nome = categorias[i].nome;
-              categoriaEscolhida.cor = categorias[i].cor;
-              categoriaEscolhida.icon = categorias[i].icon;*/
             });
             print(categorias[i].nome);
             Navigator.pop(context);

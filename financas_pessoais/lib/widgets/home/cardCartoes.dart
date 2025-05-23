@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/cartao.dart';
+import 'package:financas_pessoais/pages/detalhesCartaoPage.dart';
 import 'package:flutter/material.dart';
 
 class Cardcartoes extends StatefulWidget {
@@ -137,8 +138,9 @@ class _CardcartoesState extends State<Cardcartoes> {
         ),
         InkWell(
           onTap: () {
-            print(
-                "abrir pag de detalhes do cartão: ${widget.listCartao[i].nome}");
+            //print("abrir pag de detalhes do cartão: ${widget.listCartao[i].nome}");
+            Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (_) => (DetalhesCartaoPage(cartao: widget.listCartao[i],))));
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
