@@ -19,9 +19,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   int currentIndex = 0;
 
   List<Fatura> filtrarFaturasPorCartao(Cartao cartao) {
-    print("entrou no filtrar");
     List<Fatura> faturasFiltradas = [];
-    //List<Fatura> faturasOrdenadas = [];
 
     for (var fatura in repositoryFatura.faturas) {
       if (fatura.cartao.nome == widget.cartao.nome) {
@@ -31,14 +29,11 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     ordenarPorDataDecrescente(faturasFiltradas, (f) => f.data);
 
     faturasFiltradas.forEach((f) => print(f.data));
-    /*
-    for (int y = 0; y < faturasFiltradas.length; y++) {
-      print("${faturasFiltradas[y].data}");
-    }*/
     return faturasFiltradas;
   }
 
-  void ordenarPorDataDecrescente(List<dynamic> lista, String Function(dynamic) getData) {
+  void ordenarPorDataDecrescente(
+      List<dynamic> lista, String Function(dynamic) getData) {
     lista.sort((a, b) {
       DateTime dataA = _converterParaDateTime(getData(a));
       DateTime dataB = _converterParaDateTime(getData(b));
@@ -48,8 +43,38 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
   DateTime _converterParaDateTime(String data) {
     return DateTime.parse(
-      "${data.substring(6, 10)}-${data.substring(3, 5)}-${data.substring(0, 2)}"
-    );
+        "${data.substring(6, 10)}-${data.substring(3, 5)}-${data.substring(0, 2)}");
+  }
+
+  String formatarMes(String dataStr) {
+    // Converter String "dd/MM/yyyy" para DateTime
+    DateTime data = DateTime.parse(
+        "${dataStr.substring(6, 10)}-${dataStr.substring(3, 5)}-${dataStr.substring(0, 2)}");
+
+    const List<String> meses = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro"
+    ];
+
+    String mes = meses[data.month - 1];
+    int ano = data.year;
+    int anoAtual = DateTime.now().year;
+
+    if (ano == anoAtual) {
+      return mes;
+    } else {
+      return "${mes.substring(0, 3)}.$ano";
+    }
   }
 
   @override
@@ -63,10 +88,13 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     print("Detalhes do Cartão: \t\n ${widget.cartao.nome}");
     repositoryFatura = RepositoryFatura();
     listaFaturas = filtrarFaturasPorCartao(widget.cartao);
-
-    if (!listaFaturas.isEmpty) {
-      print("${listaFaturas[currentIndex].cartao.nome}");
-    }
+    /*
+    if (listaFaturas.isNotEmpty) {
+      print("Lançamentos deste período:");
+      for (var lanca in listaFaturas[currentIndex].lancamentos) {
+        print("valor: ${lanca.valor} - data: ${lanca.data}");
+      }
+    }*/
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -86,92 +114,305 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
             },
           ),
         ),
-        body: Column(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              color: Colors.yellow.shade200,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: listaFaturas.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey.shade700,
+                        size: 30,
+                      ),
+                    ),
+                    Text(
+                      "Não exite faturas para este cartão!",
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              )
+            : Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        if (listaFaturas.length > (currentIndex + 1)) {
-                          currentIndex++;
-                          pageController.animateToPage(
-                            currentIndex,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        } else {
-                          print("Ação inválida");
-                        }
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: listaFaturas.length > (currentIndex + 1)
-                            ? Colors.black
-                            : Colors.grey,
-                      )),
-                  Container(
-                    color: Colors.blue.shade200,
-                    height: 50,
-                    width: 200,
-                    child: PageView.builder(
-                        reverse: true,
-                        controller: pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentIndex = index;
-                          });
-                        },
-                        itemCount: listaFaturas.length,
-                        itemBuilder: (context, index) {
-                          return Center(
-                              child: Text("${listaFaturas[index].data}"));
-                        }),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      color: AppColors.backgroundClaro,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                if (listaFaturas.length > (currentIndex + 1)) {
+                                  currentIndex++;
+                                  pageController.animateToPage(
+                                    currentIndex,
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                } else {
+                                  print("Ação inválida");
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                color: listaFaturas.length > (currentIndex + 1)
+                                    ? AppColors.azulPrimario
+                                    : Colors.grey,
+                              )),
+                          Container(
+                            height: 50,
+                            width: 200,
+                            child: PageView.builder(
+                                reverse: true,
+                                controller: pageController,
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    currentIndex = index;
+                                  });
+                                },
+                                itemCount: listaFaturas.length,
+                                itemBuilder: (context, index) {
+                                  return Center(
+                                      child: Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 7),
+                                      child: Text(
+                                        formatarMes(listaFaturas[index].data),
+                                        style: TextStyle(
+                                            color: AppColors.azulPrimario,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: AppColors.azulPrimario),
+                                      color: AppColors.backgroundClaro,
+                                    ),
+                                  ));
+                                }),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                if (currentIndex > 0) {
+                                  currentIndex--;
+                                  pageController.animateToPage(
+                                    currentIndex,
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                } else {
+                                  print("Ação inválida");
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: currentIndex > 0
+                                    ? AppColors.azulPrimario
+                                    : Colors.grey,
+                              )),
+                        ],
+                      ),
+                    ),
                   ),
-                  IconButton(
-                      onPressed: () {
-                        if (currentIndex > 0) {
-                          currentIndex--;
-                          pageController.animateToPage(
-                            currentIndex,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        } else {
-                          print("Ação inválida");
-                        }
-                      },
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: currentIndex > 0 ? Colors.black : Colors.grey,
-                      )),
-                ],
-              ),
-            )
-          ],
-        ));
-  }
-}
-
-/*
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: SizedBox(
-                                height: 200,
-                                width: double.infinity,
-                                child: Image.network(
-                                  banners[index],
-                                  fit: BoxFit.cover,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.grey.shade100),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: CircleAvatar(
+                                              radius: 15,
+                                              backgroundImage: AssetImage(
+                                                  widget.cartao.icone.img),
+                                              backgroundColor: null,
+                                              child: null,
+                                            )),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.green,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Paga",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${widget.cartao.nome}",
+                                            style: TextStyle(
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Fecha em",
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                    Text(
+                                                      "${widget.cartao.diaFechamento}/05",
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 10),
+                                                child: Container(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        "Vence em",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400),
+                                                      ),
+                                                      Text(
+                                                        "${widget.cartao.diaVencimento}/05",
+                                                        style: TextStyle(
+                                                            fontSize: 17,
+                                                            fontWeight:
+                                                                FontWeight.w500),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "Gasto no mês",
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                    Text(
+                                                      "-R\$ 150,00",
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 17),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 10),
+                                                child: Container(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text(
+                                                        "Valor Pago",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400),
+                                                      ),
+                                                      Text(
+                                                        "R\$ 150,00",
+                                                        style: TextStyle(
+                                                            color: Colors.green,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 17),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),
-                          );*/
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ));
+  }
+}
 
 /*
 Cartao(
