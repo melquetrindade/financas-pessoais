@@ -149,7 +149,64 @@ class RepositoryFatura {
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "30/04/205", valor: "350,00")],
         data: "02/04/2025",
-        foiPago: true)
+        foiPago: true),
+      Fatura(
+        lancamentos: [
+          Lancamentos(
+            valor: "1.200,00",
+            descricao: "Console PS4",
+            data: "12/06/2025",
+            eDespesa: true,
+            categoria: Categorias(
+                nome: "Compras ",
+                cor: Colors.pink,
+                icon: Icons.shopping_bag_outlined),
+            conta: null,
+            cartao: Cartao(
+                nome: "Banco do Brasil",
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                limite: "1.000,00",
+                diaFechamento: "01",
+                diaVencimento: "30",
+                conta: Conta(
+                    nome: "Banco do Brasil",
+                    saldo: "1.567,90",
+                    banco:
+                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+          ),
+          Lancamentos(
+            valor: "15,00",
+            descricao: "Dogão",
+            data: "16/06/2025",
+            eDespesa: true,
+            categoria: Categorias(nome: "Alimentação", cor: Colors.pink.shade400, icon: Icons.restaurant),
+            conta: null,
+            cartao: Cartao(
+                nome: "Banco do Brasil",
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                limite: "1.000,00",
+                diaFechamento: "01",
+                diaVencimento: "30",
+                conta: Conta(
+                    nome: "Banco do Brasil",
+                    saldo: "1.567,90",
+                    banco:
+                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+          ),
+        ],
+        cartao: Cartao(
+            nome: "Banco do Brasil",
+            icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+            limite: "1.000,00",
+            diaFechamento: "01",
+            diaVencimento: "30",
+            conta: Conta(
+                nome: "Banco do Brasil",
+                saldo: "1.567,90",
+                banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+        pagamentos: [Pagamentos(data: "30/04/205", valor: "350,00")],
+        data: "12/06/2025",
+        foiPago: false)
   ];
 
   List<Fatura> get faturas => _faturas;
