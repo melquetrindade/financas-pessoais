@@ -1,8 +1,10 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/fatura.dart';
+import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/fatura.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DetalhesCartaoPage extends StatefulWidget {
   final Cartao cartao;
@@ -75,6 +77,66 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     } else {
       return "${mes.substring(0, 3)}.$ano";
     }
+  }
+
+  String formatarDiaComMesAtual(String dia) {
+    int mesAtual = DateTime.now().month;
+    String mesFormatado = mesAtual.toString().padLeft(2, '0');
+
+    return "$dia/$mesFormatado";
+  }
+
+  String formatarParaReal(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+      decimalDigits: 2,
+    );
+
+    return formatter.format(valor);
+  }
+
+  double converterStringParaDouble(String valor) {
+    String semSeparadorMilhar = valor.replaceAll('.', '');
+    String valorComPonto = semSeparadorMilhar.replaceAll(',', '.');
+
+    print("Valor convertido para double: $valorComPonto");
+
+    return double.parse(valorComPonto);
+  }
+
+  String calcularGastoNoMes() {
+    List<Lancamentos> lancamentos = listaFaturas[currentIndex].lancamentos;
+    double totalGasto = 0;
+    if (lancamentos.isNotEmpty) {
+      print("entrou no if");
+      for (var lancamento in lancamentos) {
+        double valorLancamento = converterStringParaDouble(lancamento.valor);
+        if (lancamento.eDespesa) {
+          totalGasto += (valorLancamento * -1);
+        } else{
+          totalGasto += valorLancamento;
+        }
+      }
+    }
+    print("Total gasto: ${totalGasto}");
+    return formatarParaReal(totalGasto);
+  }
+
+  String calcularPagoNoMes() {
+    List<Pagamentos> pagamentos = listaFaturas[currentIndex].pagamentos;
+    double totalPago = 0;
+    if (pagamentos.isNotEmpty) {
+      for (var pagamento in pagamentos) {
+        double valorPago = converterStringParaDouble(pagamento.valor);
+        totalPago += valorPago;
+      }
+    }
+    return formatarParaReal(totalPago);
+  }
+
+  bool possuiSinalNegativo(String valor) {
+    return valor.contains('-');
   }
 
   @override
@@ -308,7 +370,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                               FontWeight.w400),
                                                     ),
                                                     Text(
-                                                      "${widget.cartao.diaFechamento}/05",
+                                                      formatarDiaComMesAtual(
+                                                          widget.cartao
+                                                              .diaFechamento),
                                                       style: TextStyle(
                                                           fontSize: 17,
                                                           fontWeight:
@@ -318,25 +382,31 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.only(top: 10),
+                                                padding: const EdgeInsets.only(
+                                                    top: 10),
                                                 child: Container(
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                         "Vence em",
                                                         style: TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
-                                                                FontWeight.w400),
+                                                                FontWeight
+                                                                    .w400),
                                                       ),
                                                       Text(
-                                                        "${widget.cartao.diaVencimento}/05",
+                                                        formatarDiaComMesAtual(
+                                                            widget.cartao
+                                                                .diaVencimento),
                                                         style: TextStyle(
                                                             fontSize: 17,
                                                             fontWeight:
-                                                                FontWeight.w500),
+                                                                FontWeight
+                                                                    .w500),
                                                       )
                                                     ],
                                                   ),
@@ -359,9 +429,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                               FontWeight.w400),
                                                     ),
                                                     Text(
-                                                      "-R\$ 150,00",
+                                                      calcularGastoNoMes(),
                                                       style: TextStyle(
-                                                          color: Colors.red,
+                                                          color: possuiSinalNegativo(calcularGastoNoMes()) ? Colors.red : Colors.green,
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 17),
@@ -370,7 +440,8 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.only(top: 10),
+                                                padding: const EdgeInsets.only(
+                                                    top: 10),
                                                 child: Container(
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -381,10 +452,11 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                         style: TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
-                                                                FontWeight.w400),
+                                                                FontWeight
+                                                                    .w400),
                                                       ),
                                                       Text(
-                                                        "R\$ 150,00",
+                                                        calcularPagoNoMes(),
                                                         style: TextStyle(
                                                             color: Colors.green,
                                                             fontWeight:
