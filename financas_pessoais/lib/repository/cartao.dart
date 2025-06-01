@@ -8,8 +8,8 @@ class RepositoryCartao {
         nome: "Banco do Brasil",
         icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
         limite: "1.000,00",
-        diaFechamento: "01",
-        diaVencimento: "30",
+        diaFechamento: "30",
+        diaVencimento: "10",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",

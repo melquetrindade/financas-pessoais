@@ -79,8 +79,62 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     }
   }
 
+  String ajustarDiaParaDataInformada(String diaRecebido, String dataBase) {
+    int dia = int.tryParse(diaRecebido) ?? 1;
+
+    // Parse da data recebida
+    List<String> partes = dataBase.split('/');
+    if (partes.length < 3) {
+      throw FormatException("Data inválida. Esperado formato: dd/MM/yyyy");
+    }
+
+    int mes = int.tryParse(partes[1]) ?? 1;
+    int ano = int.tryParse(partes[2]) ?? DateTime.now().year;
+
+    // Último dia do mês baseado no mês e ano informados
+    DateTime ultimoDiaDoMes = DateTime(ano, mes + 1, 0);
+    int ultimoDia = ultimoDiaDoMes.day;
+
+    int diaResultado = dia > ultimoDia ? ultimoDia : dia;
+
+    String diaFormatado = diaResultado.toString().padLeft(2, '0');
+    String mesFormatado = mes.toString().padLeft(2, '0');
+
+    return "$diaFormatado/$mesFormatado";
+  }
+
+  String compararDiasComBase(String dia1Str, String dia2Str, String dataBaseStr) {
+    int dia1 = int.parse(dia1Str);
+    int dia2 = int.parse(dia2Str);
+
+    // Divide a dataBase e extrai dia, mês e ano
+    List<String> partesData = dataBaseStr.split('/');
+    int diaBase = int.parse(partesData[0]);
+    int mesBase = int.parse(partesData[1]);
+    int anoBase = int.parse(partesData[2]);
+
+    int mesRetorno = mesBase;
+    int anoRetorno = anoBase;
+
+    // Se dia1 > dia2, dia2 pertence ao próximo mês
+    if (dia1 > dia2) {
+      mesRetorno = mesBase + 1;
+      if (mesRetorno > 12) {
+        mesRetorno = 1; // Ajusta para Janeiro
+        anoRetorno += 1; // Ajusta o ano
+      }
+    }
+
+    // Formata dia e mês com dois dígitos
+    String diaFormatado = dia2.toString().padLeft(2, '0');
+    String mesFormatado = mesRetorno.toString().padLeft(2, '0');
+
+    return "$diaFormatado/$mesFormatado";
+  }
+
   String formatarDiaComMesAtual(String dia) {
     int mesAtual = DateTime.now().month;
+
     String mesFormatado = mesAtual.toString().padLeft(2, '0');
 
     return "$dia/$mesFormatado";
@@ -114,7 +168,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
         double valorLancamento = converterStringParaDouble(lancamento.valor);
         if (lancamento.eDespesa) {
           totalGasto += (valorLancamento * -1);
-        } else{
+        } else {
           totalGasto += valorLancamento;
         }
       }
@@ -369,10 +423,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                           fontWeight:
                                                               FontWeight.w400),
                                                     ),
-                                                    Text(
-                                                      formatarDiaComMesAtual(
+                                                    Text(ajustarDiaParaDataInformada(
                                                           widget.cartao
-                                                              .diaFechamento),
+                                                              .diaFechamento, listaFaturas[currentIndex].data),
                                                       style: TextStyle(
                                                           fontSize: 17,
                                                           fontWeight:
@@ -398,10 +451,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                 FontWeight
                                                                     .w400),
                                                       ),
-                                                      Text(
-                                                        formatarDiaComMesAtual(
+                                                      Text(compararDiasComBase(widget.cartao.diaFechamento,
                                                             widget.cartao
-                                                                .diaVencimento),
+                                                                .diaVencimento, listaFaturas[currentIndex].data),
                                                         style: TextStyle(
                                                             fontSize: 17,
                                                             fontWeight:
@@ -431,7 +483,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                     Text(
                                                       calcularGastoNoMes(),
                                                       style: TextStyle(
-                                                          color: possuiSinalNegativo(calcularGastoNoMes()) ? Colors.red : Colors.green,
+                                                          color: possuiSinalNegativo(
+                                                                  calcularGastoNoMes())
+                                                              ? Colors.red
+                                                              : Colors.green,
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 17),

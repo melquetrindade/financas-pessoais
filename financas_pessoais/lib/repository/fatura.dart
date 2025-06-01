@@ -88,14 +88,14 @@ class RepositoryFatura {
                 saldo: "1.567,90",
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [],
-        data: "23/05/2025",
+        data: "23/02/2025",
         foiPago: false),
     Fatura(
         lancamentos: [
           Lancamentos(
             valor: "200,00",
             descricao: "Controle do PS4",
-            data: "02/04/2025",
+            data: "02/12/2024",
             eDespesa: true,
             categoria: Categorias(
                 nome: "Compras ",
@@ -117,7 +117,7 @@ class RepositoryFatura {
           Lancamentos(
             valor: "150,00",
             descricao: "Compra do Red Dead",
-            data: "23/04/2025",
+            data: "23/12/2024",
             eDespesa: true,
             categoria: Categorias(
                 nome: "Compras ",
@@ -148,7 +148,7 @@ class RepositoryFatura {
                 saldo: "1.567,90",
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "30/04/205", valor: "350,00")],
-        data: "02/04/2024",
+        data: "02/12/2024",
         foiPago: true),
       Fatura(
         lancamentos: [
@@ -198,7 +198,7 @@ class RepositoryFatura {
             nome: "Banco do Brasil",
             icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
             limite: "1.000,00",
-            diaFechamento: "01",
+            diaFechamento: "31",
             diaVencimento: "30",
             conta: Conta(
                 nome: "Banco do Brasil",
