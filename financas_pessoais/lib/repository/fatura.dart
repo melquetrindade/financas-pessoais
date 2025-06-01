@@ -206,7 +206,151 @@ class RepositoryFatura {
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "14/06/205", valor: "1.200,00")],
         data: "12/06/2025",
-        foiPago: false)
+        foiPago: false),
+        Fatura(
+        lancamentos: [
+          Lancamentos(
+            valor: "500,00",
+            descricao: "Aluguel",
+            data: "02/02/2025",
+            eDespesa: false,
+            categoria: Categorias(
+                nome: "Outras Receitas",
+                cor: Colors.teal.shade700,
+                icon: Icons.show_chart_sharp),
+            conta: null,
+            cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+          ),
+          Lancamentos(
+            valor: "100,00",
+            descricao: "Compra de Fone",
+            data: "23/02/2025",
+            eDespesa: true,
+            categoria: Categorias(
+                nome: "Compras ",
+                cor: Colors.pink,
+                icon: Icons.shopping_bag_outlined),
+            conta: null,
+            cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+          ),
+          Lancamentos(
+            valor: "585,00",
+            descricao: "Fifa 25",
+            data: "23/02/2025",
+            eDespesa: true,
+            categoria: Categorias(
+                nome: "Compras ",
+                cor: Colors.pink,
+                icon: Icons.shopping_bag_outlined),
+            conta: null,
+            cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+          ),
+        ],
+        cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+        pagamentos: [],
+        data: "23/02/2025",
+        foiPago: false),
+    Fatura(
+        lancamentos: [
+          Lancamentos(
+            valor: "200,00",
+            descricao: "Controle do PS4",
+            data: "01/06/2025",
+            eDespesa: true,
+            categoria: Categorias(
+                nome: "Compras ",
+                cor: Colors.pink,
+                icon: Icons.shopping_bag_outlined),
+            conta: null,
+            cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+          ),
+          Lancamentos(
+            valor: "150,00",
+            descricao: "Compra do Red Dead",
+            data: "01/06/2025",
+            eDespesa: true,
+            categoria: Categorias(
+                nome: "Compras ",
+                cor: Colors.pink,
+                icon: Icons.shopping_bag_outlined),
+            conta: null,
+            cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "29",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+          ),
+        ],
+        cartao: Cartao(
+        nome: "Banco PAN",
+        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        limite: "500,00",
+        diaFechamento: "30",
+        diaVencimento: "30",
+        conta: Conta(
+            nome: "Banco PAN", 
+            saldo: "10.000,00",
+            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+        )),
+        pagamentos: [Pagamentos(data: "01/06/2025", valor: "200,00")],
+        data: "01/05/2025",
+        foiPago: false),
   ];
 
   List<Fatura> get faturas => _faturas;

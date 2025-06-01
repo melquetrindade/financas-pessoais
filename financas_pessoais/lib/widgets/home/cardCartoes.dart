@@ -131,6 +131,7 @@ class _CardcartoesState extends State<Cardcartoes> {
     double faturaDespesaTotal = 0;
     double faturaReceitaTotal = 0;
     double disponivelTotal = 0;
+    double faturaPagamento = 0;
 
     DateTime hoje = DateTime.now();
 
@@ -145,38 +146,69 @@ class _CardcartoesState extends State<Cardcartoes> {
     }
 
     void calcFaturaTotal() {
-      for (var lancamento in faturasFiltradas[0].lancamentos) {
-        if (lancamento.eDespesa) {
-          String valorFormatado =
-              lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
-          double fatura = double.parse(valorFormatado);
-          faturaDespesaTotal += fatura * -1;
-        } else {
-          String valorFormatado =
-              lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
-          double fatura = double.parse(valorFormatado);
-          faturaReceitaTotal += fatura;
+      if (faturasFiltradas[0].lancamentos.isNotEmpty) {
+        for (var lancamento in faturasFiltradas[0].lancamentos) {
+          if (lancamento.eDespesa) {
+            String valorFormatado =
+                lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+            double fatura = double.parse(valorFormatado);
+            faturaDespesaTotal += fatura * -1;
+          } else {
+            String valorFormatado =
+                lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+            double fatura = double.parse(valorFormatado);
+            faturaReceitaTotal += fatura;
+          }
         }
       }
     }
 
     void calcDisponivelTotal() {
-      double disponivel = 0;
-      String valorFormatado =
-          widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
-      disponivel = double.parse(valorFormatado);
-      disponivelTotal =
-          (disponivel + (faturaReceitaTotal + faturaDespesaTotal));
+      if (faturasFiltradas[0].foiPago) {
+        String valorFormatado = widget.listCartao[i].limite
+            .replaceAll(".", "")
+            .replaceAll(",", ".");
+        double valor = double.parse(valorFormatado);
+        disponivelTotal = valor;
+      } else {
+        String limiteFormatado = widget.listCartao[i].limite
+            .replaceAll(".", "")
+            .replaceAll(",", ".");
+        double limite = double.parse(limiteFormatado);
+        double conta =
+            faturaReceitaTotal + faturaDespesaTotal + faturaPagamento;
+        disponivelTotal = limite + conta;
+      }
+      print("saiu dessa função");
     }
 
     Color corFatura() {
-      return (faturaReceitaTotal + faturaDespesaTotal) >= 0 ? AppColors.azulPrimario : Colors.red;
+      return (faturaReceitaTotal + faturaDespesaTotal + faturaPagamento) >= 0
+          ? AppColors.azulPrimario
+          : Colors.red;
+    }
+
+    void calcFaturaPagamento() {
+      if (faturasFiltradas[0].pagamentos.isNotEmpty) {
+        print("entrou para ${widget.listCartao[i].nome}");
+        for (var pagamento in faturasFiltradas[0].pagamentos) {
+          String valorFormatado =
+              pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+          double valor = double.parse(valorFormatado);
+          faturaPagamento += valor;
+        }
+      }
     }
 
     if (faturasFiltradas.length != 0) {
       calcFaturaTotal();
+      calcFaturaPagamento();
+      calcDisponivelTotal();
+    } else {
+      String valorFormatado = widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
+          double valor = double.parse(valorFormatado);
+      disponivelTotal = valor;
     }
-    calcDisponivelTotal();
 
     return Column(
       children: [
@@ -204,7 +236,6 @@ class _CardcartoesState extends State<Cardcartoes> {
         ),
         InkWell(
           onTap: () {
-            //print("abrir pag de detalhes do cartão: ${widget.listCartao[i].nome}");
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -256,7 +287,7 @@ class _CardcartoesState extends State<Cardcartoes> {
                         ),
                         Text(
                             showSaldo
-                                ? "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal)}"
+                                ? "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal + faturaPagamento)}"
                                 : "R\$ ---",
                             style: TextStyle(
                                 fontSize: 16,

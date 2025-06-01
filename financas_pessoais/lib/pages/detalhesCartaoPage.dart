@@ -79,6 +79,46 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     }
   }
 
+  String verificarStatus(
+      String dataInicioStr, String dataFimStr, bool estaPaga) {
+    DateTime now = DateTime.now();
+    int anoAtual = now.year;
+
+    // Converte as datas de string para DateTime, assumindo o ano atual
+    List<String> partesInicio = dataInicioStr.split('/');
+    int diaInicio = int.parse(partesInicio[0]);
+    int mesInicio = int.parse(partesInicio[1]);
+
+    List<String> partesFim = dataFimStr.split('/');
+    int diaFim = int.parse(partesFim[0]);
+    int mesFim = int.parse(partesFim[1]);
+
+    // Cria objetos DateTime
+    DateTime dataInicio = DateTime(anoAtual, mesInicio, diaInicio);
+    DateTime dataFim = DateTime(anoAtual, mesFim, diaFim);
+
+    // Ajusta para o próximo ano se a data de início for em dezembro e o fim em janeiro, por exemplo
+    if (dataFim.isBefore(dataInicio)) {
+      // significa que o intervalo passa de um ano para outro
+      dataFim = DateTime(anoAtual + 1, mesFim, diaFim);
+    }
+
+    // Situação: A data atual está dentro do intervalo
+    if (now.isAfter(dataInicio) && now.isBefore(dataFim)) {
+      return estaPaga ? "Paga" : "Aberto";
+    }
+    // Situação: A data atual é igual à data de início ou fim
+    if (now.isAtSameMomentAs(dataInicio) || now.isAtSameMomentAs(dataFim)) {
+      return estaPaga ? "Paga" : "Aberto";
+    }
+    // Situação: A data atual passou do intervalo
+    if (now.isAfter(dataFim)) {
+      return estaPaga ? "Paga" : "Atrasada";
+    }
+    // Situação: A data atual é antes do início
+    return estaPaga ? "Paga" : "Aberto";
+  }
+
   String ajustarDiaParaDataInformada(String diaRecebido, String dataBase) {
     int dia = int.tryParse(diaRecebido) ?? 1;
 
@@ -103,7 +143,8 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     return "$diaFormatado/$mesFormatado";
   }
 
-  String compararDiasComBase(String dia1Str, String dia2Str, String dataBaseStr) {
+  String compararDiasComBase(
+      String dia1Str, String dia2Str, String dataBaseStr) {
     int dia1 = int.parse(dia1Str);
     int dia2 = int.parse(dia2Str);
 
@@ -191,6 +232,21 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
   bool possuiSinalNegativo(String valor) {
     return valor.contains('-');
+  }
+
+  Color statusFatura() {
+    String status = verificarStatus(
+        ajustarDiaParaDataInformada(
+            widget.cartao.diaFechamento, listaFaturas[currentIndex].data),
+        compararDiasComBase(widget.cartao.diaFechamento,
+            widget.cartao.diaVencimento, listaFaturas[currentIndex].data),
+        listaFaturas[currentIndex].foiPago);
+    if (status == "Aberto") {
+      return Colors.grey;
+    } else if(status == "Paga"){
+      return Colors.green;
+    }
+    return Colors.red;
   }
 
   @override
@@ -373,12 +429,26 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            color: Colors.green,
+                                            color: statusFatura(),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              "Paga",
+                                              verificarStatus(
+                                                  ajustarDiaParaDataInformada(
+                                                      widget
+                                                          .cartao.diaFechamento,
+                                                      listaFaturas[currentIndex]
+                                                          .data),
+                                                  compararDiasComBase(
+                                                      widget
+                                                          .cartao.diaFechamento,
+                                                      widget
+                                                          .cartao.diaVencimento,
+                                                      listaFaturas[currentIndex]
+                                                          .data),
+                                                  listaFaturas[currentIndex]
+                                                      .foiPago),
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w500),
@@ -423,9 +493,13 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                           fontWeight:
                                                               FontWeight.w400),
                                                     ),
-                                                    Text(ajustarDiaParaDataInformada(
+                                                    Text(
+                                                      ajustarDiaParaDataInformada(
                                                           widget.cartao
-                                                              .diaFechamento, listaFaturas[currentIndex].data),
+                                                              .diaFechamento,
+                                                          listaFaturas[
+                                                                  currentIndex]
+                                                              .data),
                                                       style: TextStyle(
                                                           fontSize: 17,
                                                           fontWeight:
@@ -451,9 +525,15 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                 FontWeight
                                                                     .w400),
                                                       ),
-                                                      Text(compararDiasComBase(widget.cartao.diaFechamento,
+                                                      Text(
+                                                        compararDiasComBase(
                                                             widget.cartao
-                                                                .diaVencimento, listaFaturas[currentIndex].data),
+                                                                .diaFechamento,
+                                                            widget.cartao
+                                                                .diaVencimento,
+                                                            listaFaturas[
+                                                                    currentIndex]
+                                                                .data),
                                                         style: TextStyle(
                                                             fontSize: 17,
                                                             fontWeight:

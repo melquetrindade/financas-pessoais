@@ -15,6 +15,7 @@ class RepositoryCartao {
           saldo: "1.567,90",
           banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
         )),
+        
     Cartao(
         nome: "Banco PAN",
         icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
@@ -26,6 +27,7 @@ class RepositoryCartao {
             saldo: "10.000,00",
             banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
         )),
+        /*
     Cartao(
         nome: "Caixa",
         icone: Banco(nome: "Caixa", img: "assets/caixa.jpg"),
@@ -49,7 +51,7 @@ class RepositoryCartao {
             nome: "Next",
             saldo: "2.003,90",
             banco: Banco(img: "assets/next.jpg", nome: "Next")
-          )),
+          )),*/
   ];
 
   List<Cartao> get cartoes => _cartoes;

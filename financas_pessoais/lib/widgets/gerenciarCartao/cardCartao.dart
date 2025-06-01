@@ -49,6 +49,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
     double faturaDespesaTotal = 0;
     double faturaReceitaTotal = 0;
     double disponivelTotal = 0;
+    double faturaPagamento = 0;
 
     void filtrarFaturasPorCartaoEMes(Cartao cartao) {
       DateTime hoje = DateTime.now();
@@ -65,40 +66,69 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
     }
 
     void calcFaturaTotal() {
-      for (var lancamento in faturasFiltradas[0].lancamentos) {
-        if(lancamento.eDespesa){
-          String valorFormatado = lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
-          double fatura = double.parse(valorFormatado);
-          faturaDespesaTotal += fatura*-1;
-        } else {
+      if(faturasFiltradas[0].lancamentos.isNotEmpty){
+        for (var lancamento in faturasFiltradas[0].lancamentos) {
+          if (lancamento.eDespesa) {
+            String valorFormatado =
+                lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+            double fatura = double.parse(valorFormatado);
+            faturaDespesaTotal += fatura * -1;
+          } else {
+            String valorFormatado =
+                lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+            double fatura = double.parse(valorFormatado);
+            faturaReceitaTotal += fatura;
+          }
+        }
+      }
+    }
+
+    void calcFaturaPagamento() {
+      if (faturasFiltradas[0].pagamentos.isNotEmpty) {
+        print("entrou para ${widget.listCartao[i].nome}");
+        for (var pagamento in faturasFiltradas[0].pagamentos) {
           String valorFormatado =
-              lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
-          double fatura = double.parse(valorFormatado);
-          faturaReceitaTotal += fatura;
+              pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+          double valor = double.parse(valorFormatado);
+          faturaPagamento += valor;
         }
       }
     }
 
     void calcDisponivelTotal() {
-      double disponivel = 0;
-      String valorFormatado =
-          widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
-      disponivel = double.parse(valorFormatado);
-      disponivelTotal =
-          (disponivel + (faturaReceitaTotal + faturaDespesaTotal));
+      if (faturasFiltradas[0].foiPago) {
+        String valorFormatado = widget.listCartao[i].limite
+            .replaceAll(".", "")
+            .replaceAll(",", ".");
+        double valor = double.parse(valorFormatado);
+        disponivelTotal = valor;
+      } else {
+        String limiteFormatado = widget.listCartao[i].limite
+            .replaceAll(".", "")
+            .replaceAll(",", ".");
+        double limite = double.parse(limiteFormatado);
+        double conta =
+            faturaReceitaTotal + faturaDespesaTotal + faturaPagamento;
+        disponivelTotal = limite + conta;
+      }
+      print("saiu dessa função");
     }
 
     Color corFatura() {
-      return (faturaReceitaTotal + faturaDespesaTotal) >= 0 ? AppColors.azulPrimario : Colors.red;
+      return (faturaReceitaTotal + faturaDespesaTotal + faturaPagamento) >= 0 ? AppColors.azulPrimario : Colors.red;
     }
 
     filtrarFaturasPorCartaoEMes(widget.listCartao[i]);
     if(faturasFiltradas.length != 0){
       calcFaturaTotal();
+      calcFaturaPagamento();
+      calcDisponivelTotal();
+    } else {
+      String valorFormatado = widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
+          double valor = double.parse(valorFormatado);
+      disponivelTotal = valor;
     }
 
-    calcDisponivelTotal();
-    
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, top: 20),
       child: Container(
@@ -196,7 +226,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   color: Colors.grey.shade800),
                             ),
                             Text(
-                              "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal)}",
+                              "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal + faturaPagamento)}",
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
