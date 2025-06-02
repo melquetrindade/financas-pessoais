@@ -692,8 +692,15 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                               ),
                             ),
                             Column(
-                              children: hasBotaoPagar() ? [botaoPagar()] : [],
+                              children: hasBotaoPagar() ? [botaoPagar(), Divider()] : [Divider()],
                             ),
+                            Column(
+                              children: [
+                                if (listaFaturas[currentIndex].lancamentos.isNotEmpty)
+                                  for (int i = 0; i < listaFaturas[currentIndex].lancamentos.length; i++)
+                                    cardLancamentos(i),
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -701,6 +708,42 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                   ),
                 ],
               ));
+  }
+
+  Widget cardLancamentos(int i){
+    double converterValor(String valorStr, bool negativo) {
+      // Remove pontos de milhar e substitui vírgula decimal por ponto
+      String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
+
+      // Converte para double
+      double valor = double.parse(valorLimpo);
+
+      // Aplica sinal negativo se for o caso
+      return negativo ? -valor : valor;
+    }
+
+    Color corPagamento(double valor) {
+      return valor >= 0 ? AppColors.azulPrimario : Colors.red;
+    }
+
+    return ListTile(
+      leading: SizedBox(
+          width: 35,
+          height: 35,
+          child: CircleAvatar(
+              radius: 15,
+              backgroundColor: listaFaturas[currentIndex].lancamentos[i].categoria.cor,
+              child: Icon(listaFaturas[currentIndex].lancamentos[i].categoria.icon,
+                color: Colors.white,
+              ))),
+      title: Text(listaFaturas[currentIndex].lancamentos[i].descricao,
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+      trailing: Text(
+        formatarParaReal(converterValor(listaFaturas[currentIndex].lancamentos[i].valor, listaFaturas[currentIndex].lancamentos[i].eDespesa)),
+        style: TextStyle(color: corPagamento(converterValor(listaFaturas[currentIndex].lancamentos[i].valor, listaFaturas[currentIndex].lancamentos[i].eDespesa)), fontSize: 13),
+      ),
+    );
   }
 
   double moduloNum(double valor) {

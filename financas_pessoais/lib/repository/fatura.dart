@@ -223,9 +223,9 @@ class RepositoryFatura {
                 nome: "Banco do Brasil",
                 saldo: "1.567,90",
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
-        pagamentos: [Pagamentos(data: "14/06/205", valor: "-1.000,00"), /*Pagamentos(data: "14/06/205", valor: "485,00")*/],
+        pagamentos: [Pagamentos(data: "14/06/205", valor: "-1.000,00"), Pagamentos(data: "14/06/205", valor: "485,00")],
         data: "12/06/2025",
-        foiPago: false),
+        foiPago: true),
     Fatura(
         lancamentos: [
           Lancamentos(
