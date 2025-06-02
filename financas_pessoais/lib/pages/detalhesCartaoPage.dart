@@ -195,40 +195,103 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     String semSeparadorMilhar = valor.replaceAll('.', '');
     String valorComPonto = semSeparadorMilhar.replaceAll(',', '.');
 
-    print("Valor convertido para double: $valorComPonto");
-
     return double.parse(valorComPonto);
   }
 
   String calcularGastoNoMes() {
-    List<Lancamentos> lancamentos = listaFaturas[currentIndex].lancamentos;
-    double totalGasto = 0;
-    if (lancamentos.isNotEmpty) {
-      print("entrou no if");
-      for (var lancamento in lancamentos) {
-        double valorLancamento = converterStringParaDouble(lancamento.valor);
-        if (lancamento.eDespesa) {
-          totalGasto += (valorLancamento * -1);
-        } else {
-          totalGasto += valorLancamento;
-        }
+    double valorTotalLancamento = 0;
+    double valorTotalPagamento = 0;
+
+    for (var lancamento in listaFaturas[currentIndex].lancamentos) {
+      String valorFormatado =
+          lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      if (lancamento.eDespesa) {
+        valorTotalLancamento += (valor * (-1));
+      } else {
+        valorTotalLancamento += valor;
       }
     }
-    print("Total gasto: ${totalGasto}");
-    return formatarParaReal(totalGasto);
+    for (var pagamento in listaFaturas[currentIndex].pagamentos) {
+      String valorFormatado =
+          pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      valorTotalPagamento += moduloNum(valor);
+    }
+    if (valorTotalPagamento != valorTotalLancamento) {
+      print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
+    }
+    if (listaFaturas[currentIndex].foiPago) {
+      return formatarParaReal(valorTotalLancamento);
+    }
+    return formatarParaReal(valorTotalLancamento + valorTotalPagamento);
   }
 
-  String calcularPagoNoMes() {
-    List<Pagamentos> pagamentos = listaFaturas[currentIndex].pagamentos;
-    double totalPago = 0;
-    if (pagamentos.isNotEmpty) {
-      for (var pagamento in pagamentos) {
-        double valorPago = converterStringParaDouble(pagamento.valor);
-        totalPago += valorPago;
+  String calcValorPagar() {
+    double valorTotalLancamento = 0;
+    double valorTotalPagamento = 0;
+
+    for (var lancamento in listaFaturas[currentIndex].lancamentos) {
+      String valorFormatado =
+          lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      if (lancamento.eDespesa) {
+        valorTotalLancamento += (valor * (-1));
+      } else {
+        valorTotalLancamento += valor;
       }
     }
-    return formatarParaReal(totalPago);
+    for (var pagamento in listaFaturas[currentIndex].pagamentos) {
+      String valorFormatado =
+          pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      if (listaFaturas[currentIndex].foiPago) {
+        valorTotalPagamento += valor;
+      } else {
+        valorTotalPagamento += moduloNum(valor);
+      }
+    }
+    if (valorTotalPagamento != valorTotalLancamento) {
+      print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
+    }
+    if (listaFaturas[currentIndex].foiPago) {
+      return formatarParaReal(valorTotalPagamento);
+    }
+    return formatarParaReal(valorTotalLancamento + valorTotalPagamento);
   }
+
+  bool hasBotaoPagar() {
+    double valorTotalLancamento = 0;
+    double valorTotalPagamento = 0;
+
+    for (var lancamento in listaFaturas[currentIndex].lancamentos) {
+      String valorFormatado =
+          lancamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      if (lancamento.eDespesa) {
+        valorTotalLancamento += (valor * (-1));
+      } else {
+        valorTotalLancamento += valor;
+      }
+    }
+    for (var pagamento in listaFaturas[currentIndex].pagamentos) {
+      String valorFormatado =
+          pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      if (listaFaturas[currentIndex].foiPago) {
+        valorTotalPagamento += valor;
+      } else{
+        valorTotalPagamento += moduloNum(valor);
+      }
+    }
+    if (valorTotalPagamento != valorTotalLancamento) {
+      print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
+    }
+
+    return valorTotalPagamento != valorTotalLancamento ? true : false;
+  }
+
+  
 
   bool possuiSinalNegativo(String valor) {
     return valor.contains('-');
@@ -243,7 +306,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
         listaFaturas[currentIndex].foiPago);
     if (status == "Aberto") {
       return Colors.grey;
-    } else if(status == "Paga"){
+    } else if (status == "Paga") {
       return Colors.green;
     }
     return Colors.red;
@@ -257,16 +320,8 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Detalhes do Cartão: \t\n ${widget.cartao.nome}");
     repositoryFatura = RepositoryFatura();
     listaFaturas = filtrarFaturasPorCartao(widget.cartao);
-    /*
-    if (listaFaturas.isNotEmpty) {
-      print("Lançamentos deste período:");
-      for (var lanca in listaFaturas[currentIndex].lancamentos) {
-        print("valor: ${lanca.valor} - data: ${lanca.data}");
-      }
-    }*/
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -583,7 +638,11 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                         CrossAxisAlignment.end,
                                                     children: [
                                                       Text(
-                                                        "Valor Pago",
+                                                        listaFaturas[
+                                                                    currentIndex]
+                                                                .foiPago
+                                                            ? "Valor pago"
+                                                            : "Valor a pagar",
                                                         style: TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
@@ -591,9 +650,12 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                     .w400),
                                                       ),
                                                       Text(
-                                                        calcularPagoNoMes(),
+                                                        calcValorPagar(),
                                                         style: TextStyle(
-                                                            color: Colors.green,
+                                                            color: possuiSinalNegativo(
+                                                                    calcValorPagar())
+                                                                ? Colors.red
+                                                                : Colors.green,
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             fontSize: 17),
@@ -610,7 +672,28 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                   ],
                                 ),
                               ),
-                            )
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: listaFaturas[currentIndex]
+                                        .pagamentos
+                                        .isNotEmpty
+                                    ? [
+                                        for (int i = 0;
+                                            i <
+                                                listaFaturas[currentIndex]
+                                                    .pagamentos
+                                                    .length;
+                                            i++)
+                                          cardPagamentos(i),
+                                      ]
+                                    : [],
+                              ),
+                            ),
+                            Column(
+                              children: hasBotaoPagar() ? [botaoPagar()] : [],
+                            ),
                           ],
                         ),
                       ),
@@ -619,20 +702,109 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                 ],
               ));
   }
+
+  double moduloNum(double valor) {
+    if (valor >= 0) {
+      return valor;
+    }
+    return valor * (-1);
+  }
+
+  Widget botaoPagar() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 13),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+              side: BorderSide(
+                color: Colors.green,
+                width: 1,
+              ),
+            ),
+          ),
+          onPressed: () {
+            print("Pagar Fatura");
+            //Navigator.pushNamed(context, '/gerenciaCartao');
+          },
+          child: Text(
+            'Pagar Fatura',
+            style: TextStyle(color: Colors.green, fontSize: 15),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget cardPagamentos(int i) {
+    String valorFormatado = listaFaturas[currentIndex]
+        .pagamentos[i]
+        .valor
+        .replaceAll(".", "")
+        .replaceAll(",", ".");
+    double valor = double.parse(valorFormatado);
+
+    Color corPagamento() {
+      return valor >= 0 ? AppColors.azulPrimario : Colors.red;
+    }
+
+    return ListTile(
+      leading: SizedBox(
+          width: 25,
+          height: 25,
+          child: CircleAvatar(
+              radius: 15,
+              backgroundColor: Colors.green,
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+              ))),
+      title: Text(
+        "Pagamento Recebido",
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        "em ${listaFaturas[currentIndex].pagamentos[i].data}",
+        style: TextStyle(
+            color: Colors.black54, fontWeight: FontWeight.w500, fontSize: 12),
+      ),
+      trailing: Text(
+        formatarParaReal(valor),
+        style: TextStyle(color: corPagamento(), fontSize: 13),
+      ),
+    );
+  }
 }
 
 /*
-Cartao(
-        nome: "Next",
-        icone: Banco(nome: "Cartão", img: "Cartão"),
-        limite: "500,00",
-        diaFechamento: "08",
-        diaVencimento: "15",
-        fatura: "0,00",
-        conta:
-          Conta(
-            nome: "Next",
-            saldo: "2.003,90",
-            banco: Banco(img: "assets/next.jpg", nome: "Next")
-          )),
- */
+  String calcularPagoNoMes() {
+    List<Pagamentos> pagamentos = listaFaturas[currentIndex].pagamentos;
+    double totalPago = 0;
+    if (pagamentos.isNotEmpty) {
+      for (var pagamento in pagamentos) {
+        double valorPago = converterStringParaDouble(pagamento.valor);
+        totalPago += valorPago;
+      }
+    }
+    return formatarParaReal(totalPago);
+  }*/
+
+  /*
+  String calcularGastoNoMes() {
+    List<Lancamentos> lancamentos = listaFaturas[currentIndex].lancamentos;
+    double totalGasto = 0;
+    if (lancamentos.isNotEmpty) {
+      for (var lancamento in lancamentos) {
+        double valorLancamento = converterStringParaDouble(lancamento.valor);
+        if (lancamento.eDespesa) {
+          totalGasto += (valorLancamento * -1);
+        } else {
+          totalGasto += valorLancamento;
+        }
+      }
+    }
+    return formatarParaReal(totalGasto);
+  }*/

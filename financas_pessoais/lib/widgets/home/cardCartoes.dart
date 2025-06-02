@@ -163,6 +163,13 @@ class _CardcartoesState extends State<Cardcartoes> {
       }
     }
 
+    double moduloNum(double valor) {
+      if (valor >= 0) {
+        return valor;
+      }
+      return valor * (-1);
+    }
+
     void calcDisponivelTotal() {
       if (faturasFiltradas[0].foiPago) {
         String valorFormatado = widget.listCartao[i].limite
@@ -171,26 +178,43 @@ class _CardcartoesState extends State<Cardcartoes> {
         double valor = double.parse(valorFormatado);
         disponivelTotal = valor;
       } else {
+        print("fatura pagamento: ${faturaPagamento}");
         String limiteFormatado = widget.listCartao[i].limite
             .replaceAll(".", "")
             .replaceAll(",", ".");
         double limite = double.parse(limiteFormatado);
-        double conta =
-            faturaReceitaTotal + faturaDespesaTotal + faturaPagamento;
-        disponivelTotal = limite + conta;
+        double conta = faturaReceitaTotal +
+            faturaDespesaTotal +
+            moduloNum(faturaPagamento);
+        if (conta > 0) {
+          disponivelTotal += conta + limite;
+        } else {
+          print("disponível total = limitie: ${limite} - conta: ${conta}");
+          disponivelTotal = limite + conta;
+        }
       }
-      print("saiu dessa função");
+    }
+
+    double calcFaturaAtual(
+        double fatDespesa, double fatReceita, double fatPagamento) {
+      double conta = fatDespesa + fatReceita + fatPagamento;
+      if (conta > 0) {
+        return 0;
+      }
+      return conta;
     }
 
     Color corFatura() {
-      return (faturaReceitaTotal + faturaDespesaTotal + faturaPagamento) >= 0
+      return (faturaReceitaTotal +
+                  faturaDespesaTotal +
+                  moduloNum(faturaPagamento)) >=
+              0
           ? AppColors.azulPrimario
           : Colors.red;
     }
 
     void calcFaturaPagamento() {
       if (faturasFiltradas[0].pagamentos.isNotEmpty) {
-        print("entrou para ${widget.listCartao[i].nome}");
         for (var pagamento in faturasFiltradas[0].pagamentos) {
           String valorFormatado =
               pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
@@ -205,8 +229,9 @@ class _CardcartoesState extends State<Cardcartoes> {
       calcFaturaPagamento();
       calcDisponivelTotal();
     } else {
-      String valorFormatado = widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
-          double valor = double.parse(valorFormatado);
+      String valorFormatado =
+          widget.listCartao[i].limite.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
       disponivelTotal = valor;
     }
 
@@ -287,7 +312,7 @@ class _CardcartoesState extends State<Cardcartoes> {
                         ),
                         Text(
                             showSaldo
-                                ? "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal + faturaPagamento)}"
+                                ? "${formatarParaReal(calcFaturaAtual(faturaDespesaTotal, faturaReceitaTotal, moduloNum(faturaPagamento)))}"
                                 : "R\$ ---",
                             style: TextStyle(
                                 fontSize: 16,
