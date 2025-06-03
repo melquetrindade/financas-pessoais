@@ -19,6 +19,44 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   late List<Fatura> listaFaturas;
   PageController pageController = PageController();
   int currentIndex = 0;
+  List<String> datas = [];
+
+  void recuperaDatasLancamentos() {
+    if (listaFaturas.isNotEmpty) {
+      if (listaFaturas[currentIndex].lancamentos.isNotEmpty) {
+        for (var lancamento in listaFaturas[currentIndex].lancamentos) {
+          if (!datas.contains(lancamento.data)) {
+            datas.add(lancamento.data);
+          }
+        }
+      }
+    }
+  }
+
+  void ordenaDatasLancamentos() {
+    if (datas.isNotEmpty) {
+      datas.sort((a, b) {
+        // Converte as strings para DateTime
+        List<String> partesA = a.split('/');
+        List<String> partesB = b.split('/');
+
+        DateTime dataA = DateTime(
+          int.parse(partesA[2]), // ano
+          int.parse(partesA[1]), // mês
+          int.parse(partesA[0]), // dia
+        );
+
+        DateTime dataB = DateTime(
+          int.parse(partesB[2]),
+          int.parse(partesB[1]),
+          int.parse(partesB[0]),
+        );
+
+        // Ordena de mais recente para mais antiga
+        return dataB.compareTo(dataA);
+      });
+    }
+  }
 
   List<Fatura> filtrarFaturasPorCartao(Cartao cartao) {
     List<Fatura> faturasFiltradas = [];
@@ -28,9 +66,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
         faturasFiltradas.add(fatura);
       }
     }
-    ordenarPorDataDecrescente(faturasFiltradas, (f) => f.data);
-
-    faturasFiltradas.forEach((f) => print(f.data));
+    if (faturasFiltradas.isNotEmpty) {
+      ordenarPorDataDecrescente(faturasFiltradas, (f) => f.data);
+    }
     return faturasFiltradas;
   }
 
@@ -153,9 +191,11 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     int diaBase = int.parse(partesData[0]);
     int mesBase = int.parse(partesData[1]);
     int anoBase = int.parse(partesData[2]);
+    print(diaBase);
 
     int mesRetorno = mesBase;
     int anoRetorno = anoBase;
+    print(anoRetorno);
 
     // Se dia1 > dia2, dia2 pertence ao próximo mês
     if (dia1 > dia2) {
@@ -280,7 +320,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
       double valor = double.parse(valorFormatado);
       if (listaFaturas[currentIndex].foiPago) {
         valorTotalPagamento += valor;
-      } else{
+      } else {
         valorTotalPagamento += moduloNum(valor);
       }
     }
@@ -290,8 +330,6 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
     return valorTotalPagamento != valorTotalLancamento ? true : false;
   }
-
-  
 
   bool possuiSinalNegativo(String valor) {
     return valor.contains('-');
@@ -322,6 +360,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   Widget build(BuildContext context) {
     repositoryFatura = RepositoryFatura();
     listaFaturas = filtrarFaturasPorCartao(widget.cartao);
+    datas = [];
+    recuperaDatasLancamentos();
+    ordenaDatasLancamentos();
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -461,7 +502,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                             Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: Colors.grey.shade100),
+                                  color: Colors.grey.shade200),
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Column(
@@ -556,7 +597,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                   currentIndex]
                                                               .data),
                                                       style: TextStyle(
-                                                          fontSize: 17,
+                                                          fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )
@@ -590,7 +631,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                     currentIndex]
                                                                 .data),
                                                         style: TextStyle(
-                                                            fontSize: 17,
+                                                            fontSize: 16,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w500),
@@ -624,7 +665,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                               : Colors.green,
                                                           fontWeight:
                                                               FontWeight.w500,
-                                                          fontSize: 17),
+                                                          fontSize: 16),
                                                     )
                                                   ],
                                                 ),
@@ -658,7 +699,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                                                                 : Colors.green,
                                                             fontWeight:
                                                                 FontWeight.w500,
-                                                            fontSize: 17),
+                                                            fontSize: 16),
                                                       )
                                                     ],
                                                   ),
@@ -692,13 +733,17 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
                               ),
                             ),
                             Column(
-                              children: hasBotaoPagar() ? [botaoPagar(), Divider()] : [Divider()],
+                              children: hasBotaoPagar()
+                                  ? [botaoPagar(), Divider()]
+                                  : [Divider()],
                             ),
                             Column(
                               children: [
-                                if (listaFaturas[currentIndex].lancamentos.isNotEmpty)
-                                  for (int i = 0; i < listaFaturas[currentIndex].lancamentos.length; i++)
-                                    cardLancamentos(i),
+                                if (listaFaturas[currentIndex]
+                                    .lancamentos
+                                    .isNotEmpty)
+                                  for (int i = 0; i < datas.length; i++)
+                                    cardDatas(i),
                               ],
                             )
                           ],
@@ -710,15 +755,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
               ));
   }
 
-  Widget cardLancamentos(int i){
+  Widget cardDatas(int i) {
     double converterValor(String valorStr, bool negativo) {
-      // Remove pontos de milhar e substitui vírgula decimal por ponto
       String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
-
-      // Converte para double
       double valor = double.parse(valorLimpo);
-
-      // Aplica sinal negativo se for o caso
       return negativo ? -valor : valor;
     }
 
@@ -726,23 +766,62 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
       return valor >= 0 ? AppColors.azulPrimario : Colors.red;
     }
 
-    return ListTile(
-      leading: SizedBox(
-          width: 35,
-          height: 35,
-          child: CircleAvatar(
-              radius: 15,
-              backgroundColor: listaFaturas[currentIndex].lancamentos[i].categoria.cor,
-              child: Icon(listaFaturas[currentIndex].lancamentos[i].categoria.icon,
-                color: Colors.white,
-              ))),
-      title: Text(listaFaturas[currentIndex].lancamentos[i].descricao,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-      ),
-      trailing: Text(
-        formatarParaReal(converterValor(listaFaturas[currentIndex].lancamentos[i].valor, listaFaturas[currentIndex].lancamentos[i].eDespesa)),
-        style: TextStyle(color: corPagamento(converterValor(listaFaturas[currentIndex].lancamentos[i].valor, listaFaturas[currentIndex].lancamentos[i].eDespesa)), fontSize: 13),
-      ),
+    Widget cardLancamentos(Lancamentos lancamento) {
+      bool match = false;
+      if (lancamento.data == datas[i]) {
+        match = true;
+      }
+
+      return match
+          ? ListTile(
+              leading: SizedBox(
+                  width: 35,
+                  height: 35,
+                  child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: lancamento.categoria.cor,
+                      child: Icon(
+                        lancamento.categoria.icon,
+                        color: Colors.white,
+                      ))),
+              title: Text(
+                lancamento.descricao,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade800),
+              ),
+              trailing: Text(
+                formatarParaReal(
+                    converterValor(lancamento.valor, lancamento.eDespesa)),
+                style: TextStyle(
+                    color: corPagamento(
+                        converterValor(lancamento.valor, lancamento.eDespesa)),
+                    fontSize: 13),
+              ),
+            )
+          : Container();
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                datas[i],
+                style: TextStyle(
+                    color: Colors.grey.shade800, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+        if (listaFaturas[currentIndex].lancamentos.isNotEmpty)
+          for (Lancamentos lancamento in listaFaturas[currentIndex].lancamentos)
+            cardLancamentos(lancamento),
+      ],
     );
   }
 
@@ -807,7 +886,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
               ))),
       title: Text(
         "Pagamento Recebido",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade800),
       ),
       subtitle: Text(
         "em ${listaFaturas[currentIndex].pagamentos[i].data}",
@@ -821,6 +903,41 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     );
   }
 }
+
+/* 
+ListTile(
+              leading: SizedBox(
+                  width: 35,
+                  height: 35,
+                  child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: listaFaturas[currentIndex]
+                          .lancamentos[i]
+                          .categoria
+                          .cor,
+                      child: Icon(
+                        listaFaturas[currentIndex]
+                            .lancamentos[i]
+                            .categoria
+                            .icon,
+                        color: Colors.white,
+                      ))),
+              title: Text(
+                listaFaturas[currentIndex].lancamentos[i].descricao,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              ),
+              trailing: Text(
+                formatarParaReal(converterValor(
+                    listaFaturas[currentIndex].lancamentos[i].valor,
+                    listaFaturas[currentIndex].lancamentos[i].eDespesa)),
+                style: TextStyle(
+                    color: corPagamento(converterValor(
+                        listaFaturas[currentIndex].lancamentos[i].valor,
+                        listaFaturas[currentIndex].lancamentos[i].eDespesa)),
+                    fontSize: 13),
+              ),
+            )
+*/
 
 /*
   String calcularPagoNoMes() {

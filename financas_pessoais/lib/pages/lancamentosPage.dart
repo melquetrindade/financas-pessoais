@@ -492,8 +492,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
                         padding: const EdgeInsets.only(top: 20),
                         child: Align(
                           alignment: Alignment.topLeft,
-                          child: Text(
-                            "Pago com",
+                          child: Text(eDespesa ? "Pago com" : "Recebido com",
                             style: TextStyle(
                                 color: Colors.grey.shade700,
                                 fontWeight: FontWeight.w500,

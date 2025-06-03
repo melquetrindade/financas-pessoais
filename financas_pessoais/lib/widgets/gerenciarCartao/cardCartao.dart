@@ -83,16 +83,11 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
       }
     }
 
-    void calcFaturaPagamento() {
-      if (faturasFiltradas[0].pagamentos.isNotEmpty) {
-        print("entrou para ${widget.listCartao[i].nome}");
-        for (var pagamento in faturasFiltradas[0].pagamentos) {
-          String valorFormatado =
-              pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
-          double valor = double.parse(valorFormatado);
-          faturaPagamento += valor;
-        }
+    double moduloNum(double valor) {
+      if (valor >= 0) {
+        return valor;
       }
+      return valor * (-1);
     }
 
     void calcDisponivelTotal() {
@@ -108,14 +103,37 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
             .replaceAll(",", ".");
         double limite = double.parse(limiteFormatado);
         double conta =
-            faturaReceitaTotal + faturaDespesaTotal + faturaPagamento;
-        disponivelTotal = limite + conta;
+            faturaReceitaTotal + faturaDespesaTotal + moduloNum(faturaPagamento);
+        if (conta > 0) {
+          disponivelTotal += conta + limite;
+        } else {
+          disponivelTotal = limite + conta;
+        }
       }
-      print("saiu dessa função");
+    }
+
+    double calcFaturaAtual(
+        double fatDespesa, double fatReceita, double fatPagamento) {
+      double conta = fatDespesa + fatReceita + fatPagamento;
+      if (conta > 0) {
+        return 0;
+      }
+      return conta;
     }
 
     Color corFatura() {
-      return (faturaReceitaTotal + faturaDespesaTotal + faturaPagamento) >= 0 ? AppColors.azulPrimario : Colors.red;
+      return (faturaReceitaTotal + faturaDespesaTotal + moduloNum(faturaPagamento)) >= 0 ? AppColors.azulPrimario : Colors.red;
+    }
+
+    void calcFaturaPagamento() {
+      if (faturasFiltradas[0].pagamentos.isNotEmpty) {
+        for (var pagamento in faturasFiltradas[0].pagamentos) {
+          String valorFormatado =
+              pagamento.valor.replaceAll(".", "").replaceAll(",", ".");
+          double valor = double.parse(valorFormatado);
+          faturaPagamento += valor;
+        }
+      }
     }
 
     filtrarFaturasPorCartaoEMes(widget.listCartao[i]);
@@ -209,7 +227,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey.shade800),
                             ),
-                            Text("R\$ ${formatarParaReal(disponivelTotal)}",
+                            Text(formatarParaReal(disponivelTotal),
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             )
@@ -226,7 +244,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                                   color: Colors.grey.shade800),
                             ),
                             Text(
-                              "${formatarParaReal(faturaDespesaTotal + faturaReceitaTotal + faturaPagamento)}",
+                              "${formatarParaReal(calcFaturaAtual(faturaDespesaTotal, faturaReceitaTotal, moduloNum(faturaPagamento)))}",
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

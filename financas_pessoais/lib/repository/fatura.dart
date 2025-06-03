@@ -177,7 +177,7 @@ class RepositoryFatura {
           Lancamentos(
             valor: "15,00",
             descricao: "Dogão",
-            data: "16/06/2025",
+            data: "01/06/2025",
             eDespesa: true,
             categoria: Categorias(nome: "Alimentação", cor: Colors.pink.shade400, icon: Icons.restaurant),
             conta: null,

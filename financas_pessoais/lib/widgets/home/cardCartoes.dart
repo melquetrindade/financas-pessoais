@@ -178,7 +178,6 @@ class _CardcartoesState extends State<Cardcartoes> {
         double valor = double.parse(valorFormatado);
         disponivelTotal = valor;
       } else {
-        print("fatura pagamento: ${faturaPagamento}");
         String limiteFormatado = widget.listCartao[i].limite
             .replaceAll(".", "")
             .replaceAll(",", ".");
@@ -189,7 +188,6 @@ class _CardcartoesState extends State<Cardcartoes> {
         if (conta > 0) {
           disponivelTotal += conta + limite;
         } else {
-          print("disponível total = limitie: ${limite} - conta: ${conta}");
           disponivelTotal = limite + conta;
         }
       }
