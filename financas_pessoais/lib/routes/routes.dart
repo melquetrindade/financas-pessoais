@@ -24,6 +24,7 @@ class Routes {
     '/notificacaoPage': (_) => const NotificacaoPage(),
   };
   static String initial = '/homeController';
+  //static String initial = '/onboardingOne';
   
   static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
 }

@@ -301,6 +301,13 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   }
 
   bool hasBotaoPagar() {
+    List<double> valores = valorFatura();
+
+    return valores[0] != valores[1] ? true : false;
+  }
+
+  List<double> valorFatura() {
+    List<double> valores = [];
     double valorTotalLancamento = 0;
     double valorTotalPagamento = 0;
 
@@ -327,8 +334,9 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     if (valorTotalPagamento != valorTotalLancamento) {
       print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
     }
-
-    return valorTotalPagamento != valorTotalLancamento ? true : false;
+    valores.add(valorTotalPagamento);
+    valores.add(valorTotalLancamento);
+    return valores;
   }
 
   bool possuiSinalNegativo(String valor) {
@@ -849,8 +857,15 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
             ),
           ),
           onPressed: () {
-            print("Pagar Fatura");
-            //Navigator.pushNamed(context, '/gerenciaCartao');
+            List<double> valores = valorFatura();
+            DateTime dataAtual = DateTime.now();
+            String dia = dataAtual.day.toString().padLeft(2, '0');
+            String mes = dataAtual.month.toString().padLeft(2, '0');
+            String ano = dataAtual.year.toString();
+
+            //return '$dia/$mes/$ano';
+            print("Pagamento: \n\tData: ${'$dia/$mes/$ano'} \n\tValor: ${formatarParaReal(valores[0] + valores[1])} \nConta: ${widget.cartao.conta.nome}");
+
           },
           child: Text(
             'Pagar Fatura',
@@ -903,68 +918,3 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     );
   }
 }
-
-/* 
-ListTile(
-              leading: SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: listaFaturas[currentIndex]
-                          .lancamentos[i]
-                          .categoria
-                          .cor,
-                      child: Icon(
-                        listaFaturas[currentIndex]
-                            .lancamentos[i]
-                            .categoria
-                            .icon,
-                        color: Colors.white,
-                      ))),
-              title: Text(
-                listaFaturas[currentIndex].lancamentos[i].descricao,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              trailing: Text(
-                formatarParaReal(converterValor(
-                    listaFaturas[currentIndex].lancamentos[i].valor,
-                    listaFaturas[currentIndex].lancamentos[i].eDespesa)),
-                style: TextStyle(
-                    color: corPagamento(converterValor(
-                        listaFaturas[currentIndex].lancamentos[i].valor,
-                        listaFaturas[currentIndex].lancamentos[i].eDespesa)),
-                    fontSize: 13),
-              ),
-            )
-*/
-
-/*
-  String calcularPagoNoMes() {
-    List<Pagamentos> pagamentos = listaFaturas[currentIndex].pagamentos;
-    double totalPago = 0;
-    if (pagamentos.isNotEmpty) {
-      for (var pagamento in pagamentos) {
-        double valorPago = converterStringParaDouble(pagamento.valor);
-        totalPago += valorPago;
-      }
-    }
-    return formatarParaReal(totalPago);
-  }*/
-
-  /*
-  String calcularGastoNoMes() {
-    List<Lancamentos> lancamentos = listaFaturas[currentIndex].lancamentos;
-    double totalGasto = 0;
-    if (lancamentos.isNotEmpty) {
-      for (var lancamento in lancamentos) {
-        double valorLancamento = converterStringParaDouble(lancamento.valor);
-        if (lancamento.eDespesa) {
-          totalGasto += (valorLancamento * -1);
-        } else {
-          totalGasto += valorLancamento;
-        }
-      }
-    }
-    return formatarParaReal(totalGasto);
-  }*/

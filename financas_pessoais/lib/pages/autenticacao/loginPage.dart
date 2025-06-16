@@ -115,11 +115,13 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           print("Fazer login");
+                          Navigator.pushReplacementNamed(context, '/homeController');
+                          /*
                           if (formKey.currentState!.validate()) {
                             print("tudo ok");
                           } else {
                             print("não ta ok");
-                          }
+                          }*/
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue.shade300, // Cor do botão
@@ -135,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/signUp');
+                      Navigator.pushReplacementNamed(context, '/signUp');
                     },
                     child: Text(
                       "Ainda não tem conta? Cadastre-se agora!",

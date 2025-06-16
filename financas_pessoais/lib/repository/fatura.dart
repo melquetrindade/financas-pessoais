@@ -223,9 +223,9 @@ class RepositoryFatura {
                 nome: "Banco do Brasil",
                 saldo: "1.567,90",
                 banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
-        pagamentos: [Pagamentos(data: "14/06/205", valor: "-1.000,00"), Pagamentos(data: "14/06/205", valor: "485,00")],
+        pagamentos: [Pagamentos(data: "14/06/205", valor: "-1.000,00"), /*Pagamentos(data: "14/06/205", valor: "485,00")*/],
         data: "12/06/2025",
-        foiPago: true),
+        foiPago: false),
     Fatura(
         lancamentos: [
           Lancamentos(
@@ -296,16 +296,16 @@ class RepositoryFatura {
           ),
         ],
         cartao: Cartao(
-        nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
-        limite: "500,00",
-        diaFechamento: "30",
-        diaVencimento: "29",
-        conta: Conta(
-            nome: "Banco PAN", 
-            saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
-        )),
+          nome: "Banco PAN",
+          icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+          limite: "500,00",
+          diaFechamento: "30",
+          diaVencimento: "29",
+          conta: Conta(
+              nome: "Banco PAN", 
+              saldo: "10.000,00",
+              banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+          )),
         pagamentos: [],
         data: "23/02/2025",
         foiPago: false),
@@ -418,17 +418,17 @@ class RepositoryFatura {
             ),
             ],
             cartao: Cartao(
-            nome: "Banco PAN",
-            icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
-            limite: "500,00",
-            diaFechamento: "30",
-            diaVencimento: "30",
-            conta: Conta(
-                nome: "Banco PAN", 
-                saldo: "10.000,00",
-                banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
-            )),
-            pagamentos: [],
+              nome: "Banco PAN",
+              icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+              limite: "500,00",
+              diaFechamento: "30",
+              diaVencimento: "30",
+              conta: Conta(
+                  nome: "Banco PAN", 
+                  saldo: "10.000,00",
+                  banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+              )),
+            pagamentos: [/*Pagamentos(data: "01/06/2025", valor: "-200,00")*/],
             data: "02/06/2025",
             foiPago: false),
   ];

@@ -185,7 +185,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                     child: Text(
                       "Já possui uma conta? Faça o login!",
