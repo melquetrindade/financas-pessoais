@@ -17,6 +17,7 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
   late List<String> datas;
   PageController pageController = PageController();
   int currentIndex = 0;
+  int filtro = 0;
 
   List<String> ordenarMesAno(List<Lancamentos> lancamentos) {
     List<String> datas = [];
@@ -94,6 +95,7 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
     repositoryLancamentos = RepositoryLancamentos();
     listaLancamentos = repositoryLancamentos.lancamentos;
     datas = ordenarMesAno(listaLancamentos);
+    print("Filtro atual: ${filtro}");
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -106,6 +108,45 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
           ),
           iconTheme: IconThemeData(color: Colors.white),
+          actions: [
+            PopupMenuButton<int>(
+              icon: Icon(
+                Icons.filter_list_rounded,
+                color: Colors.white,
+              ),
+              onSelected: (value) {
+                // Implemente aqui o que deve acontecer ao selecionar cada opção
+                print('Opção selecionada: $value');
+                setState(() {
+                  filtro = value;
+                });
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text(
+                    'Mais recentes',
+                    style: TextStyle(fontWeight: FontWeight.w400),
+                  ),
+                ),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Text('Menos recentes',
+                      style: TextStyle(fontWeight: FontWeight.w400)),
+                ),
+                const PopupMenuItem<int>(
+                  value: 2,
+                  child: Text('Maior valor',
+                      style: TextStyle(fontWeight: FontWeight.w400)),
+                ),
+                const PopupMenuItem<int>(
+                  value: 3,
+                  child: Text('Menor valor',
+                      style: TextStyle(fontWeight: FontWeight.w400)),
+                ),
+              ],
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -197,11 +238,9 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
             Expanded(
                 child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(15),
                 child: Column(
-                  children: [
-                    cardLancamento()
-                  ],
+                  children: [cardLancamento()],
                 ),
               ),
             ))
@@ -212,6 +251,7 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
   Widget cardLancamento() {
     List<Lancamentos> lancamentos = listaLancamentos;
     List<Lancamentos> lancamentosAux = [];
+    List<String> datasAux = [];
 
     List<Lancamentos> filtrarLancamentosPorMesAno() {
       // Extrai mês e ano da data base
@@ -249,36 +289,163 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
     }
 
     lancamentosAux = filtrarLancamentosPorMesAno();
+    for (var lanc in lancamentosAux) {
+      if (!datasAux.contains(lanc.data)) {
+        datasAux.add(lanc.data);
+      }
+    }
+    print(datasAux);
 
+    DateTime _converterParaDateTime(String dataStr) {
+      final partes = dataStr.split('/');
+      final dia = int.parse(partes[0]);
+      final mes = int.parse(partes[1]);
+      final ano = int.parse(partes[2]);
+      return DateTime(ano, mes, dia);
+    }
+
+    List<String> ordenarDatasMaisRecentes() {
+      datasAux.sort((a, b) {
+        DateTime dataA = _converterParaDateTime(a);
+        DateTime dataB = _converterParaDateTime(b);
+        return dataB.compareTo(dataA); // Mais recente primeiro
+      });
+      if (filtro == 0) {
+        return datasAux;
+      }
+      return datasAux.reversed.toList();
+    }
+
+    /// Função utilitária: converte "1.234,56" → 1234.56
+    double _valorNumerico(String valorBr) {
+      final semPontos = valorBr.replaceAll('.', ''); // "1234,56"
+      final comPonto = semPontos.replaceAll(',', '.'); // "1234.56"
+      return double.parse(comPonto);
+    }
+
+    /// Retorna o valor final com sinal aplicado (+ ou -)
+    double _valorComSinal(Lancamentos l) {
+      final double base = _valorNumerico(l.valor);
+      return l.eDespesa ? -base : base;
+    }
+
+    /// Ordena a lista *in place* do maior para o menor
+    void ordenarPorValorDesc() {
+      if (filtro == 2) {
+        lancamentosAux
+            .sort((a, b) => _valorComSinal(b).compareTo(_valorComSinal(a)));
+      } else {
+        print("entrou aqui");
+        lancamentosAux
+            .sort((a, b) => _valorComSinal(a).compareTo(_valorComSinal(b)));
+      }
+    }
+
+    if (filtro == 0 || filtro == 1) {
+      datasAux = ordenarDatasMaisRecentes();
+    }
+    if (filtro == 2 || filtro == 3) {
+      ordenarPorValorDesc();
+    }
+
+    if (filtro == 0 || filtro == 1) {
+      return Column(
+        children: [
+          for (int i = 0; i < datasAux.length; i++) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(datasAux[i],
+                    style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontWeight: FontWeight.w500)),
+              ],
+            ),
+            for (var lancamento in lancamentosAux)
+              lancamento.data == datasAux[i]
+                  ? ListTile(
+                      leading: SizedBox(
+                          width: 35,
+                          height: 35,
+                          child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: lancamento.categoria.cor,
+                              child: Icon(
+                                lancamento.categoria.icon,
+                                color: Colors.white,
+                              ))),
+                      title: Text(
+                        lancamento.descricao,
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade800),
+                      ),
+                      subtitle: Text(
+                        lancamento.cartao != null
+                            ? 'Cartão: ${lancamento.cartao?.nome}'
+                            : 'Conta: ${lancamento.conta?.nome}',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      trailing: Text(
+                        formatarParaReal(converterValor(
+                            lancamento.valor, lancamento.eDespesa)),
+                        style: TextStyle(
+                            color: corPagamento(converterValor(
+                                lancamento.valor, lancamento.eDespesa)),
+                            fontSize: 13),
+                      ),
+                    )
+                  : Container()
+          ]
+        ],
+      );
+    }
     return Column(
       children: [
-        for(var lancamento in lancamentosAux) ListTile(
-          leading: SizedBox(
-            width: 35,
-            height: 35,
-            child: CircleAvatar(
-                radius: 15,
-                backgroundColor: lancamento.categoria.cor,
-                child: Icon(
-                  lancamento.categoria.icon,
-                  color: Colors.white,
-                ))),
-          title: Text(
-            lancamento.descricao,
-            style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade800),
-          ),
-          trailing: Text(
-            formatarParaReal(
-                converterValor(lancamento.valor, lancamento.eDespesa)),
-            style: TextStyle(
-                color: corPagamento(
-                    converterValor(lancamento.valor, lancamento.eDespesa)),
-                fontSize: 13),
-          ),
-        )
+        for (var lancamento in lancamentosAux)
+          ListTile(
+            leading: SizedBox(
+                width: 35,
+                height: 35,
+                child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: lancamento.categoria.cor,
+                    child: Icon(
+                      lancamento.categoria.icon,
+                      color: Colors.white,
+                    ))),
+            title: Text(
+              lancamento.descricao,
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade800),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  lancamento.cartao != null
+                      ? 'Cartão: ${lancamento.cartao?.nome}'
+                      : 'Conta: ${lancamento.conta?.nome}',
+                  style: TextStyle(fontSize: 12),
+                ),
+                Text(
+                  lancamento.data,
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+            trailing: Text(
+              formatarParaReal(
+                  converterValor(lancamento.valor, lancamento.eDespesa)),
+              style: TextStyle(
+                  color: corPagamento(
+                      converterValor(lancamento.valor, lancamento.eDespesa)),
+                  fontSize: 13),
+            ),
+          )
       ],
     );
   }
