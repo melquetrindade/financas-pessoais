@@ -23,34 +23,37 @@ class _GastosPageState extends State<GastosPage> {
   List<String> ordenarMesAno(List<Gastos> gastos) {
     List<String> datas = [];
 
-    for (var gasto in gastos) {
-      datas.add(gasto.data);
-    }
-
-    // 1. Converte cada string para DateTime (usando o 1º dia do mês).
-    final List<DateTime> convertidas = datas.map((d) {
-      final partes = d.split('/'); // [dd, mm, aaaa]
-      final mes = int.parse(partes[1]);
-      final ano = int.parse(partes[2]);
-      return DateTime(ano, mes); // dia = 1 (default)
-    }).toList();
-
-    // 2. Ordena do mais recente (desc) para o mais antigo (asc).
-    convertidas.sort((a, b) => b.compareTo(a));
-
-    // 3. Garante unicidade e formata como "mm/aaaa".
-    final Set<String> jaAdicionados = {};
-    final List<String> resultado = [];
-
-    for (final data in convertidas) {
-      final String mesAno =
-          '${data.month.toString().padLeft(2, '0')}/${data.year}';
-      if (jaAdicionados.add(mesAno)) {
-        // só entra se ainda não existir
-        resultado.add(mesAno);
+    if (gastos.isNotEmpty) {
+      for (var gasto in gastos) {
+        datas.add(gasto.data);
       }
+
+      // 1. Converte cada string para DateTime (usando o 1º dia do mês).
+      final List<DateTime> convertidas = datas.map((d) {
+        final partes = d.split('/'); // [dd, mm, aaaa]
+        final mes = int.parse(partes[1]);
+        final ano = int.parse(partes[2]);
+        return DateTime(ano, mes); // dia = 1 (default)
+      }).toList();
+
+      // 2. Ordena do mais recente (desc) para o mais antigo (asc).
+      convertidas.sort((a, b) => b.compareTo(a));
+
+      // 3. Garante unicidade e formata como "mm/aaaa".
+      final Set<String> jaAdicionados = {};
+      final List<String> resultado = [];
+
+      for (final data in convertidas) {
+        final String mesAno =
+            '${data.month.toString().padLeft(2, '0')}/${data.year}';
+        if (jaAdicionados.add(mesAno)) {
+          // só entra se ainda não existir
+          resultado.add(mesAno);
+        }
+      }
+      return resultado;
     }
-    return resultado;
+    return datas;
   }
 
   String formatarMesAno(String mesAno) {
@@ -92,20 +95,23 @@ class _GastosPageState extends State<GastosPage> {
   }
 
   List<Gastos> filtrarGastosPorMesAno(
-      List<Gastos> listaGastos, String dataBase) {
+      List<Gastos> listaGastos) {
     // Extrai mês e ano da data base
-    final partesBase = dataBase.split('/');
-    final int mesBase = int.parse(partesBase[0]);
-    final int anoBase = int.parse(partesBase[1]);
+    if (listaGastos.isNotEmpty) {
+      final partesBase = datas[currentIndex].split('/');
+      final int mesBase = int.parse(partesBase[0]);
+      final int anoBase = int.parse(partesBase[1]);
 
-    // Filtra os gastos pela correspondência de mês/ano
-    return listaGastos.where((gasto) {
-      final partesData = gasto.data.split('/');
-      final int mesGasto = int.parse(partesData[1]); // mês está na posição 1
-      final int anoGasto = int.parse(partesData[2]); // ano está na posição 2
+      // Filtra os gastos pela correspondência de mês/ano
+      return listaGastos.where((gasto) {
+        final partesData = gasto.data.split('/');
+        final int mesGasto = int.parse(partesData[1]); // mês está na posição 1
+        final int anoGasto = int.parse(partesData[2]); // ano está na posição 2
 
-      return mesGasto == mesBase && anoGasto == anoBase;
-    }).toList();
+        return mesGasto == mesBase && anoGasto == anoBase;
+      }).toList();
+    }
+    return [];
   }
 
   @override
@@ -113,8 +119,7 @@ class _GastosPageState extends State<GastosPage> {
     repositoryGastos = RepositoryGastos();
     listaGastos = repositoryGastos.gastos;
     datas = ordenarMesAno(listaGastos);
-    gastosAtuais = filtrarGastosPorMesAno(listaGastos, datas[currentIndex]);
-    print("datas: ${gastosAtuais}");
+    gastosAtuais = filtrarGastosPorMesAno(listaGastos);
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
@@ -134,114 +139,140 @@ class _GastosPageState extends State<GastosPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CriarLimiteGastosPage()),
+                      MaterialPageRoute(
+                          builder: (context) => CriarLimiteGastosPage()),
                     );
                   },
                   icon: Icon(Icons.add))
             ]),
-        body: Container(
-          color: AppColors.backgroundClaro,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  color: AppColors.backgroundClaro,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            if (datas.length > (currentIndex + 1)) {
-                              currentIndex++;
-                              pageController.animateToPage(
-                                currentIndex,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            } else {
-                              print("Ação inválida");
-                            }
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: datas.length > (currentIndex + 1)
-                                ? AppColors.azulPrimario
-                                : Colors.grey,
-                          )),
-                      Container(
-                        height: 50,
-                        width: 200,
-                        child: PageView.builder(
-                            reverse: true,
-                            controller: pageController,
-                            onPageChanged: (index) {
-                              setState(() {
-                                currentIndex = index;
-                              });
-                            },
-                            itemCount: datas.length,
-                            itemBuilder: (context, index) {
-                              return Center(
-                                  child: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 7),
-                                  child: Text(
-                                    formatarMesAno(datas[index]),
-                                    style: TextStyle(
-                                        color: AppColors.azulPrimario,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border:
-                                      Border.all(color: AppColors.azulPrimario),
-                                  color: AppColors.backgroundClaro,
-                                ),
-                              ));
-                            }),
+        body: listaGastos.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Icon(
+                        Icons.help_outline,
+                        color: Colors.grey.shade700,
+                        size: 30,
                       ),
-                      IconButton(
-                          onPressed: () {
-                            if (currentIndex > 0) {
-                              currentIndex--;
-                              pageController.animateToPage(
-                                currentIndex,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            } else {
-                              print("Ação inválida");
-                            }
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: currentIndex > 0
-                                ? AppColors.azulPrimario
-                                : Colors.grey,
-                          )),
-                    ],
-                  ),
+                    ),
+                    Text(
+                      "Você ainda não definiu limites de gastos!",
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ),
-              ),
-              Expanded(
-                  child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < gastosAtuais.length; i++) cardGasto(i)
-                    ],
-                  ),
+              )
+            : Container(
+                color: AppColors.backgroundClaro,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        color: AppColors.backgroundClaro,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  if (datas.length > (currentIndex + 1)) {
+                                    currentIndex++;
+                                    pageController.animateToPage(
+                                      currentIndex,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  } else {
+                                    print("Ação inválida");
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  color: datas.length > (currentIndex + 1)
+                                      ? AppColors.azulPrimario
+                                      : Colors.grey,
+                                )),
+                            Container(
+                              height: 50,
+                              width: 200,
+                              child: PageView.builder(
+                                  reverse: true,
+                                  controller: pageController,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      currentIndex = index;
+                                    });
+                                  },
+                                  itemCount: datas.length,
+                                  itemBuilder: (context, index) {
+                                    return Center(
+                                        child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 7),
+                                        child: Text(
+                                          formatarMesAno(datas[index]),
+                                          style: TextStyle(
+                                              color: AppColors.azulPrimario,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: AppColors.azulPrimario),
+                                        color: AppColors.backgroundClaro,
+                                      ),
+                                    ));
+                                  }),
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  if (currentIndex > 0) {
+                                    currentIndex--;
+                                    pageController.animateToPage(
+                                      currentIndex,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  } else {
+                                    print("Ação inválida");
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: currentIndex > 0
+                                      ? AppColors.azulPrimario
+                                      : Colors.grey,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                        child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < gastosAtuais.length; i++)
+                              cardGasto(i)
+                          ],
+                        ),
+                      ),
+                    ))
+                  ],
                 ),
-              ))
-            ],
-          ),
-        ));
+              ));
   }
 
   String formatarParaReal(double valor) {

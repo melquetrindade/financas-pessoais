@@ -147,7 +147,31 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
             ),
           ],
         ),
-        body: Column(
+        body: listaLancamentos.isEmpty ?
+          Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: Icon(
+                  Icons.help_outline,
+                  color: Colors.grey.shade700,
+                  size: 30,
+                ),
+              ),
+              Text(
+                "O fluxo de caixa está vazio!",
+                style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ) :
+        Column(
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

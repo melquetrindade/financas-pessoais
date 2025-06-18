@@ -3,6 +3,7 @@ import 'package:financas_pessoais/model/categoria.dart';
 import 'package:financas_pessoais/repository/categorias.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CriarLimiteGastosPage extends StatefulWidget {
   const CriarLimiteGastosPage({super.key});
@@ -18,6 +19,41 @@ class _CriarLimiteGastosPageState extends State<CriarLimiteGastosPage> {
   final limite = TextEditingController();
   Categorias categotiaEscolhida =
       Categorias(nome: "", cor: Colors.blue, icon: Icons.add);
+
+  @override
+  void initState() {
+    super.initState();
+    limite.addListener(_formatSaldo);
+  }
+
+  void _formatSaldo() {
+    String text = limite.text;
+    String onlyDigits = text.replaceAll(RegExp(r'[^\d]'), '');
+
+    if (onlyDigits.isEmpty) {
+      limite.value = TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+      return;
+    }
+    double value = double.parse(onlyDigits) / 100;
+    final formatter =
+        NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
+    String newText = formatter.format(value).trim();
+
+    limite.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+
+  @override
+  void dispose() {
+    limite.removeListener(_formatSaldo);
+    limite.dispose();
+    super.dispose();
+  }
 
   void mostrarModal(BuildContext context) {
     showModalBottomSheet(
