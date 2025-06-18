@@ -95,7 +95,6 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
     repositoryLancamentos = RepositoryLancamentos();
     listaLancamentos = repositoryLancamentos.lancamentos;
     datas = ordenarMesAno(listaLancamentos);
-    print("Filtro atual: ${filtro}");
 
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
