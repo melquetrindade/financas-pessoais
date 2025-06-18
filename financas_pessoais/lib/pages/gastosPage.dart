@@ -1,7 +1,9 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/gastos.dart';
+import 'package:financas_pessoais/pages/criarLimiteGastos.dart';
 import 'package:financas_pessoais/repository/gastos.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class GastosPage extends StatefulWidget {
   const GastosPage({super.key});
@@ -130,7 +132,10 @@ class _GastosPageState extends State<GastosPage> {
             actions: [
               IconButton(
                   onPressed: () {
-                    print("Criar novo orçamento");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CriarLimiteGastosPage()),
+                    );
                   },
                   icon: Icon(Icons.add))
             ]),
@@ -224,22 +229,67 @@ class _GastosPageState extends State<GastosPage> {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        for(int i = 0; i < gastosAtuais.length; i++) cardGasto(i)
-                      ],
-                    ),
+                  child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < gastosAtuais.length; i++) cardGasto(i)
+                    ],
                   ),
+                ),
               ))
             ],
           ),
         ));
   }
 
-  Widget cardGasto(int i){
+  String formatarParaReal(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+      decimalDigits: 2,
+    );
+
+    return formatter.format(valor);
+  }
+
+  double converterValor(String valorStr) {
+    String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
+    double valor = double.parse(valorLimpo);
+    return valor;
+  }
+  /*
+  double converterLimite(String valorStr) {
+    String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
+    double valor = double.parse(valorLimpo);
+    return valor;
+  }*/
+
+  Widget cardGasto(int i) {
+    double diferenca = converterValor(gastosAtuais[i].limite) -
+        converterValor(gastosAtuais[i].valor);
+    double barra = 0;
+
+    double calcularPorcentagem(double numero, double total) {
+      if (total != 0) {
+        double porcentagem = (numero / total) * 100;
+        return porcentagem;
+      } else {
+        return 0;
+      }
+    }
+
+    double setBarra() {
+      if (diferenca < 0) {
+        return 0;
+      }
+      return calcularPorcentagem(converterValor(gastosAtuais[i].valor),
+          converterValor(gastosAtuais[i].limite));
+    }
+
+    barra = setBarra();
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Card(
@@ -257,17 +307,18 @@ class _GastosPageState extends State<GastosPage> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 35,
-                          height: 35,
-                          child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: gastosAtuais[i].categoria.cor,
-                            child: Icon(
-                              gastosAtuais[i].categoria.icon,
-                              color: Colors.white,
-                            ))),
+                            width: 35,
+                            height: 35,
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: gastosAtuais[i].categoria.cor,
+                                child: Icon(
+                                  gastosAtuais[i].categoria.icon,
+                                  color: Colors.white,
+                                ))),
                         SizedBox(width: 8),
-                        Text(gastosAtuais[i].categoria.nome,
+                        Text(
+                          gastosAtuais[i].categoria.nome,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.grey.shade800,
@@ -277,16 +328,16 @@ class _GastosPageState extends State<GastosPage> {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       child: Divider(),
                     ),
                     Text(
                       "Limite de gasto excedido",
                       style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400
-                      ),
+                          color: Colors.grey.shade700,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
@@ -294,15 +345,17 @@ class _GastosPageState extends State<GastosPage> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "-R\$ 60,00",
+                              text: "${formatarParaReal(diferenca)}",
                               style: TextStyle(
-                                color: Colors.red,
+                                color:
+                                    diferenca < 0 ? Colors.red : Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
                             ),
                             TextSpan(
-                              text: " / R\$ ${gastosAtuais[i].limite}",
+                              text:
+                                  " / ${formatarParaReal(converterValor(gastosAtuais[i].limite))}",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -319,8 +372,18 @@ class _GastosPageState extends State<GastosPage> {
                 height: 100,
                 width: 10,
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(1),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(top: barra),
+                  child: SizedBox(
+                    height: 10,
+                    width: 10,
+                    child: Container(
+                      color: diferenca < 0 ? Colors.red : Colors.green,
+                    ),
+                  ),
                 ),
               ),
             ],
