@@ -290,12 +290,6 @@ class _GastosPageState extends State<GastosPage> {
     double valor = double.parse(valorLimpo);
     return valor;
   }
-  /*
-  double converterLimite(String valorStr) {
-    String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
-    double valor = double.parse(valorLimpo);
-    return valor;
-  }*/
 
   Widget cardGasto(int i) {
     double diferenca = converterValor(gastosAtuais[i].limite) -
