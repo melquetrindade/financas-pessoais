@@ -1,9 +1,11 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/repository/lancamentos.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 class RelatoriosPage extends StatefulWidget {
   const RelatoriosPage({super.key});
@@ -14,16 +16,49 @@ class RelatoriosPage extends StatefulWidget {
 
 class _RelatoriosPageState extends State<RelatoriosPage> {
   late RepositoryContas repositoryContas;
+  late List<Conta> listaContas;
+  late List<Conta> listaContasAtuais;
   late RepositoryLancamentos repositoryLancamentos;
   late List<Lancamentos> listaLancamentos;
   late List<String> datas;
   List<Lancamentos> lancamentosAtuais = [];
-  final double receita = 500.00;
-  final double despesa = -1584.00;
+  double receita = 0;
+  double despesa = 0;
   double maxY = 0;
   double minY = 0;
   PageController pageController = PageController();
   int currentIndex = 0;
+
+  /*
+  void mostrarModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.93,
+          minChildSize: 0.3,
+          maxChildSize: 0.93,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: modalCategorias(),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }*/
 
   double moduloValor(double valor) {
     return valor < 0 ? -(valor) : valor;
@@ -156,22 +191,83 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
     }).toList();
   }
 
+  double converterValor(String valorStr, bool negativo) {
+    String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
+    double valor = double.parse(valorLimpo);
+    return negativo ? -valor : valor;
+  }
+
+  void calcReceitaDespesa() {
+    double receitaAux = 0;
+    double despesaAux = 0;
+    if (lancamentosAtuais.isNotEmpty) {
+      for (var lancamento in lancamentosAtuais) {
+        double valor = converterValor(lancamento.valor, lancamento.eDespesa);
+        if (valor < 0) {
+          despesaAux += valor;
+        } else {
+          receitaAux += valor;
+        }
+      }
+
+      setState(() {
+        receita = receitaAux;
+        despesa = despesaAux;
+      });
+    }
+  }
+
+  String formatarParaReal(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: '',
+      decimalDigits: 2,
+    );
+
+    return formatter.format(valor);
+  }
+
+  List<Conta> filtraContasAtuais() {
+    List<Conta> listaAux = [];
+    if (lancamentosAtuais.isNotEmpty) {
+      for (var lancamento in lancamentosAtuais) {
+        if (lancamento.conta == null) {
+          for (var conta in listaContas) {
+            if (lancamento.cartao!.conta.nome == conta.nome) {
+              if (!listaAux.contains(conta)) {
+                listaAux.add(conta);
+              }
+            }
+          }
+        } else {
+          for (var conta in listaContas) {
+            if (lancamento.conta!.nome == conta.nome) {
+              if (!listaAux.contains(conta)) {
+                listaAux.add(conta);
+              }
+            }
+          }
+        }
+      }
+    }
+    return listaAux;
+  }
+
   @override
   Widget build(BuildContext context) {
     repositoryContas = RepositoryContas();
+    listaContas = repositoryContas.contas;
     repositoryLancamentos = RepositoryLancamentos();
     listaLancamentos = repositoryLancamentos.lancamentos;
     datas = ordenarMesAno(listaLancamentos);
     lancamentosAtuais = filtrarPorMesAno(listaLancamentos, datas[currentIndex]);
+    listaContasAtuais = filtraContasAtuais();
+    calcReceitaDespesa();
     setMaximoYX();
-    /*
-    for (var lancamento in lancamentosAtuais) {
-      print("Lancamento: ${lancamento.descricao}");
-    }
-    print("Datas: ${datas}");
     
-    print("MaxY: ${maxY}");
-    print("MinY: ${minY}");*/
+    for (var conta in listaContasAtuais) {
+      print("conta: ${conta.nome}");
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -286,6 +382,41 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                         padding: const EdgeInsets.all(10),
                         child: Column(
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Entradas x Saídas",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                    ),
+                                    TextButton(
+                                        onPressed: () {
+                                          //mostrarModal(context);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Todas as Contas",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 13),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.grey,
+                                            )
+                                          ],
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ),
                             AspectRatio(
                               aspectRatio: 1.5,
                               child: BarChart(
@@ -360,14 +491,73 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
-                              child: Text("Abril"),
+                              child: Text(
+                                formatarMesAno(datas[currentIndex]),
+                                style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w500),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Container(
-                                color: Colors.blue,
-                                height: 100,
+                                //color: Colors.blue,
+                                //height: 100,
                                 width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text(
+                                          formatarParaReal(receita),
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          "Receitas",
+                                          style: TextStyle(
+                                              fontSize: 13, color: Colors.grey),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          formatarParaReal(despesa),
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          "Despesas",
+                                          style: TextStyle(
+                                              fontSize: 13, color: Colors.grey),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "1.000,00",
+                                          style: TextStyle(
+                                              color: AppColors.azulPrimario,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          "Saldo",
+                                          style: TextStyle(
+                                              fontSize: 13, color: Colors.grey),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             )
                           ],
@@ -392,17 +582,32 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
     );
   }
 
-  Widget getBottomTitles(double value, TitleMeta meta) {
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: Text(
-        'Abril',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+  /*
+  Widget modalCategorias() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black,
+          ),
+          height: 3,
+          width: 130,
         ),
-        textAlign: TextAlign.center,
-      ),
+        Padding(
+          padding: const EdgeInsets.only(top: 15, bottom: 20),
+          child: Text(
+            'Selecionar conta',
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54),
+          ),
+        ),
+        for (var i = 0; i < listaDeCategorias().length; i++)
+          iconesCategorias(i, listaDeCategorias()),
+      ],
     );
-  }
+  }*/
 }
