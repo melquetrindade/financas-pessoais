@@ -1,6 +1,7 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Cardcontas extends StatefulWidget {
   final List<Conta> listContas;
@@ -12,10 +13,35 @@ class Cardcontas extends StatefulWidget {
 
 class _CardcontasState extends State<Cardcontas> {
   bool showSaldo = true;
+  double saldo = 0;
+
+  double converterValor(String valorStr) {
+    String valorLimpo = valorStr.replaceAll('.', '').replaceAll(',', '.');
+    double valor = double.parse(valorLimpo);
+    return valor;
+  }
+
+  void calcSaldo() {
+    if (widget.listContas.isNotEmpty) {
+      for (var conta in widget.listContas) {
+        saldo += converterValor(conta.saldo);
+      }
+    }
+  }
+
+  String formatarParaReal(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+      decimalDigits: 2,
+    );
+
+    return formatter.format(valor);
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("rendenziou o card conta00");
+    calcSaldo();
     return Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -39,12 +65,11 @@ class _CardcontasState extends State<Cardcontas> {
                         style: TextStyle(fontSize: 13),
                       ),
                       Text(
-                        showSaldo ? "R\$ 1.000,00" : "R\$ ---",
+                        showSaldo ? formatarParaReal(saldo) : "R\$ ---",
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, 
+                            fontWeight: FontWeight.w600,
                             fontSize: 18,
-                            color: showSaldo ? Colors.black : Colors.black54
-                        ),
+                            color: showSaldo ? Colors.black : Colors.black54),
                       ),
                     ],
                   ),
@@ -54,7 +79,9 @@ class _CardcontasState extends State<Cardcontas> {
                         showSaldo = !showSaldo;
                       });
                     },
-                    icon: Icon(showSaldo ? Icons.visibility_off_outlined : Icons.visibility),
+                    icon: Icon(showSaldo
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility),
                   )
                 ],
               ),
@@ -70,7 +97,37 @@ class _CardcontasState extends State<Cardcontas> {
                 "Minhas contas",
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
               ),
-              for (var i = 0; i < widget.listContas.length; i++) cardConta(i),
+              Column(
+                children: widget.listContas.isNotEmpty
+                    ? List.generate(
+                        widget.listContas.length, (i) => cardConta(i))
+                    : [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.help_outline_sharp,
+                                  color: Colors.grey.shade700,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Você não tem conta cadastrada",
+                                    style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 13),
                 child: SizedBox(
@@ -90,7 +147,9 @@ class _CardcontasState extends State<Cardcontas> {
                       Navigator.pushNamed(context, '/gerenciaConta');
                     },
                     child: Text(
-                      'Gerenciar contas',
+                      widget.listContas.length != 0
+                          ? 'Gerenciar contas'
+                          : 'Criar conta',
                       style: TextStyle(
                           color: AppColors.azulPrimario, fontSize: 15),
                     ),
@@ -152,9 +211,8 @@ class _CardcontasState extends State<Cardcontas> {
       trailing: Text(
         showSaldo ? "R\$ ${widget.listContas[i].saldo}" : "R\$ ---",
         style: TextStyle(
-          fontSize: 15, 
-          color: showSaldo ? AppColors.azulPrimario : Colors.black54
-        ),
+            fontSize: 15,
+            color: showSaldo ? AppColors.azulPrimario : Colors.black54),
       ),
     );
   }

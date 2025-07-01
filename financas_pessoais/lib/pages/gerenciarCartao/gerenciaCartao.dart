@@ -83,10 +83,32 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
                 ),
                 Column(
                   children: [
+                    repositoryCartao.cartoes.length != 0
+                    ?
                     CardGerenciaCartao(
                       listCartao: repositoryCartao.cartoes,
                       listaFatura: repositoryFatura.faturas,
                     )
+                    :
+                    Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Icon(Icons.help_outline_sharp, color: Colors.grey.shade700,),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Clique no ícone de mais para criar um novo cartão", style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ), textAlign: TextAlign.center,),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ],

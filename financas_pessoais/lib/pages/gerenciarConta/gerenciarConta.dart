@@ -80,7 +80,27 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                 ),
                 Column(
                   children: [
-                    CardGerenciaConta(listContas: repositoryContas.contas)
+                    repositoryContas.contas.length != 0 
+                    ? CardGerenciaConta(listContas: repositoryContas.contas) 
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Icon(Icons.help_outline_sharp, color: Colors.grey.shade700,),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Clique no ícone de mais para criar uma nova conta", style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ), textAlign: TextAlign.center,),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ],

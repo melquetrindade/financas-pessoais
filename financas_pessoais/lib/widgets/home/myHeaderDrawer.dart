@@ -55,7 +55,6 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
               InkWell(
                 onTap: () {
                   print("abrir pag de editar perfil");
-                  Navigator.pushNamed(context, "/onboardingTwo");
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -85,7 +84,6 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
                 onTap: () {
                   //authService.logout();
                   print("Fazer logout");
-                  Navigator.pushNamed(context, "/onboardingOne");
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),

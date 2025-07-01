@@ -17,6 +17,7 @@ class Cardcartoes extends StatefulWidget {
 
 class _CardcartoesState extends State<Cardcartoes> {
   bool showSaldo = true;
+  double fatura = 0;
 
   DateTime _converterStringParaDateTime(String data) {
     List<String> partes = data.split('/');
@@ -37,8 +38,58 @@ class _CardcartoesState extends State<Cardcartoes> {
     return formatter.format(valor);
   }
 
+  void calcFatura() {
+    DateTime hoje = DateTime.now();
+
+    for (var cartao in widget.listCartao) {
+      final faturasCartao = widget.listaFatura.where((fatura) =>
+          fatura.cartao.nome == cartao.nome &&
+          _converterStringParaDateTime(fatura.data).month == hoje.month &&
+          _converterStringParaDateTime(fatura.data).year == hoje.year);
+
+      if (faturasCartao.isNotEmpty) {
+        final faturaAtual = faturasCartao.first;
+
+        double faturaDespesaTotal = 0;
+        double faturaReceitaTotal = 0;
+        double faturaPagamento = 0;
+
+        for (var lancamento in faturaAtual.lancamentos) {
+          String valorStr =
+              lancamento.valor.replaceAll('.', '').replaceAll(',', '.');
+          double valor = double.parse(valorStr);
+          if (lancamento.eDespesa) {
+            faturaDespesaTotal += valor * -1;
+          } else {
+            faturaReceitaTotal += valor;
+          }
+        }
+
+        for (var pagamento in faturaAtual.pagamentos) {
+          String valorStr =
+              pagamento.valor.replaceAll('.', '').replaceAll(',', '.');
+          faturaPagamento += double.parse(valorStr);
+        }
+
+        double calcFaturaAtual(
+            double fatDespesa, double fatReceita, double fatPagamento) {
+          double conta = fatDespesa + fatReceita + fatPagamento;
+          return conta > 0 ? 0 : conta;
+        }
+
+        fatura += calcFaturaAtual(
+          faturaDespesaTotal,
+          faturaReceitaTotal,
+          faturaPagamento >= 0 ? faturaPagamento : -faturaPagamento,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    calcFatura();
+
     return Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -62,11 +113,11 @@ class _CardcartoesState extends State<Cardcartoes> {
                         style: TextStyle(fontSize: 13),
                       ),
                       Text(
-                        showSaldo ? "R\$ 1.000,00" : "R\$ ---",
+                        showSaldo ? formatarParaReal(fatura) : "R\$ ---",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
-                            color: showSaldo ? Colors.black : Colors.black54),
+                            color: showSaldo ? fatura < 0 ? Colors.red : AppColors.azulPrimario : Colors.black54),
                       ),
                     ],
                   ),
@@ -94,7 +145,38 @@ class _CardcartoesState extends State<Cardcartoes> {
                 "Meus cartões",
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
               ),
-              for (var i = 0; i < widget.listCartao.length; i++) cardCartao(i),
+              Column(
+                children: widget.listCartao.isNotEmpty
+                    ? List.generate(
+                        widget.listCartao.length, (i) => cardCartao(i))
+                    : [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.help_outline_sharp,
+                                  color: Colors.grey.shade700,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Você não tem cartão cadastrado",
+                                    style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+              ),
+              //for (var i = 0; i < widget.listCartao.length; i++) cardCartao(i),
               Padding(
                 padding: const EdgeInsets.only(top: 13),
                 child: SizedBox(
@@ -114,7 +196,9 @@ class _CardcartoesState extends State<Cardcartoes> {
                       Navigator.pushNamed(context, '/gerenciaCartao');
                     },
                     child: Text(
-                      'Gerenciar cartões',
+                      widget.listCartao.length != 0
+                          ? 'Gerenciar cartões'
+                          : 'Criar cartão',
                       style: TextStyle(
                           color: AppColors.azulPrimario, fontSize: 15),
                     ),
@@ -132,7 +216,6 @@ class _CardcartoesState extends State<Cardcartoes> {
     double faturaReceitaTotal = 0;
     double disponivelTotal = 0;
     double faturaPagamento = 0;
-
     DateTime hoje = DateTime.now();
 
     for (var fatura in widget.listaFatura) {
@@ -333,3 +416,16 @@ class _CardcartoesState extends State<Cardcartoes> {
     );
   }
 }
+
+/*
+    if (calcFaturaAtual(faturaDespesaTotal, faturaReceitaTotal,
+            moduloNum(faturaPagamento)) !=
+        0) {
+      print("entrou no if");
+      setState(() {
+        fatura += calcFaturaAtual(
+            faturaDespesaTotal, faturaReceitaTotal, moduloNum(faturaPagamento));
+      });
+    }*/
+
+    //print("Fatura: ${calcFaturaAtual(faturaDespesaTotal, faturaReceitaTotal, moduloNum(faturaPagamento))}");
