@@ -18,6 +18,8 @@ class _SignUpPageState extends State<SignUpPage> {
   bool visibilitySenha = false;
   bool visibilityConfSenha = false;
 
+  cadastrar(){}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +99,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Email'),
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (value) => Validador.validatorEmail(value),
+                                  validator: (value) =>
+                                      Validador.validatorEmail(value),
                                 ),
                               ),
                               Padding(
@@ -125,7 +128,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Senha'),
                                   obscureText: visibilitySenha,
-                                  validator: (value) => Validador.validatorSenha(value),
+                                  validator: (value) =>
+                                      Validador.validatorSenha(value),
                                 ),
                               ),
                               Padding(
@@ -150,7 +154,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       labelText: 'Confirme sua senha'),
                                   obscureText: visibilityConfSenha,
-                                  validator: (value) => Validador.validatorConfirmeSenha(value, senha.text),
+                                  validator: (value) =>
+                                      Validador.validatorConfirmeSenha(
+                                          value, senha.text),
                                 ),
                               ),
                             ],
@@ -164,11 +170,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Cadastrar");
                           if (formKey.currentState!.validate()) {
                             print("tudo ok");
-                          } else {
-                            print("não ta ok");
+                            cadastrar();
                           }
                         },
                         style: ElevatedButton.styleFrom(

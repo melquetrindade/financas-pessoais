@@ -15,6 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   final senha = TextEditingController();
   bool visibilitySenha = false;
 
+  login(){}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,13 +116,9 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Fazer login");
-                          //Navigator.pushReplacementNamed(context, '/homeController');
-                          
                           if (formKey.currentState!.validate()) {
                             print("tudo ok");
-                          } else {
-                            print("não ta ok");
+                            login();
                           }
                         },
                         style: ElevatedButton.styleFrom(
