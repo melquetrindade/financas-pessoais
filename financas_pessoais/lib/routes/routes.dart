@@ -8,10 +8,12 @@ import 'package:financas_pessoais/pages/notificacaoPage.dart';
 import 'package:financas_pessoais/pages/onboarding/onboardingTwo.dart';
 import 'package:financas_pessoais/pages/onboarding/onborardingOne.dart';
 import 'package:financas_pessoais/pages/splash/splashPage.dart';
+import 'package:financas_pessoais/widgets/auth_check.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
   static Map<String, Widget Function(BuildContext)> list = <String, WidgetBuilder>{
+    '/authCheck': (_) => const AuthCheck(),
     '/home': (_) => const Home(),
     '/homeController': (_) => const HomeControllerPage(),
     '/gerenciaConta': (_) => const GerenciarContaPage(),
@@ -23,8 +25,7 @@ class Routes {
     '/signUp': (_) => const SignUpPage(),
     '/notificacaoPage': (_) => const NotificacaoPage(),
   };
-  static String initial = '/homeController';
-  //static String initial = '/onboardingOne';
+  static String initial = '/authCheck';
   
   static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
 }

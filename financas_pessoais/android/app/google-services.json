@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272756769676",
+    "project_id": "walletfy-122db",
+    "storage_bucket": "walletfy-122db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272756769676:android:f206b6ab5337c1b72a0ca9",
+        "android_client_info": {
+          "package_name": "com.example.financas_pessoais"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNc65s5QAfoGofGel0o5aSNTqRTfv7DwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

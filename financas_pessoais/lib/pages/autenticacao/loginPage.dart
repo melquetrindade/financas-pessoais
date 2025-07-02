@@ -115,13 +115,13 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           print("Fazer login");
-                          Navigator.pushReplacementNamed(context, '/homeController');
-                          /*
+                          //Navigator.pushReplacementNamed(context, '/homeController');
+                          
                           if (formKey.currentState!.validate()) {
                             print("tudo ok");
                           } else {
                             print("não ta ok");
-                          }*/
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue.shade300, // Cor do botão
