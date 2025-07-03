@@ -113,7 +113,6 @@ class _CriarContaPageState extends State<CriarContaPage> {
   }
 
   void setarImgIcone(Banco banco) {
-    //print("${banco.img} - ${banco.nome}");
     setState(() {
       infoBanco = banco;
     });
@@ -121,8 +120,18 @@ class _CriarContaPageState extends State<CriarContaPage> {
     Navigator.pop(context);
   }
 
+  teste(bool sinal){
+    if(sinal){
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Deu certo")));
+    } else{
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Erro")));
+    }
+  }
+
   addConta(Conta conta) {
-    context.read<RepositoryContas>().saveContas(conta);
+    context.read<RepositoryContas>().saveContas(conta, teste);
   }
 
   @override
@@ -286,7 +295,6 @@ class _CriarContaPageState extends State<CriarContaPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Cadastrar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "") {
                             addConta(Conta(
@@ -294,9 +302,6 @@ class _CriarContaPageState extends State<CriarContaPage> {
                                 banco: Banco(
                                     nome: infoBanco.nome, img: infoBanco.img),
                                 saldo: saldo.text));
-                            print("tudo ok");
-                            print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text} - nome do banco: ${infoBanco.nome}");
                           } else {
                             if (infoBanco.img == "") {
                               ScaffoldMessenger.of(context).showSnackBar(

@@ -38,9 +38,9 @@ class RepositoryContas extends ChangeNotifier {
     notifyListeners();
   }
 
-  saveContas(Conta conta) async {
+  saveContas(Conta conta, Function teste) async {
     bool existe = _contas.any((c) => c.nome == conta.nome);
-    if (!existe) {
+    if (existe == false) {
       _contas.add(conta);
       await db
           .collection('usuarios/${auth.usuario!.uid}/contas')
@@ -50,10 +50,11 @@ class RepositoryContas extends ChangeNotifier {
         'saldo': conta.saldo,
         'banco': {'nome': conta.banco.nome, 'img': conta.banco.img}
       });
+      teste(true);
     } else {
       print("Não salvou pois já existia uma conta com este nome");
+      teste(false);
     }
-    print("Notificou");
     notifyListeners();
   }
 

@@ -41,7 +41,10 @@ class _CardcontasState extends State<Cardcontas> {
 
   @override
   Widget build(BuildContext context) {
+    print("entrou no cardContas");
+    saldo = 0;
     calcSaldo();
+
     return Container(
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
