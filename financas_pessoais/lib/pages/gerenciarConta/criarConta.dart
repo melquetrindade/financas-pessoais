@@ -1,10 +1,13 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/bancos.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CriarContaPage extends StatefulWidget {
   const CriarContaPage({super.key});
@@ -110,12 +113,16 @@ class _CriarContaPageState extends State<CriarContaPage> {
   }
 
   void setarImgIcone(Banco banco) {
-    print("${banco.img} - ${banco.nome}");
+    //print("${banco.img} - ${banco.nome}");
     setState(() {
       infoBanco = banco;
     });
     Navigator.pop(context);
     Navigator.pop(context);
+  }
+
+  addConta(Conta conta) {
+    context.read<RepositoryContas>().saveContas(conta);
   }
 
   @override
@@ -282,9 +289,14 @@ class _CriarContaPageState extends State<CriarContaPage> {
                           print("Cadastrar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "") {
+                            addConta(Conta(
+                                nome: nome.text,
+                                banco: Banco(
+                                    nome: infoBanco.nome, img: infoBanco.img),
+                                saldo: saldo.text));
                             print("tudo ok");
                             print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
+                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text} - nome do banco: ${infoBanco.nome}");
                           } else {
                             if (infoBanco.img == "") {
                               ScaffoldMessenger.of(context).showSnackBar(

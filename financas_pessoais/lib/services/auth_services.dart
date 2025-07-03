@@ -44,25 +44,23 @@ class AuthService extends ChangeNotifier {
 
   registrar(String nome, String email, String senha) async {
     try {
-      final result = await _auth.createUserWithEmailAndPassword(email: email, password: senha);
+      final result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: senha);
       if (result.user != null) {
-        // Atualiza o nome do usuário
         loginOrSigin = !loginOrSigin;
         await result.user!.updateDisplayName(nome);
-        // Recarrega os dados do usuário
         await result.user!.reload();
       }
 
       _getUser();
     } on FirebaseAuthException catch (e) {
       print("erro: ${e.code}");
-      throw AuthException("Email ou senha incorretos!");
-      /*
+      //throw AuthException("Email ou senha incorretos!");
       if (e.code == "weak-password") {
         throw AuthException('A senha é muito fraca!');
       } else if (e.code == 'email-already-in-use') {
         throw AuthException('Este email já está cadastrado!');
-      }*/
+      }
     }
   }
 
@@ -70,8 +68,7 @@ class AuthService extends ChangeNotifier {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
     } on FirebaseAuthException catch (e) {
-      print("entrou no exeception");
-      print("erro: ${e.code}");
+      print(e);
       throw AuthException("Email ou senha incorretos!");
     }
   }

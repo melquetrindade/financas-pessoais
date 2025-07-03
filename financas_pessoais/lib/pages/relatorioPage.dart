@@ -6,6 +6,7 @@ import 'package:financas_pessoais/repository/lancamentos.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class RelatoriosPage extends StatefulWidget {
   const RelatoriosPage({super.key});
@@ -247,7 +248,7 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
 
   @override
   Widget build(BuildContext context) {
-    repositoryContas = RepositoryContas();
+    repositoryContas = context.watch<RepositoryContas>();
     listaContas = repositoryContas.contas;
     repositoryLancamentos = RepositoryLancamentos();
     listaLancamentos = repositoryLancamentos.lancamentos;

@@ -7,13 +7,12 @@ import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/criarConta/searchIcone.dart';
 
 class EditarCartaoPage extends StatefulWidget {
   final Cartao cartao;
-  const EditarCartaoPage(
-      {super.key,
-      required this.cartao});
+  const EditarCartaoPage({super.key, required this.cartao});
 
   @override
   State<EditarCartaoPage> createState() => _EditarCartaoPageState();
@@ -21,7 +20,8 @@ class EditarCartaoPage extends StatefulWidget {
 
 class _EditarCartaoPageState extends State<EditarCartaoPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
-  final RepositoryContas repositoryContas = RepositoryContas();
+  late RepositoryContas repositoryContas;
+  late List<Conta> listaContas = [];
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final limite = TextEditingController();
@@ -170,6 +170,9 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
+    repositoryContas = context.watch<RepositoryContas>();
+    listaContas = repositoryContas.contas;
+
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
@@ -705,7 +708,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
             ],
           ),
         ),
-        for (var i = 0; i < repositoryContas.contas.length; i++)
+        for (var i = 0; i < listaContas.length; i++)
           iconesContas(i),
       ],
     );
@@ -718,8 +721,8 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
           onTap: () {
             setState(() {
               infoContaPag.banco.img =
-                  "${repositoryContas.contas[i].banco.img}";
-              infoContaPag.nome = "${repositoryContas.contas[i].nome}";
+                  "${listaContas[i].banco.img}";
+              infoContaPag.nome = "${listaContas[i].nome}";
             });
             Navigator.pop(context);
           },
@@ -729,26 +732,26 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                 height: 40,
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage: repositoryContas.contas[i].banco.img ==
+                  backgroundImage: listaContas[i].banco.img ==
                               "Carteira" ||
-                          repositoryContas.contas[i].banco.img == "Banco" ||
-                          repositoryContas.contas[i].banco.img == "Cofrinho"
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
                       ? null
-                      : AssetImage("${repositoryContas.contas[i].banco.img}"),
+                      : AssetImage("${listaContas[i].banco.img}"),
                   backgroundColor:
-                      repositoryContas.contas[i].banco.img == "Carteira" ||
-                              repositoryContas.contas[i].banco.img == "Banco" ||
-                              repositoryContas.contas[i].banco.img == "Cofrinho"
+                      listaContas[i].banco.img == "Carteira" ||
+                              listaContas[i].banco.img == "Banco" ||
+                              listaContas[i].banco.img == "Cofrinho"
                           ? AppColors.azulPrimario
                           : null,
-                  child: repositoryContas.contas[i].banco.img == "Carteira" ||
-                          repositoryContas.contas[i].banco.img == "Banco" ||
-                          repositoryContas.contas[i].banco.img == "Cofrinho"
-                      ? iconeContaPag2(repositoryContas.contas[i])
+                  child: listaContas[i].banco.img == "Carteira" ||
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
+                      ? iconeContaPag2(listaContas[i])
                       : null,
                 )),
             title: Text(
-              "${repositoryContas.contas[i].nome}",
+              "${listaContas[i].nome}",
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
             ),

@@ -7,6 +7,7 @@ import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CriarCartaoPage extends StatefulWidget {
   const CriarCartaoPage({super.key});
@@ -17,14 +18,16 @@ class CriarCartaoPage extends StatefulWidget {
 
 class _CriarCartaoPageState extends State<CriarCartaoPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
-  final RepositoryContas repositoryContas = RepositoryContas();
+  late RepositoryContas repositoryContas;
+  late List<Conta> listaContas = [];
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
   final diaFecha = TextEditingController();
   final diaVencimento = TextEditingController();
   Banco infoBanco = Banco(nome: "", img: "");
-  Conta infoContaPag = Conta(nome: "", saldo: "", banco: Banco(nome: "", img: ""));
+  Conta infoContaPag =
+      Conta(nome: "", saldo: "", banco: Banco(nome: "", img: ""));
 
   void mostrarModal(BuildContext context, int modalTipo) {
     showModalBottomSheet(
@@ -160,6 +163,9 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
+    repositoryContas = context.watch<RepositoryContas>();
+    listaContas = repositoryContas.contas;
+
     return Scaffold(
         backgroundColor: AppColors.backgroundClaro,
         appBar: AppBar(
@@ -451,14 +457,18 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                                 height: 37,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundImage: infoContaPag.banco.img == "" ||
-                                          infoContaPag.banco.img == "Carteira" ||
+                                  backgroundImage: infoContaPag.banco.img ==
+                                              "" ||
+                                          infoContaPag.banco.img ==
+                                              "Carteira" ||
                                           infoContaPag.banco.img == "Banco" ||
                                           infoContaPag.banco.img == "Cofrinho"
                                       ? null
                                       : AssetImage(infoContaPag.banco.img),
-                                  backgroundColor: infoContaPag.banco.img == "" ||
-                                          infoContaPag.banco.img == "Carteira" ||
+                                  backgroundColor: infoContaPag.banco.img ==
+                                              "" ||
+                                          infoContaPag.banco.img ==
+                                              "Carteira" ||
                                           infoContaPag.banco.img == "Banco" ||
                                           infoContaPag.banco.img == "Cofrinho"
                                       ? AppColors.azulPrimario
@@ -672,7 +682,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
             ],
           ),
         ),
-        for (var i = 0; i < repositoryContas.contas.length; i++)
+        for (var i = 0; i < listaContas.length; i++)
           iconesContas(i),
       ],
     );
@@ -684,8 +694,9 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
         InkWell(
           onTap: () {
             setState(() {
-              infoContaPag.banco.img = "${repositoryContas.contas[i].banco.img}";
-              infoContaPag.nome = "${repositoryContas.contas[i].nome}";
+              infoContaPag.banco.img =
+                  "${listaContas[i].banco.img}";
+              infoContaPag.nome = "${listaContas[i].nome}";
             });
             Navigator.pop(context);
           },
@@ -695,26 +706,26 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                 height: 40,
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage:
-                      repositoryContas.contas[i].banco.img == "Carteira" ||
-                              repositoryContas.contas[i].banco.img == "Banco" ||
-                              repositoryContas.contas[i].banco.img == "Cofrinho"
-                          ? null
-                          : AssetImage("${repositoryContas.contas[i].banco.img}"),
+                  backgroundImage: listaContas[i].banco.img ==
+                              "Carteira" ||
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
+                      ? null
+                      : AssetImage("${listaContas[i].banco.img}"),
                   backgroundColor:
-                      repositoryContas.contas[i].banco.img == "Carteira" ||
-                              repositoryContas.contas[i].banco.img == "Banco" ||
-                              repositoryContas.contas[i].banco.img == "Cofrinho"
+                      listaContas[i].banco.img == "Carteira" ||
+                              listaContas[i].banco.img == "Banco" ||
+                              listaContas[i].banco.img == "Cofrinho"
                           ? AppColors.azulPrimario
                           : null,
-                  child: repositoryContas.contas[i].banco.img == "Carteira" ||
-                          repositoryContas.contas[i].banco.img == "Banco" ||
-                          repositoryContas.contas[i].banco.img == "Cofrinho"
-                      ? iconeContaPag2(repositoryContas.contas[i])
+                  child: listaContas[i].banco.img == "Carteira" ||
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
+                      ? iconeContaPag2(listaContas[i])
                       : null,
                 )),
             title: Text(
-              "${repositoryContas.contas[i].nome}",
+              "${listaContas[i].nome}",
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w700),
             ),

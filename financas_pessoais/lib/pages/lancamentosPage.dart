@@ -9,6 +9,7 @@ import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:financas_pessoais/model/categoria.dart';
+import 'package:provider/provider.dart';
 
 class LancamentosPage extends StatefulWidget {
   const LancamentosPage({super.key});
@@ -20,6 +21,7 @@ class LancamentosPage extends StatefulWidget {
 class _LancamentosPageState extends State<LancamentosPage> {
   late RepositoryCategorias repositoryCategorias;
   late RepositoryContas repositoryContas;
+  late List<Conta> listaContas = [];
   late RepositoryCartao repositoryCartao;
   final formKey = GlobalKey<FormState>();
   final valor = TextEditingController();
@@ -231,8 +233,9 @@ class _LancamentosPageState extends State<LancamentosPage> {
   @override
   Widget build(BuildContext context) {
     repositoryCategorias = RepositoryCategorias();
-    repositoryContas = RepositoryContas();
+    repositoryContas = context.watch<RepositoryContas>();
     repositoryCartao = RepositoryCartao();
+    listaContas = repositoryContas.contas;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundClaro,
@@ -492,7 +495,8 @@ class _LancamentosPageState extends State<LancamentosPage> {
                         padding: const EdgeInsets.only(top: 20),
                         child: Align(
                           alignment: Alignment.topLeft,
-                          child: Text(eDespesa ? "Pago com" : "Recebido com",
+                          child: Text(
+                            eDespesa ? "Pago com" : "Recebido com",
                             style: TextStyle(
                                 color: Colors.grey.shade700,
                                 fontWeight: FontWeight.w500,
@@ -702,7 +706,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
             ),
           ),
         ),
-        for (var i = 0; i < repositoryContas.contas.length; i++)
+        for (var i = 0; i < listaContas.length; i++)
           iconesContasCartoes(i, true),
         Padding(
           padding: const EdgeInsets.only(top: 15, bottom: 10),
@@ -765,7 +769,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
     void setValores() {
       if (eConta) {
         setState(() {
-          contaEscolhida = repositoryContas.contas[i];
+          contaEscolhida = listaContas[i];
           cartaoEscolhido = Cartao(
               nome: "",
               icone: Banco(nome: "", img: ""),
@@ -786,9 +790,9 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
     bool temImg() {
       if (eConta) {
-        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
-            repositoryContas.contas[i].banco.img == "Carteira" ||
-            repositoryContas.contas[i].banco.img == "Banco") {
+        if (listaContas[i].banco.img == "Cofrinho" ||
+            listaContas[i].banco.img == "Carteira" ||
+            listaContas[i].banco.img == "Banco") {
           return false;
         }
         return true;
@@ -801,12 +805,12 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
     AssetImage? imgContaCartao() {
       if (eConta) {
-        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
-            repositoryContas.contas[i].banco.img == "Carteira" ||
-            repositoryContas.contas[i].banco.img == "Banco") {
+        if (listaContas[i].banco.img == "Cofrinho" ||
+            listaContas[i].banco.img == "Carteira" ||
+            listaContas[i].banco.img == "Banco") {
           return null;
         }
-        return AssetImage(repositoryContas.contas[i].banco.img);
+        return AssetImage(listaContas[i].banco.img);
       }
       if (repositoryCartao.cartoes[i].icone.img == "Cartão") {
         return null;
@@ -816,16 +820,16 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
     Icon? iconContaCartao() {
       if (eConta) {
-        if (repositoryContas.contas[i].banco.img == "Cofrinho" ||
-            repositoryContas.contas[i].banco.img == "Carteira" ||
-            repositoryContas.contas[i].banco.img == "Banco") {
-          if (repositoryContas.contas[i].banco.img == "Cofrinho") {
+        if (listaContas[i].banco.img == "Cofrinho" ||
+            listaContas[i].banco.img == "Carteira" ||
+            listaContas[i].banco.img == "Banco") {
+          if (listaContas[i].banco.img == "Cofrinho") {
             return Icon(
               Icons.savings,
               color: Colors.white,
             );
           }
-          if (repositoryContas.contas[i].banco.img == "Carteira") {
+          if (listaContas[i].banco.img == "Carteira") {
             return Icon(
               Icons.account_balance_wallet,
               color: Colors.white,
@@ -849,7 +853,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
     String nomeContaCartao() {
       if (eConta) {
-        return repositoryContas.contas[i].nome;
+        return listaContas[i].nome;
       }
       return repositoryCartao.cartoes[i].nome;
     }

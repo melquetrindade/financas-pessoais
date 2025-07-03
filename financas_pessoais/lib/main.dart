@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/firebase_options.dart';
+import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/routes/routes.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +14,7 @@ void main() async {
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => AuthService()),
+      ChangeNotifierProvider<RepositoryContas>(create: (context) => RepositoryContas(auth: context.read<AuthService>())),
     ], child: MyApp(),)
   );
 }

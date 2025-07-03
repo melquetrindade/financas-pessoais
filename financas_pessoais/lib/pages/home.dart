@@ -7,6 +7,7 @@ import 'package:financas_pessoais/widgets/home/cardCartoes.dart';
 import 'package:financas_pessoais/widgets/home/cardContas.dart';
 import 'package:financas_pessoais/widgets/home/myHeaderDrawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,13 +17,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final RepositoryContas repositoryContas = RepositoryContas();
+  late RepositoryContas repositoryContas;
   final RepositoryCartao repositoryCartao = RepositoryCartao();
   late RepositoryFatura repositoryFatura;
 
   @override
   Widget build(BuildContext context) {
     repositoryFatura = RepositoryFatura();
+    repositoryContas = context.watch<RepositoryContas>();
 
     return Scaffold(
       backgroundColor: AppColors.backgroundClaro,

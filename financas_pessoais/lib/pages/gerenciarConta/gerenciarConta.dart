@@ -1,8 +1,10 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/pages/gerenciarConta/criarConta.dart';
 import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/widgets/gerenciarConta/cardContas.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GerenciarContaPage extends StatefulWidget {
   const GerenciarContaPage({super.key});
@@ -12,10 +14,14 @@ class GerenciarContaPage extends StatefulWidget {
 }
 
 class _GerenciarContaPageState extends State<GerenciarContaPage> {
-  RepositoryContas repositoryContas = RepositoryContas();
+  late RepositoryContas repositoryContas;
+  late List<Conta> listaContas = [];
 
   @override
   Widget build(BuildContext context) {
+    repositoryContas = context.watch<RepositoryContas>();
+    listaContas = repositoryContas.contas;
+
     return Scaffold(
         backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
@@ -80,27 +86,34 @@ class _GerenciarContaPageState extends State<GerenciarContaPage> {
                 ),
                 Column(
                   children: [
-                    repositoryContas.contas.length != 0 
-                    ? CardGerenciaConta(listContas: repositoryContas.contas) 
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Icon(Icons.help_outline_sharp, color: Colors.grey.shade700,),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Clique no ícone de mais para criar uma nova conta", style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                ), textAlign: TextAlign.center,),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
+                    listaContas.length != 0
+                        ? CardGerenciaConta(listContas: listaContas)
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.help_outline_sharp,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Clique no ícone de mais para criar uma nova conta",
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
                   ],
                 ),
               ],
