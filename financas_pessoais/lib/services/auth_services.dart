@@ -10,6 +10,9 @@ class AuthService extends ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
+  bool onboardingOneView = false;
+  bool onboardingTwoView = false;
+  bool loginOrSigin = true;
 
   AuthService() {
     _authCheck();
@@ -17,7 +20,7 @@ class AuthService extends ChangeNotifier {
 
   _authCheck() {
     _auth.authStateChanges().listen((User? user) {
-      usuario = (user == null) ? null : user;
+      usuario = user == null ? null : user;
       isLoading = false;
       notifyListeners();
     });
@@ -28,21 +31,53 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  controllerPags(String pag) {
+    if (pag == "onboardingOne") {
+      onboardingOneView = true;
+    } else if (pag == "onboardingTwo") {
+      onboardingTwoView = true;
+    } else {
+      loginOrSigin = !loginOrSigin;
+    }
+    notifyListeners();
+  }
+
   registrar(String nome, String email, String senha) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(email: email, password: senha);
-      // Atualiza o nome do usuário
-      await result.user?.updateDisplayName(nome);
-      // Recarrega os dados do usuário após a atualização
-      await result.user?.reload();
-      
+      if (result.user != null) {
+        // Atualiza o nome do usuário
+        loginOrSigin = !loginOrSigin;
+        await result.user!.updateDisplayName(nome);
+        // Recarrega os dados do usuário
+        await result.user!.reload();
+      }
+
       _getUser();
     } on FirebaseAuthException catch (e) {
+      print("erro: ${e.code}");
+      throw AuthException("Email ou senha incorretos!");
+      /*
       if (e.code == "weak-password") {
         throw AuthException('A senha é muito fraca!');
       } else if (e.code == 'email-already-in-use') {
         throw AuthException('Este email já está cadastrado!');
-      }
+      }*/
     }
+  }
+
+  login(String email, String senha) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: senha);
+    } on FirebaseAuthException catch (e) {
+      print("entrou no exeception");
+      print("erro: ${e.code}");
+      throw AuthException("Email ou senha incorretos!");
+    }
+  }
+
+  logout() async {
+    await _auth.signOut();
+    _getUser();
   }
 }

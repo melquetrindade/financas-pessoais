@@ -22,7 +22,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -30,7 +30,7 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
             valor: "100,00",
@@ -44,7 +44,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -52,7 +52,7 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
             valor: "585,00",
@@ -66,7 +66,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -74,19 +74,19 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
         ],
         cartao: Cartao(
             nome: "Banco do Brasil",
-            icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+            icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
             limite: "1.000,00",
             diaFechamento: "01",
             diaVencimento: "30",
             conta: Conta(
                 nome: "Banco do Brasil",
                 saldo: "1.567,90",
-                banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "01/03/205", valor: "-185,00")],
         data: "23/02/2025",
         foiPago: true),
@@ -104,7 +104,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -112,7 +112,7 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
             valor: "150,00",
@@ -126,7 +126,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -134,19 +134,19 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
         ],
         cartao: Cartao(
             nome: "Banco do Brasil",
-            icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+            icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
             limite: "1.000,00",
             diaFechamento: "01",
             diaVencimento: "30",
             conta: Conta(
                 nome: "Banco do Brasil",
                 saldo: "1.567,90",
-                banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "30/04/205", valor: "-350,00")],
         data: "02/12/2024",
         foiPago: true),
@@ -164,7 +164,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -172,7 +172,7 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
             valor: "15,00",
@@ -183,7 +183,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "01",
                 diaVencimento: "30",
@@ -191,7 +191,7 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
           Lancamentos(
             valor: "500,00",
@@ -202,7 +202,7 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
                 nome: "Banco do Brasil",
-                icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+                icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
                 limite: "1.000,00",
                 diaFechamento: "31",
                 diaVencimento: "30",
@@ -210,19 +210,19 @@ class RepositoryFatura {
                     nome: "Banco do Brasil",
                     saldo: "1.567,90",
                     banco:
-                        Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                        Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
           ),
         ],
         cartao: Cartao(
             nome: "Banco do Brasil",
-            icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+            icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
             limite: "1.000,00",
             diaFechamento: "31",
             diaVencimento: "30",
             conta: Conta(
                 nome: "Banco do Brasil",
                 saldo: "1.567,90",
-                banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
         pagamentos: [Pagamentos(data: "14/06/205", valor: "-1.000,00"), /*Pagamentos(data: "14/06/205", valor: "485,00")*/],
         data: "12/06/2025",
         foiPago: false),
@@ -240,14 +240,14 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
           ),
           Lancamentos(
@@ -262,14 +262,14 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
           ),
           Lancamentos(
@@ -284,27 +284,27 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
           ),
         ],
         cartao: Cartao(
           nome: "Banco PAN",
-          icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+          icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
           limite: "500,00",
           diaFechamento: "30",
           diaVencimento: "29",
           conta: Conta(
               nome: "Banco PAN", 
               saldo: "10.000,00",
-              banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+              banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
           )),
         pagamentos: [],
         data: "23/02/2025",
@@ -323,14 +323,14 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
           ),
           Lancamentos(
@@ -345,27 +345,27 @@ class RepositoryFatura {
             conta: null,
             cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
           ),
         ],
         cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "30",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
         pagamentos: [Pagamentos(data: "01/06/2025", valor: "-200,00")],
         data: "01/05/2025",
@@ -384,14 +384,14 @@ class RepositoryFatura {
                 conta: null,
                 cartao: Cartao(
             nome: "Banco PAN",
-            icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+            icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
             limite: "500,00",
             diaFechamento: "30",
             diaVencimento: "29",
             conta: Conta(
                 nome: "Banco PAN", 
                 saldo: "10.000,00",
-                banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+                banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
             )),
             ),
             Lancamentos(
@@ -406,27 +406,27 @@ class RepositoryFatura {
                 conta: null,
                 cartao: Cartao(
                     nome: "Banco PAN",
-                    icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+                    icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
                     limite: "500,00",
                     diaFechamento: "30",
                     diaVencimento: "29",
                     conta: Conta(
                         nome: "Banco PAN", 
                         saldo: "10.000,00",
-                        banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+                        banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
                     )),
             ),
             ],
             cartao: Cartao(
               nome: "Banco PAN",
-              icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+              icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
               limite: "500,00",
               diaFechamento: "30",
               diaVencimento: "30",
               conta: Conta(
                   nome: "Banco PAN", 
                   saldo: "10.000,00",
-                  banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+                  banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
               )),
             pagamentos: [/*Pagamentos(data: "01/06/2025", valor: "-200,00")*/],
             data: "02/06/2025",

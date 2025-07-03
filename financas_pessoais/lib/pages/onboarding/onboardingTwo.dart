@@ -1,6 +1,8 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class OnborardingTwoPage extends StatefulWidget {
   const OnborardingTwoPage({super.key});
@@ -93,7 +95,10 @@ class _OnborardingTwoPageState extends State<OnborardingTwoPage> {
                             ElevatedButton(
                                 onPressed: () {
                                   print("Próxima onboarding");
-                                  Navigator.pushReplacementNamed(context, '/login');
+                                  //Navigator.pushReplacementNamed(context, '/login');
+                                  context
+                                      .read<AuthService>()
+                                      .controllerPags("onboardingTwo");
                                 },
                                 child: Text("Skip")
                             )

@@ -1,6 +1,8 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -17,8 +19,20 @@ class _SignUpPageState extends State<SignUpPage> {
   final confirmeSenha = TextEditingController();
   bool visibilitySenha = false;
   bool visibilityConfSenha = false;
+  bool loading = false;
 
-  cadastrar(){}
+  cadastrar() async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<AuthService>()
+          .registrar(nome.text, email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,12 +198,43 @@ class _SignUpPageState extends State<SignUpPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text("Cadastrar")),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: (loading)
+                              ? [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                ]
+                              : [
+                                  Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      "Cadastrar",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                        )),
                   ),
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
+                      context.read<AuthService>().controllerPags("sigin");
                     },
                     child: Text(
                       "Já possui uma conta? Faça o login!",

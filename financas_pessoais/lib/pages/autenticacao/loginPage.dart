@@ -1,6 +1,8 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,8 +16,18 @@ class _LoginPageState extends State<LoginPage> {
   final email = TextEditingController();
   final senha = TextEditingController();
   bool visibilitySenha = false;
+  bool loading = false;
 
-  login(){}
+  login() async {
+    setState(() => loading = true);
+    try {
+      await context.read<AuthService>().login(email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     labelText: 'Email'),
                                 keyboardType: TextInputType.emailAddress,
-                                validator: (value) => Validador.validatorEmail(value),
+                                validator: (value) =>
+                                    Validador.validatorEmail(value),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
@@ -102,7 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       labelText: 'Senha'),
                                   obscureText: visibilitySenha,
-                                  validator: (value) => Validador.validatorSenha(value),
+                                  validator: (value) =>
+                                      Validador.validatorSenha(value),
                                 ),
                               ),
                             ],
@@ -117,7 +131,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            print("tudo ok");
                             login();
                           }
                         },
@@ -130,12 +143,43 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text("Login")),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: (loading)
+                              ? [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                ]
+                              : [
+                                  Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                        )),
                   ),
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/signUp');
+                      context.read<AuthService>().controllerPags("login");
                     },
                     child: Text(
                       "Ainda não tem conta? Cadastre-se agora!",
@@ -160,8 +204,14 @@ class _LoginPageState extends State<LoginPage> {
         });
       },
       child: visibilitySenha == true
-          ? Icon(Icons.visibility_off, color: AppColors.azulPrimario,)
-          : Icon(Icons.visibility, color: AppColors.azulPrimario,),
+          ? Icon(
+              Icons.visibility_off,
+              color: AppColors.azulPrimario,
+            )
+          : Icon(
+              Icons.visibility,
+              color: AppColors.azulPrimario,
+            ),
     );
   }
 }

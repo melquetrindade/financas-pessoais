@@ -1,4 +1,7 @@
+import 'package:financas_pessoais/pages/autenticacao/loginPage.dart';
+import 'package:financas_pessoais/pages/autenticacao/signupPage.dart';
 import 'package:financas_pessoais/pages/homeControllerPage.dart';
+import 'package:financas_pessoais/pages/onboarding/onboardingTwo.dart';
 import 'package:financas_pessoais/pages/onboarding/onborardingOne.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +15,24 @@ class AuthCheck extends StatefulWidget {
 }
 
 class _AuthCheckState extends State<AuthCheck> {
+  late AuthService auth;
+  bool teste = true;
   @override
   Widget build(BuildContext context) {
-    AuthService auth = Provider.of<AuthService>(context);
+    auth = context.watch<AuthService>();
 
     if (auth.isLoading) {
       return loading();
-    } else if (auth.usuario == null) {
+    } else if (auth.usuario == null && auth.onboardingOneView == false && auth.onboardingTwoView == false) {
       return OnborardingOnePage();
+    } else if (auth.usuario == null && auth.onboardingOneView == true && auth.onboardingTwoView == false) {
+      return OnborardingTwoPage();
+    } else if (auth.usuario == null && auth.onboardingOneView == true && auth.onboardingTwoView == true && auth.loginOrSigin == true) {
+      return LoginPage();
+    } else if (auth.usuario == null && auth.onboardingOneView == true && auth.onboardingTwoView == true && auth.loginOrSigin == false) {
+      return SignUpPage();
     } else {
+      print('Nome do usuário: ${auth.usuario!.displayName}');
       return HomeControllerPage();
     }
   }

@@ -16,14 +16,14 @@ class RepositoryLancamentos {
       conta: null, 
       cartao: Cartao(
         nome: "Banco do Brasil",
-        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
-          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+          banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil")  
         )),
     ),
     Lancamentos(
@@ -35,14 +35,14 @@ class RepositoryLancamentos {
       conta: null, 
       cartao: Cartao(
         nome: "Banco do Brasil",
-        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
-          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+          banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil")  
         )),
     ),
     Lancamentos(
@@ -54,14 +54,14 @@ class RepositoryLancamentos {
       conta: null, 
       cartao: Cartao(
         nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/pan.png"),
+        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
         limite: "500,00",
         diaFechamento: "30",
         diaVencimento: "29",
         conta: Conta(
             nome: "Banco PAN", 
             saldo: "10.000,00",
-            banco: Banco(img: "assets/pan.png", nome: "Banco PAN")
+            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
         )),
     ),
     Lancamentos(
@@ -70,7 +70,7 @@ class RepositoryLancamentos {
       data: "30/04/2025", 
       eDespesa: false, 
       categoria: Categorias(nome: "Investimentos", cor: Colors.tealAccent.shade700, icon: Icons.list_sharp), 
-      conta: Conta(nome: "Banco do Brasil", saldo: "1.567,90", banco: Banco(nome: "Banco do Brasil", img: "assets/bb.png")), 
+      conta: Conta(nome: "Banco do Brasil", saldo: "1.567,90", banco: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png")), 
       cartao: null
     ),
     Lancamentos(
@@ -79,7 +79,7 @@ class RepositoryLancamentos {
       data: "02/05/2025", 
       eDespesa: true, 
       categoria: Categorias(nome: "Transporte", cor: Colors.blue.shade300, icon: Icons.bus_alert_sharp), 
-      conta: Conta(nome: "Banco PAN", saldo: "10.000,00", banco: Banco(nome: "Banco PAN", img: "assets/pan.png")), 
+      conta: Conta(nome: "Banco PAN", saldo: "10.000,00", banco: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png")), 
       cartao: null
     ),
     Lancamentos(
@@ -91,14 +91,14 @@ class RepositoryLancamentos {
       conta: null, 
       cartao: Cartao(
         nome: "Banco do Brasil",
-        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
-          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+          banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil")  
         )),
     ),
     Lancamentos(
@@ -113,7 +113,7 @@ class RepositoryLancamentos {
       conta: null,
       cartao: Cartao(
           nome: "Banco do Brasil",
-          icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+          icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
           limite: "1.000,00",
           diaFechamento: "01",
           diaVencimento: "30",
@@ -121,7 +121,7 @@ class RepositoryLancamentos {
               nome: "Banco do Brasil",
               saldo: "1.567,90",
               banco:
-                  Banco(img: "assets/bb.png", nome: "Banco do Brasil"))),
+                  Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil"))),
     ),
     Lancamentos(
       valor: "75,00", 
@@ -140,7 +140,7 @@ class RepositoryLancamentos {
           Conta(
             nome: "Next",
             saldo: "2.003,90",
-            banco: Banco(img: "assets/next.jpg", nome: "Next")
+            banco: Banco(img: "assets/bancos/next.jpg", nome: "Next")
           )),
     ),
     Lancamentos(
@@ -161,14 +161,14 @@ class RepositoryLancamentos {
       conta: null, 
       cartao: Cartao(
         nome: "Banco do Brasil",
-        icone: Banco(nome: "Banco do Brasil", img: "assets/bb.png"),
+        icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
         limite: "1.000,00",
         diaFechamento: "01",
         diaVencimento: "30",
         conta: Conta(
           nome: "Banco do Brasil",
           saldo: "1.567,90",
-          banco: Banco(img: "assets/bb.png", nome: "Banco do Brasil")  
+          banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil")  
         )),
     ),
   ];

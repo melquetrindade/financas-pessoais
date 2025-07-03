@@ -35,7 +35,7 @@ class _MyAppBarState extends State<MyAppBar> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage("assets/melque.png"),
+                        backgroundImage: AssetImage("assets/bancos/melque.png"),
                       )
                     ),
                     onTap: () {

@@ -1,5 +1,7 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyHeaderDrawser extends StatefulWidget {
   const MyHeaderDrawser({super.key});
@@ -9,6 +11,10 @@ class MyHeaderDrawser extends StatefulWidget {
 }
 
 class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
+  logout() async {
+    await context.read<AuthService>().logout();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,18 +27,17 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: 10),
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
+                  margin: EdgeInsets.only(bottom: 10),
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 1),
-                ),
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage("assets/melque.png"),
-                )
-              ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundImage: AssetImage("assets/bancos/melque.png"),
+                  )),
               Container(
                 width: double.infinity,
                 child: Text(
@@ -82,8 +87,8 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
               Divider(),
               InkWell(
                 onTap: () {
-                  //authService.logout();
                   print("Fazer logout");
+                  logout();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),

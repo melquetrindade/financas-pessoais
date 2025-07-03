@@ -1,6 +1,8 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class OnborardingOnePage extends StatefulWidget {
   const OnborardingOnePage({super.key});
@@ -70,17 +72,19 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
                                       color: Colors.white,
                                     ),
                                     height: 6,
                                     width: 65,
-                                  ), 
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 10),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
                                         color: Colors.white38,
                                       ),
                                       height: 6,
@@ -93,10 +97,12 @@ class _OnborardingOnePageState extends State<OnborardingOnePage> {
                             ElevatedButton(
                                 onPressed: () {
                                   print("Próxima onboarding");
-                                  Navigator.pushNamed(context, '/onboardingTwo');
+                                  //Navigator.pushNamed(context, '/onboardingTwo');
+                                  context
+                                      .read<AuthService>()
+                                      .controllerPags("onboardingOne");
                                 },
-                                child: Text("Skip")
-                            )
+                                child: Text("Skip"))
                           ],
                         ),
                       )
