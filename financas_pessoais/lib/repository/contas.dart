@@ -70,7 +70,7 @@ class RepositoryContas extends ChangeNotifier {
           .collection('usuarios/${auth.usuario!.uid}/contas')
           .doc(conta.nome)
           .delete();
-      feedback(true);
+      feedback(true, 'Conta deletada com sucesso!');
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -78,15 +78,29 @@ class RepositoryContas extends ChangeNotifier {
     }
   }
 
+  updateConta(Conta conta, Function feedback) async {
+    try {
+      await db
+          .collection('usuarios/${auth.usuario!.uid}/contas')
+          .doc(conta.nome)
+          .update({
+        'saldo': conta.saldo,
+        'banco': {'img': conta.banco.img, 'nome': conta.banco.nome}
+      });
+      for (var c in _contas) {
+        if (c.nome == conta.nome) {
+          c.banco = conta.banco;
+          c.saldo = conta.saldo;
+          break;
+        }
+      }
+      feedback(true, 'Conta atualizada com sucesso!');
+      notifyListeners();
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      throw AuthException("Erro, não foi possível atualizar a conta!");
+    }
+  }
+
   List<Conta> get contas => _contas;
 }
-
-/* 
-final List<Conta> _contas = [
-  Conta(nome: "Banco do Brasil", saldo: "1.567,90", banco: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png")),
-  Conta(nome: "Caixa", saldo: "5.633,90", banco: Banco(nome: "Caixa", img: "assets/bancos/caixa.jpg")),
-  Conta(nome: "Banco PAN", saldo: "10.000,00", banco: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png")),
-  Conta(nome: "Poupança", saldo: "8.500,00", banco: Banco(nome: "Cofrinho", img: "Cofrinho")),
-  Conta(nome: "Next", saldo: "2.003,90", banco: Banco(nome: "Next", img: "assets/bancos/next.jpg"))
-];
-*/

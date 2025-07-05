@@ -28,9 +28,11 @@ class EditarContaPage extends StatefulWidget {
 class _EditarContaPageState extends State<EditarContaPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
   final formKey = GlobalKey<FormState>();
-  final nome = TextEditingController();
+  //final nome = TextEditingController();
+
   final saldo = TextEditingController();
   bool loading = false;
+  bool loadingUpdate = false;
   Banco infoBanco = Banco(nome: "", img: "");
 
   void mostrarModal(BuildContext context) {
@@ -66,7 +68,7 @@ class _EditarContaPageState extends State<EditarContaPage> {
   @override
   void initState() {
     super.initState();
-    nome.text = widget.nomeConta;
+    //nome.text = widget.nomeConta;
     infoBanco = widget.banco;
     saldo.text = widget.saldo;
     saldo.addListener(_formatSaldo);
@@ -135,9 +137,17 @@ class _EditarContaPageState extends State<EditarContaPage> {
     Navigator.pop(context);
   }
 
-  feedback(bool sinal) {
+  feedback(bool sinal, String message) {
     if (sinal) {
-      MySnackBar.mensagem('OK', Colors.green, Icon(Icons.check, color: Colors.white,), 'Conta deletada com sucesso!', context);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.green,
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          message,
+          context);
     }
   }
 
@@ -146,10 +156,37 @@ class _EditarContaPageState extends State<EditarContaPage> {
     try {
       await context.read<RepositoryContas>().removeConta(conta, feedback);
       setState(() => loading = false);
-      
     } on AuthException catch (e) {
       setState(() => loading = false);
-      MySnackBar.mensagem('OK', Colors.red, Icon(Icons.close, color: Colors.white,), e.message, context);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          e.message,
+          context);
+    }
+    Navigator.pop(context);
+  }
+
+  updateConta(Conta conta) async {
+    setState(() => loadingUpdate = true);
+    try {
+      await context.read<RepositoryContas>().updateConta(conta, feedback);
+      setState(() => loadingUpdate = false);
+    } on AuthException catch (e) {
+      setState(() => loadingUpdate = false);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          e.message,
+          context);
     }
     Navigator.pop(context);
   }
@@ -214,7 +251,7 @@ class _EditarContaPageState extends State<EditarContaPage> {
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            "Nome da conta",
+                            "Conta",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400,
@@ -222,26 +259,16 @@ class _EditarContaPageState extends State<EditarContaPage> {
                           ),
                         ),
                       ),
-                      TextFormField(
-                          controller: nome,
-                          decoration: InputDecoration(
-                            hintText: 'Digite o nome da conta',
-                            hintStyle: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black54),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.black54),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.black54),
-                            ),
-                          ),
-                          validator: (value) =>
-                              Validador.validatorNomeConta(value)),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          widget.nomeConta,
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Align(
@@ -347,23 +374,25 @@ class _EditarContaPageState extends State<EditarContaPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Cadastrar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "") {
-                            print("tudo ok");
-                            print(
-                                "dados da conta=> nome: ${nome.text} - ícone: ${infoBanco.img} - saldo: ${saldo.text}");
+                            updateConta(
+                                Conta(
+                                  nome: widget.nomeConta, 
+                                  banco: Banco(nome: infoBanco.nome, img: infoBanco.img), 
+                                  saldo: saldo.text));
                           } else {
                             if (infoBanco.img == "") {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Erro, selecione um ícone para prosseguir!'),
-                                  duration: Duration(seconds: 10),
-                                ),
-                              );
+                              MySnackBar.mensagem(
+                                  'OK',
+                                  Colors.red,
+                                  Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                  ),
+                                  'Erro, selecione um ícone para prosseguir!',
+                                  context);
                             }
-                            print("error");
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -379,7 +408,18 @@ class _EditarContaPageState extends State<EditarContaPage> {
                             ),
                           ),
                         ),
-                        child: Text("Salvar alterações")),
+                        child: loadingUpdate
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.azulPrimario,
+                                  ),
+                                ),
+                              )
+                            : Text("Salvar alterações")),
                   ),
                 ),
               ],
