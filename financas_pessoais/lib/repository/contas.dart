@@ -3,12 +3,14 @@ import 'package:financas_pessoais/databases/db_firestore.dart';
 import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RepositoryContas extends ChangeNotifier {
   List<Conta> _contas = [];
   late FirebaseFirestore db;
   late AuthService auth;
+  bool isLoading = true;
 
   RepositoryContas({required this.auth}) {
     _startRepository();
@@ -35,12 +37,18 @@ class RepositoryContas extends ChangeNotifier {
             saldo: item['saldo']));
       });
     }
+    isLoading = false;
     notifyListeners();
   }
 
-  saveContas(Conta conta, Function teste) async {
+  notifica() {
+    notifyListeners();
+  }
+
+  saveContas(Conta conta, Function feedback) async {
     bool existe = _contas.any((c) => c.nome == conta.nome);
     if (existe == false) {
+      feedback(true);
       _contas.add(conta);
       await db
           .collection('usuarios/${auth.usuario!.uid}/contas')
@@ -50,12 +58,24 @@ class RepositoryContas extends ChangeNotifier {
         'saldo': conta.saldo,
         'banco': {'nome': conta.banco.nome, 'img': conta.banco.img}
       });
-      teste(true);
     } else {
-      print("Não salvou pois já existia uma conta com este nome");
-      teste(false);
+      feedback(false);
     }
-    notifyListeners();
+  }
+
+  removeConta(Conta conta, Function feedback) async {
+    try {
+      _contas.removeWhere((c) => c.nome == conta.nome);
+      await db
+          .collection('usuarios/${auth.usuario!.uid}/contas')
+          .doc(conta.nome)
+          .delete();
+      feedback(true);
+      notifyListeners();
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      throw AuthException("Erro, não foi possível excluir a conta!");
+    }
   }
 
   List<Conta> get contas => _contas;

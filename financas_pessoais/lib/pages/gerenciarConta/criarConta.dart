@@ -3,6 +3,7 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
@@ -120,18 +121,19 @@ class _CriarContaPageState extends State<CriarContaPage> {
     Navigator.pop(context);
   }
 
-  teste(bool sinal){
-    if(sinal){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Deu certo")));
-    } else{
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Erro")));
+  feedback(bool sinal) {
+    if (sinal) {
+      MySnackBar.mensagem('OK', Colors.green, Icon(Icons.check, color: Colors.white,), 'Conta criada com sucesso!', context);
+      context.read<RepositoryContas>().notifica();
+    } else {
+      MySnackBar.mensagem('OK', Colors.red, Icon(Icons.close, color: Colors.white,), 'Você já possui uma conta com este nome!', context);
+      context.read<RepositoryContas>().notifica();
     }
   }
 
   addConta(Conta conta) {
-    context.read<RepositoryContas>().saveContas(conta, teste);
+    context.read<RepositoryContas>().saveContas(conta, feedback);
+    Navigator.pop(context);
   }
 
   @override
@@ -304,15 +306,8 @@ class _CriarContaPageState extends State<CriarContaPage> {
                                 saldo: saldo.text));
                           } else {
                             if (infoBanco.img == "") {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Erro, selecione um ícone para prosseguir!'),
-                                  duration: Duration(seconds: 10),
-                                ),
-                              );
+                              MySnackBar.mensagem('OK', Colors.red, Icon(Icons.close, color: Colors.white,), 'Erro, selecione um ícone para prosseguir!', context);
                             }
-                            print("error");
                           }
                         },
                         style: ElevatedButton.styleFrom(

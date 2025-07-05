@@ -55,7 +55,6 @@ class AuthService extends ChangeNotifier {
       _getUser();
     } on FirebaseAuthException catch (e) {
       print("erro: ${e.code}");
-      //throw AuthException("Email ou senha incorretos!");
       if (e.code == "weak-password") {
         throw AuthException('A senha é muito fraca!');
       } else if (e.code == 'email-already-in-use') {

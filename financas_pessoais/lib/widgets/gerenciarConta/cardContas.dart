@@ -81,9 +81,7 @@ class _CardGerenciaContaState extends State<CardGerenciaConta> {
                   title: Text(widget.listContas[i].nome),
                   trailing: IconButton(
                       onPressed: () {
-                        print(
-                            "Ir para a página de edição da ${widget.listContas[i].nome}");
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (_) => EditarContaPage(

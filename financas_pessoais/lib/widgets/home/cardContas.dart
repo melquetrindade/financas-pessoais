@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 class Cardcontas extends StatefulWidget {
   final List<Conta> listContas;
-  const Cardcontas({super.key, required this.listContas});
+  final bool isLoading;
+  const Cardcontas({super.key, required this.listContas, required this.isLoading});
 
   @override
   State<Cardcontas> createState() => _CardcontasState();
@@ -101,35 +102,49 @@ class _CardcontasState extends State<Cardcontas> {
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
               ),
               Column(
-                children: widget.listContas.isNotEmpty
-                    ? List.generate(
-                        widget.listContas.length, (i) => cardConta(i))
-                    : [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.help_outline_sharp,
-                                  color: Colors.grey.shade700,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Você não tem conta cadastrada",
-                                    style: TextStyle(
-                                        color: Colors.grey.shade700,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15),
-                                  ),
-                                )
-                              ],
-                            ),
+                children: [
+                  if (widget.isLoading)
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Center(
+                        child: SizedBox(
+                          width: 34,
+                          height: 34,
+                          child: CircularProgressIndicator(
+                            color: AppColors.azulPrimario,
                           ),
-                        )
-                      ],
+                        ),
+                      ),
+                    )
+                  else if (widget.listContas.isNotEmpty)
+                    ...List.generate(widget.listContas.length, (i) => cardConta(i))
+                  else
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.help_outline_sharp,
+                              color: Colors.grey.shade700,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Você não tem conta cadastrada",
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 13),

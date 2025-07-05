@@ -1,5 +1,6 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,10 @@ class _LoginPageState extends State<LoginPage> {
       await context.read<AuthService>().login(email.text, senha.text);
     } on AuthException catch (e) {
       setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
+      MySnackBar.mensagem('OK', Colors.red, Icon(Icons.close, color: Colors.white,), e.message, context);
+      
+      /*ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));*/
     }
   }
 
@@ -116,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                                       labelText: 'Senha'),
                                   obscureText: visibilitySenha,
                                   validator: (value) =>
-                                      Validador.validatorSenha(value),
+                                      Validador.formatacaoSenha(value),
                                 ),
                               ),
                             ],

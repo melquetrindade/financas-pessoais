@@ -1,10 +1,15 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/bancos.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class EditarContaPage extends StatefulWidget {
   final String nomeConta;
@@ -25,6 +30,7 @@ class _EditarContaPageState extends State<EditarContaPage> {
   final formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final saldo = TextEditingController();
+  bool loading = false;
   Banco infoBanco = Banco(nome: "", img: "");
 
   void mostrarModal(BuildContext context) {
@@ -129,6 +135,25 @@ class _EditarContaPageState extends State<EditarContaPage> {
     Navigator.pop(context);
   }
 
+  feedback(bool sinal) {
+    if (sinal) {
+      MySnackBar.mensagem('OK', Colors.green, Icon(Icons.check, color: Colors.white,), 'Conta deletada com sucesso!', context);
+    }
+  }
+
+  deleteConta(Conta conta) async {
+    setState(() => loading = true);
+    try {
+      await context.read<RepositoryContas>().removeConta(conta, feedback);
+      setState(() => loading = false);
+      
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      MySnackBar.mensagem('OK', Colors.red, Icon(Icons.close, color: Colors.white,), e.message, context);
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,14 +176,27 @@ class _EditarContaPageState extends State<EditarContaPage> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
-              child: IconButton(
-                  onPressed: () {
-                    print("excluir conta");
-                  },
-                  icon: Icon(
-                    Icons.delete_forever,
-                    color: Colors.white,
-                  )),
+              child: (loading)
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        print("excluir conta");
+                        deleteConta(Conta(
+                            nome: widget.nomeConta,
+                            banco: Banco(
+                                nome: widget.banco.nome, img: widget.banco.img),
+                            saldo: widget.saldo));
+                      },
+                      icon: Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                      )),
             )
           ],
         ),

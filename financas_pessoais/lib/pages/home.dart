@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
               child: Column(
                 children: [
-                  Cardcontas(listContas: repositoryContas.contas),
+                  Cardcontas(listContas: repositoryContas.contas, isLoading: repositoryContas.isLoading,),
                   const SizedBox(height: 20),
                   Cardcartoes(listCartao: repositoryCartao.cartoes, listaFatura: repositoryFatura.faturas,),
                   const SizedBox(height: 20),

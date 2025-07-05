@@ -24,6 +24,15 @@ class Validador {
     return null;
   }
 
+  static String? formatacaoSenha(String? value) {
+    if (value!.isEmpty) {
+      return "Informe sua senha!";
+    } else if (value.length < 8) {
+      return "Sua senha deve ter no mínimo 8 caracteres!";
+    }
+    return null;
+  }
+
   static String? validatorSenha(String? value) {
     final condition =
         RegExp(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
@@ -86,7 +95,8 @@ class Validador {
 
     // Remove caracteres não numéricos
     for (var char in value.runes) {
-      if (char >= 48 && char <= 57) { // 0-9 em ASCII
+      if (char >= 48 && char <= 57) {
+        // 0-9 em ASCII
         novoValor += String.fromCharCode(char);
       }
     }
@@ -116,7 +126,7 @@ class Validador {
   }
 
   static String? validatorDia(String? value, bool dia) {
-    if(dia){
+    if (dia) {
       if (value!.isEmpty) {
         return "Informe o dia do fechamento!";
       }
