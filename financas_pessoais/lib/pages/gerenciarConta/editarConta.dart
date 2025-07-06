@@ -28,8 +28,6 @@ class EditarContaPage extends StatefulWidget {
 class _EditarContaPageState extends State<EditarContaPage> {
   final RepositoryBanco repositoryBanco = RepositoryBanco();
   final formKey = GlobalKey<FormState>();
-  //final nome = TextEditingController();
-
   final saldo = TextEditingController();
   bool loading = false;
   bool loadingUpdate = false;

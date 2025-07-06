@@ -189,7 +189,7 @@ class _CardGerenciaCartaoState extends State<CardGerenciaCartao> {
                 ),
                 trailing: IconButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (_) => EditarCartaoPage(

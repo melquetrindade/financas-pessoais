@@ -3,7 +3,10 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +30,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   final limite = TextEditingController();
   final diaFecha = TextEditingController();
   final diaVencimento = TextEditingController();
+  bool loading = false;
   Banco infoBanco = Banco(nome: "", img: "");
   Conta infoContaPag =
       Conta(nome: "", saldo: "", banco: Banco(nome: "", img: ""));
@@ -168,6 +172,40 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
     });
   }
 
+  feedback(bool sinal, String message) {
+    if (sinal) {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.green,
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          message,
+          context);
+    }
+  }
+
+  deleteCartao(Cartao cartao) async {
+    setState(() => loading = true);
+    try {
+      await context.read<RepositoryCartao>().removeCartao(cartao, feedback);
+      setState(() => loading = false);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          e.message,
+          context);
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     repositoryContas = context.watch<RepositoryContas>();
@@ -193,14 +231,29 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
-              child: IconButton(
-                  onPressed: () {
-                    print("excluir cartão");
-                  },
-                  icon: Icon(
-                    Icons.delete_forever,
-                    color: Colors.white,
-                  )),
+              child: (loading)
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        print("excluir cartão");
+                        deleteCartao(Cartao(
+                            nome: widget.cartao.nome,
+                            icone: widget.cartao.icone,
+                            limite: widget.cartao.limite,
+                            diaFechamento: widget.cartao.diaFechamento,
+                            diaVencimento: widget.cartao.diaVencimento,
+                            conta: widget.cartao.conta));
+                      },
+                      icon: Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                      )),
             )
           ],
         ),
@@ -708,8 +761,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
             ],
           ),
         ),
-        for (var i = 0; i < listaContas.length; i++)
-          iconesContas(i),
+        for (var i = 0; i < listaContas.length; i++) iconesContas(i),
       ],
     );
   }
@@ -720,8 +772,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
         InkWell(
           onTap: () {
             setState(() {
-              infoContaPag.banco.img =
-                  "${listaContas[i].banco.img}";
+              infoContaPag.banco.img = "${listaContas[i].banco.img}";
               infoContaPag.nome = "${listaContas[i].nome}";
             });
             Navigator.pop(context);
@@ -732,18 +783,16 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                 height: 40,
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage: listaContas[i].banco.img ==
-                              "Carteira" ||
+                  backgroundImage: listaContas[i].banco.img == "Carteira" ||
                           listaContas[i].banco.img == "Banco" ||
                           listaContas[i].banco.img == "Cofrinho"
                       ? null
                       : AssetImage("${listaContas[i].banco.img}"),
-                  backgroundColor:
-                      listaContas[i].banco.img == "Carteira" ||
-                              listaContas[i].banco.img == "Banco" ||
-                              listaContas[i].banco.img == "Cofrinho"
-                          ? AppColors.azulPrimario
-                          : null,
+                  backgroundColor: listaContas[i].banco.img == "Carteira" ||
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
+                      ? AppColors.azulPrimario
+                      : null,
                   child: listaContas[i].banco.img == "Carteira" ||
                           listaContas[i].banco.img == "Banco" ||
                           listaContas[i].banco.img == "Cofrinho"

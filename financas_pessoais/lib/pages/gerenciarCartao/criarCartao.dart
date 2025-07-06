@@ -1,8 +1,11 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/bancos.dart';
+import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/repository/bancos.dart';
+import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:financas_pessoais/widgets/criarConta/searchIcone.dart';
 import 'package:flutter/material.dart';
@@ -159,6 +162,37 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
       Navigator.pop(context);
       Navigator.pop(context);
     });
+  }
+
+  feedback(bool sinal) {
+    if (sinal) {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.green,
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          'Cartão criado com sucesso!',
+          context);
+      context.read<RepositoryCartao>().notifica();
+    } else {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          'Você já possui um cartão com este nome!',
+          context);
+      context.read<RepositoryCartao>().notifica();
+    }
+  }
+
+  addCartao(Cartao cartao) {
+    context.read<RepositoryCartao>().saveCartao(cartao, feedback);
+    Navigator.pop(context);
   }
 
   @override
@@ -498,21 +532,32 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Cadastrar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "" &&
                               infoContaPag.banco.img != "") {
-                            print("tudo ok");
-                            print(
-                                "dados do cartão: \n\t nome: ${nome.text} \n\t ícone: img => ${infoBanco.img} - nome => ${infoBanco.nome} \n\t saldo: ${saldo.text} \n\t fechamento: ${diaFecha.text} - vencimento ${diaVencimento.text} \n\t Conta: img => ${infoContaPag.banco.img} - nome => ${infoContaPag.nome}");
+                            addCartao(Cartao(
+                                nome: nome.text,
+                                icone: Banco(
+                                    nome: infoBanco.nome, img: infoBanco.img),
+                                limite: saldo.text,
+                                diaFechamento: diaFecha.text,
+                                diaVencimento: diaVencimento.text,
+                                conta: Conta(
+                                    nome: infoContaPag.nome,
+                                    banco: Banco(
+                                        nome: infoContaPag.banco.nome,
+                                        img: infoContaPag.banco.img),
+                                    saldo: infoContaPag.saldo)));
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Erro, preencha os campos corretamente!'),
-                                duration: Duration(seconds: 10),
-                              ),
-                            );
+                            MySnackBar.mensagem(
+                                'OK',
+                                Colors.red,
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ),
+                                'Erro, preencha os campos corretamente!',
+                                context);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -682,8 +727,7 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
             ],
           ),
         ),
-        for (var i = 0; i < listaContas.length; i++)
-          iconesContas(i),
+        for (var i = 0; i < listaContas.length; i++) iconesContas(i),
       ],
     );
   }
@@ -694,9 +738,12 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
         InkWell(
           onTap: () {
             setState(() {
-              infoContaPag.banco.img =
-                  "${listaContas[i].banco.img}";
+              infoContaPag.banco = Banco(
+                  nome: listaContas[i].banco.nome,
+                  img: listaContas[i].banco.img);
               infoContaPag.nome = "${listaContas[i].nome}";
+              //infoContaPag.banco.nome = "${listaContas[i].banco.nome}";
+              infoContaPag.saldo = "${listaContas[i].saldo}";
             });
             Navigator.pop(context);
           },
@@ -706,18 +753,16 @@ class _CriarCartaoPageState extends State<CriarCartaoPage> {
                 height: 40,
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage: listaContas[i].banco.img ==
-                              "Carteira" ||
+                  backgroundImage: listaContas[i].banco.img == "Carteira" ||
                           listaContas[i].banco.img == "Banco" ||
                           listaContas[i].banco.img == "Cofrinho"
                       ? null
                       : AssetImage("${listaContas[i].banco.img}"),
-                  backgroundColor:
-                      listaContas[i].banco.img == "Carteira" ||
-                              listaContas[i].banco.img == "Banco" ||
-                              listaContas[i].banco.img == "Cofrinho"
-                          ? AppColors.azulPrimario
-                          : null,
+                  backgroundColor: listaContas[i].banco.img == "Carteira" ||
+                          listaContas[i].banco.img == "Banco" ||
+                          listaContas[i].banco.img == "Cofrinho"
+                      ? AppColors.azulPrimario
+                      : null,
                   child: listaContas[i].banco.img == "Carteira" ||
                           listaContas[i].banco.img == "Banco" ||
                           listaContas[i].banco.img == "Cofrinho"

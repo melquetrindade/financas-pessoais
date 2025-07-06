@@ -18,13 +18,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late RepositoryContas repositoryContas;
-  final RepositoryCartao repositoryCartao = RepositoryCartao();
+  late RepositoryCartao repositoryCartao;
   late RepositoryFatura repositoryFatura;
 
   @override
   Widget build(BuildContext context) {
     repositoryFatura = RepositoryFatura();
     repositoryContas = context.watch<RepositoryContas>();
+    repositoryCartao = context.watch<RepositoryCartao>();
 
     return Scaffold(
       backgroundColor: AppColors.backgroundClaro,
@@ -36,9 +37,16 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
               child: Column(
                 children: [
-                  Cardcontas(listContas: repositoryContas.contas, isLoading: repositoryContas.isLoading,),
+                  Cardcontas(
+                    listContas: repositoryContas.contas,
+                    isLoading: repositoryContas.isLoading,
+                  ),
                   const SizedBox(height: 20),
-                  Cardcartoes(listCartao: repositoryCartao.cartoes, listaFatura: repositoryFatura.faturas,),
+                  Cardcartoes(
+                    listCartao: repositoryCartao.cartoes,
+                    listaFatura: repositoryFatura.faturas,
+                    isLoading: repositoryCartao.isLoading,
+                  ),
                   const SizedBox(height: 20),
                 ],
               ),

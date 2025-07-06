@@ -8,8 +8,9 @@ import 'package:intl/intl.dart';
 class Cardcartoes extends StatefulWidget {
   final List<Cartao> listCartao;
   final List<Fatura> listaFatura;
+  final bool isLoading;
   const Cardcartoes(
-      {super.key, required this.listCartao, required this.listaFatura});
+      {super.key, required this.listCartao, required this.listaFatura, required this.isLoading});
 
   @override
   State<Cardcartoes> createState() => _CardcartoesState();
@@ -117,7 +118,11 @@ class _CardcartoesState extends State<Cardcartoes> {
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
-                            color: showSaldo ? fatura < 0 ? Colors.red : AppColors.azulPrimario : Colors.black54),
+                            color: showSaldo
+                                ? fatura < 0
+                                    ? Colors.red
+                                    : AppColors.azulPrimario
+                                : Colors.black54),
                       ),
                     ],
                   ),
@@ -146,11 +151,24 @@ class _CardcartoesState extends State<Cardcartoes> {
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
               ),
               Column(
-                children: widget.listCartao.isNotEmpty
-                    ? List.generate(
-                        widget.listCartao.length, (i) => cardCartao(i))
-                    : [
-                        Padding(
+                children: [
+                  if(widget.isLoading)
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Center(
+                        child: SizedBox(
+                          width: 34,
+                          height: 34,
+                          child: CircularProgressIndicator(
+                            color: AppColors.azulPrimario,
+                          ),
+                        ),
+                      ),
+                    )
+                    else if(widget.listCartao.isNotEmpty)
+                      ...List.generate(widget.listCartao.length, (i) => cardCartao(i))
+                    else
+                      Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -174,9 +192,8 @@ class _CardcartoesState extends State<Cardcartoes> {
                             ),
                           ),
                         )
-                      ],
+                ]
               ),
-              //for (var i = 0; i < widget.listCartao.length; i++) cardCartao(i),
               Padding(
                 padding: const EdgeInsets.only(top: 13),
                 child: SizedBox(

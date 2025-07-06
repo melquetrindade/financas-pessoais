@@ -234,7 +234,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
   Widget build(BuildContext context) {
     repositoryCategorias = RepositoryCategorias();
     repositoryContas = context.watch<RepositoryContas>();
-    repositoryCartao = RepositoryCartao();
+    repositoryCartao = context.watch<RepositoryCartao>();
     listaContas = repositoryContas.contas;
 
     return Scaffold(
