@@ -20,7 +20,7 @@ class _GerenciarCartaoPageState extends State<GerenciarCartaoPage> {
   @override
   Widget build(BuildContext context) {
     print('Atualiza o gerencia cartão');
-    repositoryFatura = RepositoryFatura();
+    repositoryFatura = context.watch<RepositoryFatura>();
     repositoryCartao = context.watch<RepositoryCartao>();
 
     return Scaffold(

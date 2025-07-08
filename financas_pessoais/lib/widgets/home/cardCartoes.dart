@@ -10,7 +10,10 @@ class Cardcartoes extends StatefulWidget {
   final List<Fatura> listaFatura;
   final bool isLoading;
   const Cardcartoes(
-      {super.key, required this.listCartao, required this.listaFatura, required this.isLoading});
+      {super.key,
+      required this.listCartao,
+      required this.listaFatura,
+      required this.isLoading});
 
   @override
   State<Cardcartoes> createState() => _CardcartoesState();
@@ -89,6 +92,7 @@ class _CardcartoesState extends State<Cardcartoes> {
 
   @override
   Widget build(BuildContext context) {
+    fatura = 0;
     calcFatura();
 
     return Container(
@@ -150,50 +154,49 @@ class _CardcartoesState extends State<Cardcartoes> {
                 "Meus cartões",
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
               ),
-              Column(
-                children: [
-                  if(widget.isLoading)
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Center(
-                        child: SizedBox(
-                          width: 34,
-                          height: 34,
-                          child: CircularProgressIndicator(
-                            color: AppColors.azulPrimario,
-                          ),
+              Column(children: [
+                if (widget.isLoading)
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Center(
+                      child: SizedBox(
+                        width: 34,
+                        height: 34,
+                        child: CircularProgressIndicator(
+                          color: AppColors.azulPrimario,
                         ),
                       ),
-                    )
-                    else if(widget.listCartao.isNotEmpty)
-                      ...List.generate(widget.listCartao.length, (i) => cardCartao(i))
-                    else
-                      Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.help_outline_sharp,
-                                  color: Colors.grey.shade700,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Você não tem cartão cadastrado",
-                                    style: TextStyle(
-                                        color: Colors.grey.shade700,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15),
-                                  ),
-                                )
-                              ],
-                            ),
+                    ),
+                  )
+                else if (widget.listCartao.isNotEmpty)
+                  ...List.generate(
+                      widget.listCartao.length, (i) => cardCartao(i))
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.help_outline_sharp,
+                            color: Colors.grey.shade700,
                           ),
-                        )
-                ]
-              ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Você não tem cartão cadastrado",
+                              style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+              ]),
               Padding(
                 padding: const EdgeInsets.only(top: 13),
                 child: SizedBox(

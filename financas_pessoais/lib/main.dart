@@ -1,6 +1,8 @@
 import 'package:financas_pessoais/firebase_options.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/repository/fatura.dart';
+import 'package:financas_pessoais/repository/lancamentos.dart';
 import 'package:financas_pessoais/routes/routes.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,6 +19,8 @@ void main() async {
       ChangeNotifierProvider(create: (context) => AuthService()),
       ChangeNotifierProvider<RepositoryContas>(create: (context) => RepositoryContas(auth: context.read<AuthService>())),
       ChangeNotifierProvider<RepositoryCartao>(create: (context) => RepositoryCartao(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<RepositoryLancamentos>(create: (context) => RepositoryLancamentos(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<RepositoryFatura>(create: (context) => RepositoryFatura(auth: context.read<AuthService>())),
     ], child: MyApp(),)
   );
 }

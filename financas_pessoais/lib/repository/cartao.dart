@@ -4,7 +4,6 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RepositoryCartao extends ChangeNotifier {
@@ -91,7 +90,7 @@ class RepositoryCartao extends ChangeNotifier {
           .delete();
       feedback(true, 'Cartão deletado com sucesso!');
       notifyListeners();
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       print(e);
       throw AuthException("Erro, não foi possível excluir o cartão!");
     }
@@ -128,7 +127,7 @@ class RepositoryCartao extends ChangeNotifier {
       }
       feedback(true, 'Cartão atualizado com sucesso!');
       notifyListeners();
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       print(e);
       throw AuthException("Erro, não foi possível atualizar o cartão!");
     }
@@ -136,55 +135,3 @@ class RepositoryCartao extends ChangeNotifier {
 
   List<Cartao> get cartoes => _cartoes;
 }
-
-/* 
-final List<Cartao> _cartoes = [
-    Cartao(
-        nome: "Banco do Brasil",
-        icone: Banco(nome: "Banco do Brasil", img: "assets/bancos/bb.png"),
-        limite: "1.000,00",
-        diaFechamento: "30",
-        diaVencimento: "10",
-        conta: Conta(
-          nome: "Banco do Brasil",
-          saldo: "1.567,90",
-          banco: Banco(img: "assets/bancos/bb.png", nome: "Banco do Brasil")  
-        )),
-        
-    Cartao(
-        nome: "Banco PAN",
-        icone: Banco(nome: "Banco PAN", img: "assets/bancos/pan.png"),
-        limite: "500,00",
-        diaFechamento: "30",
-        diaVencimento: "29",
-        conta: Conta(
-            nome: "Banco PAN", 
-            saldo: "10.000,00",
-            banco: Banco(img: "assets/bancos/pan.png", nome: "Banco PAN")
-        )),
-    Cartao(
-        nome: "Caixa",
-        icone: Banco(nome: "Caixa", img: "assets/bancos/caixa.jpg"),
-        limite: "1.500,00",
-        diaFechamento: "03",
-        diaVencimento: "31",
-        conta:
-          Conta(
-            nome: "Caixa", 
-            saldo: "5.633,90",
-            banco: Banco(img: "assets/bancos/caixa.jpg", nome: "Caixa")
-        )),
-    Cartao(
-        nome: "Next",
-        icone: Banco(nome: "Cartão", img: "Cartão"),
-        limite: "500,00",
-        diaFechamento: "08",
-        diaVencimento: "15",
-        conta:
-          Conta(
-            nome: "Next",
-            saldo: "2.003,90",
-            banco: Banco(img: "assets/bancos/next.jpg", nome: "Next")
-          )),
-  ];
-*/

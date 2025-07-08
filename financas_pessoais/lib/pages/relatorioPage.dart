@@ -250,7 +250,7 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
   Widget build(BuildContext context) {
     repositoryContas = context.watch<RepositoryContas>();
     listaContas = repositoryContas.contas;
-    repositoryLancamentos = RepositoryLancamentos();
+    repositoryLancamentos = context.watch<RepositoryLancamentos>();
     listaLancamentos = repositoryLancamentos.lancamentos;
     datas = ordenarMesAno(listaLancamentos);
     lancamentosAtuais = filtrarPorMesAno(listaLancamentos);

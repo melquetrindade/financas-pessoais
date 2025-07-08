@@ -1,12 +1,180 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:financas_pessoais/databases/db_firestore.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/categoria.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/model/lancamentos.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import '../model/bancos.dart';
 
-class RepositoryLancamentos {
-  final List<Lancamentos> _lancamentos = [
+class RepositoryLancamentos extends ChangeNotifier {
+  List<Lancamentos> _lancamentos = [];
+  late FirebaseFirestore db;
+  late AuthService auth;
+  bool isLoading = true;
+
+  RepositoryLancamentos({required this.auth}) {
+    _startRepository();
+  }
+
+  _startRepository() async {
+    await _startFirestore();
+    await _readLancamentos();
+  }
+
+  _startFirestore() {
+    db = DBFirestore.get();
+  }
+
+  notifica() {
+    notifyListeners();
+  }
+
+  _readLancamentos() async {
+    Color extrairCor(String corTexto) {
+      String corLimpa = corTexto.replaceAll('"', '');
+      final regex = RegExp(r'0x[0-9a-fA-F]+');
+      final match = regex.firstMatch(corLimpa);
+
+      if (match != null) {
+        final hex = match.group(0)!;
+        return Color(int.parse(hex));
+      }
+      return Colors.black;
+    }
+
+    IconData converterUnicodeParaIcone(String unicode) {
+      String codigo = unicode
+          .replaceAll('IconData(', '')
+          .replaceAll(')', '')
+          .replaceAll('U+', '');
+
+      int codePoint = int.parse(codigo, radix: 16);
+
+      return IconData(
+        codePoint,
+        fontFamily: 'MaterialIcons',
+      );
+    }
+
+    if (auth.usuario != null && _lancamentos.isEmpty) {
+      final snapshot = await db
+          .collection('usuarios/${auth.usuario!.uid}/lancamentos')
+          .get();
+      snapshot.docs.forEach((item) {
+        _lancamentos.add(Lancamentos(
+            valor: item['valor'],
+            descricao: item['descricao'],
+            data: item['data'],
+            eDespesa: item['eDespesa'],
+            categoria: Categorias(nome: item['categoria']['nome'],cor: extrairCor(item['categoria']['cor']),icon: converterUnicodeParaIcone(item['categoria']['icon'])),
+            conta: item['conta'] != null
+                ? Conta(
+                    nome: item['conta']['nome'],
+                    banco: Banco(
+                        nome: item['conta']['banco']['nome'],
+                        img: item['conta']['banco']['img']),
+                    saldo: item['conta']['saldo'])
+                : null,
+            cartao: item['cartao'] != null
+                ? Cartao(
+                    nome: item['cartao']['nome'],
+                    icone: Banco(
+                        nome: item['cartao']['icone']['nome'],
+                        img: item['cartao']['icone']['img']),
+                    limite: item['cartao']['limite'],
+                    diaFechamento: item['cartao']['diaFechamento'],
+                    diaVencimento: item['cartao']['diaVencimento'],
+                    conta: Conta(
+                      nome: item['cartao']['conta']['nome'],
+                      banco: Banco(
+                          nome: item['cartao']['conta']['banco']['nome'],
+                          img: item['cartao']['conta']['banco']['img']),
+                      saldo: item['cartao']['conta']['saldo'],
+                    ))
+                : null
+                ));
+      });
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
+  saveLancamento(Lancamentos lancamento, Function feedback) async {
+    try {
+      _lancamentos.add(lancamento);
+      final qtd = await db
+          .collection('usuarios/${auth.usuario!.uid}/lancamentos')
+          .get();
+      await db
+          .collection('usuarios/${auth.usuario!.uid}/lancamentos')
+          .doc((qtd.size + 1).toString())
+          .set({
+        'valor': lancamento.valor,
+        'descricao': lancamento.descricao,
+        'data': lancamento.data,
+        'eDespesa': lancamento.eDespesa,
+        'categoria': {
+          'nome': lancamento.categoria.nome,
+          'cor': '${lancamento.categoria.cor}',
+          'icon': '${lancamento.categoria.icon}',
+        },
+        'conta': lancamento.conta != null
+            ? {
+                'nome': lancamento.conta!.nome,
+                'saldo': lancamento.conta!.saldo,
+                'banco': {
+                  'nome': lancamento.conta!.banco.nome,
+                  'img': lancamento.conta!.banco.img
+                }
+              }
+            : null,
+        'cartao': lancamento.cartao != null
+            ? {
+                'nome': lancamento.cartao!.nome,
+                'icone': {
+                  'nome': lancamento.cartao!.icone.nome,
+                  'img': lancamento.cartao!.icone.img
+                },
+                'limite': lancamento.cartao!.limite,
+                'diaFechamento': lancamento.cartao!.diaFechamento,
+                'diaVencimento': lancamento.cartao!.diaVencimento,
+                'conta': {
+                  'nome': lancamento.cartao!.conta.nome,
+                  'saldo': lancamento.cartao!.conta.saldo,
+                  'banco': {
+                    'nome': lancamento.cartao!.conta.banco.nome,
+                    'img': lancamento.cartao!.conta.banco.img
+                  }
+                }
+              }
+            : null
+      });
+      feedback(true, 'Lançamento criado com sucesso!');
+      notifyListeners();
+    } on FirebaseException catch (e) {
+      print(e);
+      throw AuthException("Erro, não foi possível criar o lancamento!");
+    }
+  }
+
+  List<Lancamentos> get lancamentos => _lancamentos;
+}
+
+/*
+print("Lancamento:");
+        print("\t\tÉ despesa: ${item['eDespesa']}");
+        print("\t\tValor: ${item['valor']}");
+        print("\t\tDescrição: ${item['descricao']}");
+        print("\t\tData: ${item['data']}");
+        print("\t\tCategoria: ${item['categoria']['nome']}");
+        print("\t\t${item['conta'] == null ? 'Cartão' : 'Conta'}: ${item['conta'] == null ? item['cartao']['nome'] : item['conta']['nome']}");
+*/
+
+
+/* 
+final List<Lancamentos> _lancamentos = [
     Lancamentos(
       valor: "200,00", 
       descricao: "Controle do PS4", 
@@ -172,6 +340,4 @@ class RepositoryLancamentos {
         )),
     ),
   ];
-
-  List<Lancamentos> get lancamentos => _lancamentos; 
-}
+*/

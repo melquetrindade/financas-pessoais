@@ -5,6 +5,7 @@ import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/fatura.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DetalhesCartaoPage extends StatefulWidget {
   final Cartao cartao;
@@ -366,7 +367,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
   @override
   Widget build(BuildContext context) {
-    repositoryFatura = RepositoryFatura();
+    repositoryFatura = context.watch<RepositoryFatura>();
     listaFaturas = filtrarFaturasPorCartao(widget.cartao);
     datas = [];
     recuperaDatasLancamentos();

@@ -2,9 +2,15 @@ import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
+import 'package:financas_pessoais/model/fatura.dart';
+import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/categorias.dart';
 import 'package:financas_pessoais/repository/contas.dart';
+import 'package:financas_pessoais/repository/fatura.dart';
+import 'package:financas_pessoais/repository/lancamentos.dart';
+import 'package:financas_pessoais/services/auth_services.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,11 +27,13 @@ class LancamentosPage extends StatefulWidget {
 class _LancamentosPageState extends State<LancamentosPage> {
   late RepositoryCategorias repositoryCategorias;
   late RepositoryContas repositoryContas;
+  late RepositoryFatura repositoryFatura;
   late List<Conta> listaContas = [];
   late RepositoryCartao repositoryCartao;
   final formKey = GlobalKey<FormState>();
   final valor = TextEditingController();
   final descricao = TextEditingController();
+  bool loading = false;
   DateTime? data;
   bool eDespesa = true;
   Categorias categoriaEscolhida = Categorias(
@@ -230,11 +238,92 @@ class _LancamentosPageState extends State<LancamentosPage> {
     return false;
   }
 
+  feedback(bool sinal, String message) {
+    if (sinal) {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.green,
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          message,
+          context);
+    }
+  }
+
+  addLancamento(Lancamentos lancamento) async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<RepositoryLancamentos>()
+          .saveLancamento(lancamento, feedback);
+      setState(() {
+        loading = false;
+        valor.text = "";
+        descricao.text = "";
+        categoriaEscolhida = Categorias(
+            nome: "", cor: Colors.deepPurple.shade800, icon: Icons.wine_bar);
+        contaEscolhida =
+            Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: "");
+        cartaoEscolhido = Cartao(
+            nome: "",
+            icone: Banco(nome: "", img: ""),
+            limite: "",
+            diaFechamento: "",
+            diaVencimento: "",
+            conta: Conta(nome: "", banco: Banco(nome: "", img: ""), saldo: ""));
+        data = null;
+      });
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          e.message,
+          context);
+    }
+  }
+
+  addFatura(Fatura fatura) {
+    context.read<RepositoryFatura>().saveFaturas(fatura);
+    addLancamento(fatura.lancamentos[0]);
+  }
+
+  updateSaldoConta(
+      Conta conta, String valor, bool eDespesa, Lancamentos lancamento) {
+    context.read<RepositoryContas>().updateSaldo(conta, valor, eDespesa);
+    addLancamento(lancamento);
+  }
+
+  String formatarData(String dataOriginal) {
+    DateTime data = DateTime.parse(dataOriginal);
+
+    String dia = data.day.toString().padLeft(2, '0');
+    String mes = data.month.toString().padLeft(2, '0');
+    String ano = data.year.toString();
+
+    return '$dia/$mes/$ano';
+  }
+
+  String extrairMesEAno(String data) {
+    List<String> partes = data.split('/');
+    if (partes.length != 3) throw FormatException('Data inválida');
+    String mes = partes[1];
+    String ano = partes[2];
+    return '$mes/$ano';
+  }
+
   @override
   Widget build(BuildContext context) {
     repositoryCategorias = RepositoryCategorias();
     repositoryContas = context.watch<RepositoryContas>();
     repositoryCartao = context.watch<RepositoryCartao>();
+    repositoryFatura = context.watch<RepositoryFatura>();
     listaContas = repositoryContas.contas;
 
     return Scaffold(
@@ -333,7 +422,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 119,
+                        //height: 119,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 20),
                           child: Row(
@@ -569,7 +658,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
                           ),
                           title: Text(
                             data == null
-                                ? "Hoje"
+                                ? "Selecione a data"
                                 : "${data!.day}/${data!.month}/${data!.year}",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -600,35 +689,188 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                   formatValor(valor.text) &&
                                   (contaEscolhida.nome != "" ||
                                       cartaoEscolhido.nome != "")) {
-                                print(
-                                    "dados do lançamento: \t\n É despesa: ${eDespesa} \t\n Valor: ${valor.text} \t\n Descrição: ${descricao.text} \t\n Categoria: ${categoriaEscolhida.nome} \t\n Pago com: ${contaEscolhida.nome != "" ? contaEscolhida.nome : cartaoEscolhido.nome} \t\n Data: ${data!}");
+                                if (contaEscolhida.nome != "") {
+                                  if (eDespesa) {
+                                    if (possuiSaldo()) {
+                                      updateSaldoConta(
+                                          contaEscolhida,
+                                          valor.text,
+                                          true,
+                                          Lancamentos(
+                                              valor: valor.text,
+                                              descricao: descricao.text,
+                                              data: formatarData("${data!}"),
+                                              eDespesa: eDespesa,
+                                              categoria: categoriaEscolhida,
+                                              conta: contaEscolhida.nome != ""
+                                                  ? contaEscolhida
+                                                  : null,
+                                              cartao: cartaoEscolhido.nome != ""
+                                                  ? cartaoEscolhido
+                                                  : null));
+                                    } else {
+                                      MySnackBar.mensagem(
+                                          'OK',
+                                          Colors.red,
+                                          Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                          ),
+                                          'Você não possui saldo suficiente na conta!',
+                                          context);
+                                    }
+                                  } else {
+                                    updateSaldoConta(
+                                          contaEscolhida,
+                                          valor.text,
+                                          false,
+                                          Lancamentos(
+                                              valor: valor.text,
+                                              descricao: descricao.text,
+                                              data: formatarData("${data!}"),
+                                              eDespesa: eDespesa,
+                                              categoria: categoriaEscolhida,
+                                              conta: contaEscolhida.nome != ""
+                                                  ? contaEscolhida
+                                                  : null,
+                                              cartao: cartaoEscolhido.nome != ""
+                                                  ? cartaoEscolhido
+                                                  : null));
+                                  }
+                                } else {
+                                  Fatura? fatura;
+                                  repositoryFatura.faturas.forEach((item) {
+                                    if (extrairMesEAno(item.data) ==
+                                            extrairMesEAno(
+                                                formatarData("${data!}")) &&
+                                        item.cartao.nome ==
+                                            cartaoEscolhido.nome) {
+                                      print('fatura encontrada: ${item.data}');
+                                      fatura = item;
+                                    }
+                                  });
+                                  if (fatura != null) {
+                                    //já existe a fatura
+                                    if (eDespesa) {
+                                      if (possuiSaldoCartao(fatura)) {
+                                        print(
+                                            "tem saldo disponível, chama o updateFatura");
+                                        // chama o updateFatura
+                                      } else {
+                                        MySnackBar.mensagem(
+                                            'OK',
+                                            Colors.red,
+                                            Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                            ),
+                                            'Erro, você não tem saldo suficiente!',
+                                            context);
+                                      }
+                                    } else {
+                                      print("chama o updateFatura");
+                                    }
+                                  } else {
+                                    if (eDespesa) {
+                                      if (possuiSaldoCartao2(cartaoEscolhido)) {
+                                        addFatura(Fatura(
+                                            lancamentos: [
+                                              Lancamentos(
+                                                  valor: valor.text,
+                                                  descricao: descricao.text,
+                                                  data:
+                                                      formatarData("${data!}"),
+                                                  eDespesa: eDespesa,
+                                                  categoria: categoriaEscolhida,
+                                                  conta:
+                                                      contaEscolhida.nome != ""
+                                                          ? contaEscolhida
+                                                          : null,
+                                                  cartao:
+                                                      cartaoEscolhido.nome != ""
+                                                          ? cartaoEscolhido
+                                                          : null)
+                                            ],
+                                            cartao: cartaoEscolhido,
+                                            pagamentos: [],
+                                            data: formatarData("${data!}"),
+                                            foiPago: false));
+                                      } else {
+                                        MySnackBar.mensagem(
+                                            'OK',
+                                            Colors.red,
+                                            Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                            ),
+                                            'Erro, você não tem saldo suficiente!',
+                                            context);
+                                      }
+                                    } else {
+                                      addFatura(Fatura(
+                                          lancamentos: [
+                                            Lancamentos(
+                                                valor: valor.text,
+                                                descricao: descricao.text,
+                                                data: formatarData("${data!}"),
+                                                eDespesa: eDespesa,
+                                                categoria: categoriaEscolhida,
+                                                conta: contaEscolhida.nome != ""
+                                                    ? contaEscolhida
+                                                    : null,
+                                                cartao:
+                                                    cartaoEscolhido.nome != ""
+                                                        ? cartaoEscolhido
+                                                        : null)
+                                          ],
+                                          cartao: cartaoEscolhido,
+                                          pagamentos: [],
+                                          data: formatarData("${data!}"),
+                                          foiPago: false));
+                                    }
+                                  }
+                                }
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Erro, preencha corretamente as informações!'),
-                                    duration: Duration(seconds: 10),
-                                  ),
-                                );
+                                MySnackBar.mensagem(
+                                    'OK',
+                                    Colors.red,
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                    'Erro, preencha corretamente as informações!',
+                                    context);
                               }
                             },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Confirmar Lançamento',
-                                  style: TextStyle(
-                                      color: Colors.green, fontSize: 15),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Icon(
-                                    Icons.check,
-                                    color: Colors.green,
+                            child: loading
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Confirmar Lançamento',
+                                        style: TextStyle(
+                                            color: Colors.green, fontSize: 15),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
                           ),
                         ),
                       ),
@@ -641,6 +883,98 @@ class _LancamentosPageState extends State<LancamentosPage> {
         ),
       ),
     );
+  }
+
+  bool possuiSaldo() {
+    Conta conta = listaContas.firstWhere((c) => c.nome == contaEscolhida.nome);
+    String valorFormt = conta.saldo.replaceAll('.', '').replaceAll(',', '.');
+    double valorConta = double.parse(valorFormt);
+
+    String valorLancFormt = valor.text.replaceAll('.', '').replaceAll(',', '.');
+    double valorLanc = double.parse(valorLancFormt);
+
+    if (valorConta >= valorLanc) {
+      return true;
+    }
+    return false;
+  }
+
+  double moduloNum(double valor) {
+    if (valor >= 0) {
+      return valor;
+    }
+    return valor * (-1);
+  }
+
+  bool possuiSaldoCartao(Fatura? fatura) {
+    String limiteCartao = fatura!.cartao.limite;
+    if (fatura.foiPago) {
+      print("fatura foi paga? ${fatura.foiPago}");
+      String valorLancFormt =
+          valor.text.replaceAll('.', '').replaceAll(',', '.');
+      double valorLanc = double.parse(valorLancFormt);
+
+      String limiteFormt =
+          limiteCartao.replaceAll('.', '').replaceAll(',', '.');
+      double limite = double.parse(limiteFormt);
+
+      if (limite >= valorLanc) {
+        return true;
+      }
+      return false;
+    }
+    String valorLancFormt = valor.text.replaceAll('.', '').replaceAll(',', '.');
+    double valorLanc = double.parse(valorLancFormt);
+
+    double despesaTotal = 0;
+    double receitaTotal = 0;
+    double faturaPagamento = 0;
+    double disponivelTotal = 0;
+    String limiteFormt = limiteCartao.replaceAll('.', '').replaceAll(',', '.');
+    double limite = double.parse(limiteFormt);
+    fatura.lancamentos.forEach((item) {
+      if (item.eDespesa) {
+        String valorFormt = item.valor.replaceAll('.', '').replaceAll(',', '.');
+        despesaTotal += double.parse(valorFormt);
+      } else {
+        String valorFormt = item.valor.replaceAll('.', '').replaceAll(',', '.');
+        receitaTotal += double.parse(valorFormt);
+      }
+    });
+    fatura.pagamentos.forEach((item) {
+      String valorFormatado =
+          item.valor.replaceAll(".", "").replaceAll(",", ".");
+      double valor = double.parse(valorFormatado);
+      faturaPagamento += valor;
+    });
+    double conta = receitaTotal + despesaTotal + moduloNum(faturaPagamento);
+    disponivelTotal = conta + limite;
+    print("Disponível Total Fatura: ${disponivelTotal}");
+    if (disponivelTotal >= valorLanc) {
+      return true;
+    }
+    return false;
+    /*
+      if (conta > 0) {
+        disponivelTotal += conta + limite;
+      } else {
+        disponivelTotal = limite + conta;
+      }*/
+  }
+
+  bool possuiSaldoCartao2(Cartao cartaoBase) {
+    Cartao cartao =
+        repositoryCartao.cartoes.firstWhere((c) => c.nome == cartaoBase.nome);
+    String limiteFormt = cartao.limite.replaceAll('.', '').replaceAll(',', '.');
+    double limite = double.parse(limiteFormt);
+
+    String valorLancFormt = valor.text.replaceAll('.', '').replaceAll(',', '.');
+    double valorLanc = double.parse(valorLancFormt);
+
+    if (limite >= valorLanc) {
+      return true;
+    }
+    return false;
   }
 
   Widget modalCategorias() {

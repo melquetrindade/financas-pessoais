@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    repositoryFatura = RepositoryFatura();
+    repositoryFatura = context.watch<RepositoryFatura>();
     repositoryContas = context.watch<RepositoryContas>();
     repositoryCartao = context.watch<RepositoryCartao>();
 

@@ -3,6 +3,7 @@ import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/lancamentos.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class FluxoCaixaPage extends StatefulWidget {
   const FluxoCaixaPage({super.key});
@@ -92,7 +93,7 @@ class _FluxoCaixaPageState extends State<FluxoCaixaPage> {
 
   @override
   Widget build(BuildContext context) {
-    repositoryLancamentos = RepositoryLancamentos();
+    repositoryLancamentos = context.watch<RepositoryLancamentos>();
     listaLancamentos = repositoryLancamentos.lancamentos;
     datas = ordenarMesAno(listaLancamentos);
 

@@ -31,6 +31,7 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
   final diaFecha = TextEditingController();
   final diaVencimento = TextEditingController();
   bool loading = false;
+  bool loadingUpdate = false;
   Banco infoBanco = Banco(nome: "", img: "");
   Conta infoContaPag =
       Conta(nome: "", saldo: "", banco: Banco(nome: "", img: ""));
@@ -193,6 +194,26 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
       setState(() => loading = false);
     } on AuthException catch (e) {
       setState(() => loading = false);
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          e.message,
+          context);
+    }
+    Navigator.pop(context);
+  }
+
+  updateCartao(Cartao cartao) async {
+    setState(() => loadingUpdate = true);
+    try {
+      await context.read<RepositoryCartao>().updateCartao(cartao, feedback);
+      setState(() => loadingUpdate = false);
+    } on AuthException catch (e) {
+      setState(() => loadingUpdate = false);
       MySnackBar.mensagem(
           'OK',
           Colors.red,
@@ -577,21 +598,35 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                         onPressed: () {
-                          print("Cadastrar");
+                          print("Atualizar");
                           if (formKey.currentState!.validate() &&
                               infoBanco.img != "" &&
                               infoContaPag.banco.img != "") {
-                            print("tudo ok");
                             print(
                                 "dados do cartão: \n\t nome: ${nome.text} \n\t ícone: img => ${infoBanco.img} - nome => ${infoBanco.nome} \n\t saldo: ${limite.text} \n\t fechamento: ${diaFecha.text} - vencimento ${diaVencimento.text} \n\t Conta: img => ${infoContaPag.banco.img} - nome => ${infoContaPag.nome}");
+                            updateCartao(Cartao(
+                                nome: nome.text,
+                                icone: Banco(
+                                    nome: infoBanco.nome, img: infoBanco.img),
+                                limite: limite.text,
+                                diaFechamento: diaFecha.text,
+                                diaVencimento: diaVencimento.text,
+                                conta: Conta(
+                                    nome: infoContaPag.nome,
+                                    banco: Banco(
+                                        nome: infoContaPag.banco.nome,
+                                        img: infoContaPag.banco.img),
+                                    saldo: infoContaPag.saldo)));
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Erro, preencha os campos corretamente!'),
-                                duration: Duration(seconds: 10),
-                              ),
-                            );
+                            MySnackBar.mensagem(
+                                'OK',
+                                Colors.red,
+                                Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ),
+                                'Erro, preencha os campos corretamente!',
+                                context);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -607,7 +642,18 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
                             ),
                           ),
                         ),
-                        child: Text("Salvar alterações")),
+                        child: loadingUpdate
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.azulPrimario,
+                                  ),
+                                ),
+                              )
+                            : Text("Salvar alterações")),
                   ),
                 ),
               ],
@@ -772,8 +818,10 @@ class _EditarCartaoPageState extends State<EditarCartaoPage> {
         InkWell(
           onTap: () {
             setState(() {
-              infoContaPag.banco.img = "${listaContas[i].banco.img}";
-              infoContaPag.nome = "${listaContas[i].nome}";
+              //infoContaPag.banco.img = "${listaContas[i].banco.img}";
+              infoContaPag.nome = listaContas[i].nome;
+              infoContaPag.saldo = listaContas[i].saldo;
+              infoContaPag.banco = listaContas[i].banco;
             });
             Navigator.pop(context);
           },
