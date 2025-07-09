@@ -300,6 +300,11 @@ class _LancamentosPageState extends State<LancamentosPage> {
     addLancamento(lancamento);
   }
 
+  updateFatura(Fatura? fatura, Lancamentos lancamento) {
+    context.read<RepositoryFatura>().updateFatura(fatura, lancamento);
+    addLancamento(lancamento);
+  }
+
   String formatarData(String dataOriginal) {
     DateTime data = DateTime.parse(dataOriginal);
 
@@ -721,21 +726,21 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                     }
                                   } else {
                                     updateSaldoConta(
-                                          contaEscolhida,
-                                          valor.text,
-                                          false,
-                                          Lancamentos(
-                                              valor: valor.text,
-                                              descricao: descricao.text,
-                                              data: formatarData("${data!}"),
-                                              eDespesa: eDespesa,
-                                              categoria: categoriaEscolhida,
-                                              conta: contaEscolhida.nome != ""
-                                                  ? contaEscolhida
-                                                  : null,
-                                              cartao: cartaoEscolhido.nome != ""
-                                                  ? cartaoEscolhido
-                                                  : null));
+                                        contaEscolhida,
+                                        valor.text,
+                                        false,
+                                        Lancamentos(
+                                            valor: valor.text,
+                                            descricao: descricao.text,
+                                            data: formatarData("${data!}"),
+                                            eDespesa: eDespesa,
+                                            categoria: categoriaEscolhida,
+                                            conta: contaEscolhida.nome != ""
+                                                ? contaEscolhida
+                                                : null,
+                                            cartao: cartaoEscolhido.nome != ""
+                                                ? cartaoEscolhido
+                                                : null));
                                   }
                                 } else {
                                   Fatura? fatura;
@@ -750,12 +755,20 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                     }
                                   });
                                   if (fatura != null) {
-                                    //já existe a fatura
                                     if (eDespesa) {
                                       if (possuiSaldoCartao(fatura)) {
-                                        print(
-                                            "tem saldo disponível, chama o updateFatura");
-                                        // chama o updateFatura
+                                        updateFatura(fatura, Lancamentos(
+                                            valor: valor.text,
+                                            descricao: descricao.text,
+                                            data: formatarData("${data!}"),
+                                            eDespesa: eDespesa,
+                                            categoria: categoriaEscolhida,
+                                            conta: contaEscolhida.nome != ""
+                                                ? contaEscolhida
+                                                : null,
+                                            cartao: cartaoEscolhido.nome != ""
+                                                ? cartaoEscolhido
+                                                : null));
                                       } else {
                                         MySnackBar.mensagem(
                                             'OK',
@@ -769,8 +782,21 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                       }
                                     } else {
                                       print("chama o updateFatura");
+                                      updateFatura(fatura, Lancamentos(
+                                            valor: valor.text,
+                                            descricao: descricao.text,
+                                            data: formatarData("${data!}"),
+                                            eDespesa: eDespesa,
+                                            categoria: categoriaEscolhida,
+                                            conta: contaEscolhida.nome != ""
+                                                ? contaEscolhida
+                                                : null,
+                                            cartao: cartaoEscolhido.nome != ""
+                                                ? cartaoEscolhido
+                                                : null));
                                     }
-                                  } else {
+                                  }
+                                  else {
                                     if (eDespesa) {
                                       if (possuiSaldoCartao2(cartaoEscolhido)) {
                                         addFatura(Fatura(
@@ -909,7 +935,6 @@ class _LancamentosPageState extends State<LancamentosPage> {
   bool possuiSaldoCartao(Fatura? fatura) {
     String limiteCartao = fatura!.cartao.limite;
     if (fatura.foiPago) {
-      print("fatura foi paga? ${fatura.foiPago}");
       String valorLancFormt =
           valor.text.replaceAll('.', '').replaceAll(',', '.');
       double valorLanc = double.parse(valorLancFormt);
@@ -935,7 +960,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
     fatura.lancamentos.forEach((item) {
       if (item.eDespesa) {
         String valorFormt = item.valor.replaceAll('.', '').replaceAll(',', '.');
-        despesaTotal += double.parse(valorFormt);
+        despesaTotal -= double.parse(valorFormt);
       } else {
         String valorFormt = item.valor.replaceAll('.', '').replaceAll(',', '.');
         receitaTotal += double.parse(valorFormt);
@@ -948,18 +973,15 @@ class _LancamentosPageState extends State<LancamentosPage> {
       faturaPagamento += valor;
     });
     double conta = receitaTotal + despesaTotal + moduloNum(faturaPagamento);
-    disponivelTotal = conta + limite;
-    print("Disponível Total Fatura: ${disponivelTotal}");
+    if (conta > 0) {
+        disponivelTotal += conta + limite;
+      } else {
+        disponivelTotal = limite + conta;
+      }
     if (disponivelTotal >= valorLanc) {
       return true;
     }
     return false;
-    /*
-      if (conta > 0) {
-        disponivelTotal += conta + limite;
-      } else {
-        disponivelTotal = limite + conta;
-      }*/
   }
 
   bool possuiSaldoCartao2(Cartao cartaoBase) {
