@@ -1,8 +1,11 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/cartao.dart';
+import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/model/fatura.dart';
 import 'package:financas_pessoais/model/lancamentos.dart';
+import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/repository/fatura.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +21,7 @@ class DetalhesCartaoPage extends StatefulWidget {
 class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   late RepositoryFatura repositoryFatura;
   late List<Fatura> listaFaturas;
+  late RepositoryContas repositoryContas;
   PageController pageController = PageController();
   int currentIndex = 0;
   List<String> datas = [];
@@ -192,10 +196,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     int diaBase = int.parse(partesData[0]);
     int mesBase = int.parse(partesData[1]);
     int anoBase = int.parse(partesData[2]);
-    print(diaBase);
 
     int mesRetorno = mesBase;
     int anoRetorno = anoBase;
+    print(diaBase);
     print(anoRetorno);
 
     // Se dia1 > dia2, dia2 pertence ao próximo mês
@@ -232,6 +236,18 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     return formatter.format(valor);
   }
 
+  String formatarValorComSinal(double valor) {
+    final formatador = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: '',
+      decimalDigits: 2,
+    );
+
+    String valorFormatado = formatador.format(valor.abs()).trim();
+
+    return valor < 0 ? '-$valorFormatado' : valorFormatado;
+  }
+
   double converterStringParaDouble(String valor) {
     String semSeparadorMilhar = valor.replaceAll('.', '');
     String valorComPonto = semSeparadorMilhar.replaceAll(',', '.');
@@ -259,9 +275,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
       double valor = double.parse(valorFormatado);
       valorTotalPagamento += moduloNum(valor);
     }
+    /*
     if (valorTotalPagamento != valorTotalLancamento) {
       print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
-    }
+    }*/
     if (listaFaturas[currentIndex].foiPago) {
       return formatarParaReal(valorTotalLancamento);
     }
@@ -292,9 +309,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
         valorTotalPagamento += moduloNum(valor);
       }
     }
+    /*
     if (valorTotalPagamento != valorTotalLancamento) {
       print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
-    }
+    }*/
     if (listaFaturas[currentIndex].foiPago) {
       return formatarParaReal(valorTotalPagamento);
     }
@@ -303,6 +321,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
 
   bool hasBotaoPagar() {
     List<double> valores = valorFatura();
+    print("Valor 0: ${valores[0]} - valor 1: ${valores[1]}");
 
     return valores[0] != valores[1] ? true : false;
   }
@@ -332,9 +351,10 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
         valorTotalPagamento += moduloNum(valor);
       }
     }
+    /*
     if (valorTotalPagamento != valorTotalLancamento) {
       print("Falta pagar: ${valorTotalLancamento + valorTotalPagamento}");
-    }
+    }*/
     valores.add(valorTotalPagamento);
     valores.add(valorTotalLancamento);
     return valores;
@@ -359,6 +379,21 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
     return Colors.red;
   }
 
+  updateContaFatura(
+      Fatura fatura, Conta conta, Pagamentos pagamento, double valor) {
+    context.read<RepositoryFatura>().updatePagFatura(fatura, pagamento);
+    context.read<RepositoryContas>().updatePagamentoSaldo(conta, valor);
+    MySnackBar.mensagem(
+        'OK',
+        Colors.green,
+        Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+        'Pagamento realizado com sucesso!',
+        context);
+  }
+
   @override
   void dispose() {
     pageController.dispose();
@@ -368,6 +403,7 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
   @override
   Widget build(BuildContext context) {
     repositoryFatura = context.watch<RepositoryFatura>();
+    repositoryContas = context.watch<RepositoryContas>();
     listaFaturas = filtrarFaturasPorCartao(widget.cartao);
     datas = [];
     recuperaDatasLancamentos();
@@ -864,9 +900,50 @@ class _DetalhesCartaoPageState extends State<DetalhesCartaoPage> {
             String mes = dataAtual.month.toString().padLeft(2, '0');
             String ano = dataAtual.year.toString();
 
-            //return '$dia/$mes/$ano';
-            print("Pagamento: \n\tData: ${'$dia/$mes/$ano'} \n\tValor: ${formatarParaReal(valores[0] + valores[1])} \nConta: ${widget.cartao.conta.nome}");
-
+            late Conta contaCartao;
+            repositoryContas.contas.forEach((c) {
+              if (c.nome == listaFaturas[currentIndex].cartao.conta.nome) {
+                contaCartao = c;
+              }
+            });
+            if ((valores[0] + valores[1]) < 0) {
+              String saldoContaFormt =
+                  contaCartao.saldo.replaceAll('.', '').replaceAll(',', '.');
+              double saldoConta = double.parse(saldoContaFormt);
+              if (saldoConta >= (valores[0] + valores[1])) {
+                // chama o updateFatura
+                // chama o updateSaldoConta
+                updateContaFatura(
+                    listaFaturas[currentIndex],
+                    contaCartao,
+                    Pagamentos(
+                        data: '$dia/$mes/$ano',
+                        valor: formatarValorComSinal(valores[0] + valores[1])),
+                    (valores[0] + valores[1]));
+              } else {
+                MySnackBar.mensagem(
+                    'OK',
+                    Colors.red,
+                    Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
+                    'Erro, você não tem saldo suficiente na conta!',
+                    context);
+              }
+            } else {
+              // chama o updateFatura
+              // chama o updateSaldoConta
+              updateContaFatura(
+                  listaFaturas[currentIndex],
+                  contaCartao,
+                  Pagamentos(
+                      data: '$dia/$mes/$ano',
+                      valor: formatarValorComSinal(valores[0] + valores[1])),
+                  (valores[0] + valores[1]));
+            }
+            print(
+                "Pagamento: \n\tData: ${'$dia/$mes/$ano'} \n\tValor: ${formatarValorComSinal(valores[0] + valores[1])} \n\tConta: ${widget.cartao.conta.nome} \n\tFatura: => data: ${listaFaturas[currentIndex].data} => cartão: ${listaFaturas[currentIndex].cartao.nome} \n\t Saldo da conta: ${contaCartao.saldo}");
           },
           child: Text(
             'Pagar Fatura',

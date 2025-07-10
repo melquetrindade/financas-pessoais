@@ -64,7 +64,7 @@ class RepositoryFatura extends ChangeNotifier {
       snapshot.docs.forEach((item) {
         final pagamentosJson = item['pagamentos'] as List<dynamic>;
         final pagamentos = pagamentosJson.map((pag) {
-          return Pagamentos(data: pag['data'], valor: pag['data']);
+          return Pagamentos(data: pag['data'], valor: pag['valor']);
         }).toList();
 
         final lancamentosJson = item['lancamentos'] as List<dynamic>;
@@ -208,20 +208,12 @@ class RepositoryFatura extends ChangeNotifier {
   }
 
   updateFatura(Fatura? fatura, Lancamentos lancamento) async {
-    /*
     for (var f in _faturas) {
       if (f.data == fatura!.data && f.cartao.nome == fatura.cartao.nome) {
-        //print('encontrou fatura');
-        //print(f.lancamentos.length);
-        f.lancamentos.add(lancamento);
-        //print(f.lancamentos.length);
-        /*
-        f.lancamentos.forEach((lan) {
-          print("\t\tlan: ${lan.valor}");
-        });*/
+        f.foiPago = false;
         break;
       }
-    }*/
+    }
     List<Lancamentos> lancamentosAux = [];
     lancamentosAux = fatura!.lancamentos;
     lancamentosAux.add(lancamento);
@@ -273,7 +265,32 @@ class RepositoryFatura extends ChangeNotifier {
               : null
         };
       }).toList(),
+      'foiPago': false,
     });
+    notifyListeners();
+  }
+
+  updatePagFatura(Fatura fatura, Pagamentos pagamento) async {
+    List<Pagamentos> pagamentosAux = [];
+    pagamentosAux = fatura.pagamentos;
+    pagamentosAux.add(pagamento);
+
+    await db
+        .collection('usuarios/${auth.usuario!.uid}/faturas')
+        .doc("${fatura.data.replaceAll('/', '')}&${fatura.cartao.nome}")
+        .update({
+      'pagamentos': pagamentosAux.map((item) {
+        return {'valor': item.valor, 'data': item.data};
+      }).toList(),
+      'foiPago': true,
+    });
+
+    for (var f in _faturas) {
+      if (f.data == fatura.data && f.cartao.nome == fatura.cartao.nome) {
+        f.foiPago = true;
+        break;
+      }
+    }
     notifyListeners();
   }
 

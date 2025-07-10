@@ -102,15 +102,49 @@ class RepositoryContas extends ChangeNotifier {
     }
   }
 
+  updatePagamentoSaldo(Conta conta, double valor) async {
+    String formatarValorComSinal(double valor) {
+      final formatador = NumberFormat.currency(
+        locale: 'pt_BR',
+        symbol: '',
+        decimalDigits: 2,
+      );
+
+      String valorFormatado = formatador.format(valor.abs()).trim();
+
+      return valor < 0 ? '-$valorFormatado' : valorFormatado;
+    }
+
+    String saldoContaFormt =
+        conta.saldo.replaceAll('.', '').replaceAll(',', '.');
+    double saldoConta = double.parse(saldoContaFormt);
+    double newSaldo = saldoConta + (valor);
+
+    await db
+        .collection('usuarios/${auth.usuario!.uid}/contas')
+        .doc(conta.nome)
+        .update({
+      'saldo': formatarValorComSinal(newSaldo),
+    });
+    for (var c in _contas) {
+      if (c.nome == conta.nome) {
+        c.saldo = formatarValorComSinal(newSaldo);
+        break;
+      }
+    }
+    notifyListeners();
+  }
+
   updateSaldo(Conta conta, String valor, bool eDespesa) async {
     String valorFormt = valor.replaceAll('.', '').replaceAll(',', '.');
     double valorLanc = double.parse(valorFormt);
 
     String saldoFormt = conta.saldo.replaceAll('.', '').replaceAll(',', '.');
     double saldo = double.parse(saldoFormt);
-    
+
     double newSaldo = eDespesa ? (saldo - valorLanc) : (saldo + valorLanc);
-    final formatador = NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
+    final formatador =
+        NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 2);
     String newSaldoFormt = formatador.format(newSaldo).trim();
 
     await db
