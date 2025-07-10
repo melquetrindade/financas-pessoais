@@ -1,9 +1,13 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/categoria.dart';
+import 'package:financas_pessoais/model/gastos.dart';
 import 'package:financas_pessoais/repository/categorias.dart';
+import 'package:financas_pessoais/repository/gastos.dart';
+import 'package:financas_pessoais/utils/mySnackBar.dart';
 import 'package:financas_pessoais/utils/validador.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CriarLimiteGastosPage extends StatefulWidget {
   const CriarLimiteGastosPage({super.key});
@@ -85,6 +89,47 @@ class _CriarLimiteGastosPageState extends State<CriarLimiteGastosPage> {
     );
   }
 
+  String obterDataAtualFormatada() {
+    final agora = DateTime.now();
+
+    String dia = agora.day.toString().padLeft(2, '0');
+    String mes = agora.month.toString().padLeft(2, '0');
+    String ano = agora.year.toString();
+
+    return "$dia/$mes/$ano";
+  }
+
+  feedback(bool sinal) {
+    if (sinal) {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.green,
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          'Limite de gasto criado com sucesso!',
+          context);
+      context.read<RepositoryGastos>().notifica();
+    } else {
+      MySnackBar.mensagem(
+          'OK',
+          Colors.red,
+          Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          'Você já possui um limite de gasto com essa categoria para este mês!',
+          context);
+      context.read<RepositoryGastos>().notifica();
+    }
+  }
+
+  addGasto(Gastos gasto) {
+    context.read<RepositoryGastos>().saveGasto(gasto, feedback);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     repositoryCategorias = RepositoryCategorias();
@@ -136,13 +181,20 @@ class _CriarLimiteGastosPageState extends State<CriarLimiteGastosPage> {
                                 width: 37,
                                 height: 37,
                                 child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: categotiaEscolhida.nome == ""
-                                      ? AppColors.azulPrimario
-                                      : categotiaEscolhida.cor,
-                                  child: categotiaEscolhida.nome == "" ?
-                                  Icon(Icons.add, color: Colors.white,) : Icon(categotiaEscolhida.icon, color: Colors.white,)
-                                ),
+                                    radius: 15,
+                                    backgroundColor:
+                                        categotiaEscolhida.nome == ""
+                                            ? AppColors.azulPrimario
+                                            : categotiaEscolhida.cor,
+                                    child: categotiaEscolhida.nome == ""
+                                        ? Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                          )
+                                        : Icon(
+                                            categotiaEscolhida.icon,
+                                            color: Colors.white,
+                                          )),
                               ),
                             ),
                             Text(
@@ -213,7 +265,15 @@ class _CriarLimiteGastosPageState extends State<CriarLimiteGastosPage> {
                               categotiaEscolhida.nome != "") {
                             print("tudo ok");
                             print(
-                                "dados => Categoria: ${categotiaEscolhida.nome} - limite: ${limite.text}");
+                                "dados => Categoria: ${categotiaEscolhida.nome} - limite: ${limite.text} - data: ${obterDataAtualFormatada}");
+                            addGasto(Gastos(
+                                categoria: Categorias(
+                                    nome: categotiaEscolhida.nome,
+                                    cor: categotiaEscolhida.cor,
+                                    icon: categotiaEscolhida.icon),
+                                valor: "0,00",
+                                limite: limite.text,
+                                data: obterDataAtualFormatada()));
                           } else {
                             if (categotiaEscolhida.nome == "") {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -271,8 +331,7 @@ class _CriarLimiteGastosPageState extends State<CriarLimiteGastosPage> {
                 color: Colors.black54),
           ),
         ),
-        for (var i = 0; i < listaCategorias.length; i++)
-          iconesCategorias(i),
+        for (var i = 0; i < listaCategorias.length; i++) iconesCategorias(i),
       ],
     );
   }

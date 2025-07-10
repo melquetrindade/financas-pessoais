@@ -2,8 +2,10 @@ import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/model/gastos.dart';
 import 'package:financas_pessoais/pages/criarLimiteGastos.dart';
 import 'package:financas_pessoais/repository/gastos.dart';
+import 'package:financas_pessoais/widgets/gastos/editGastos.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class GastosPage extends StatefulWidget {
   const GastosPage({super.key});
@@ -94,8 +96,7 @@ class _GastosPageState extends State<GastosPage> {
     return '$abreviado.$ano';
   }
 
-  List<Gastos> filtrarGastosPorMesAno(
-      List<Gastos> listaGastos) {
+  List<Gastos> filtrarGastosPorMesAno(List<Gastos> listaGastos) {
     // Extrai mês e ano da data base
     if (listaGastos.isNotEmpty) {
       final partesBase = datas[currentIndex].split('/');
@@ -116,7 +117,7 @@ class _GastosPageState extends State<GastosPage> {
 
   @override
   Widget build(BuildContext context) {
-    repositoryGastos = RepositoryGastos();
+    repositoryGastos = context.watch<RepositoryGastos>();
     listaGastos = repositoryGastos.gastos;
     datas = ordenarMesAno(listaGastos);
     gastosAtuais = filtrarGastosPorMesAno(listaGastos);
@@ -298,6 +299,9 @@ class _GastosPageState extends State<GastosPage> {
 
     double calcularPorcentagem(double numero, double total) {
       if (total != 0) {
+        if (numero == 0) {
+          return 0;
+        }
         double porcentagem = (numero / total) * 100;
         return porcentagem;
       } else {
@@ -317,101 +321,113 @@ class _GastosPageState extends State<GastosPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Card(
-        color: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                            width: 35,
-                            height: 35,
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: gastosAtuais[i].categoria.cor,
-                                child: Icon(
-                                  gastosAtuais[i].categoria.icon,
-                                  color: Colors.white,
-                                ))),
-                        SizedBox(width: 8),
-                        Text(
-                          gastosAtuais[i].categoria.nome,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade800,
-                            fontSize: 16,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => EditGastos(gasto: gastosAtuais[i])));
+        },
+        child: Card(
+          color: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: 35,
+                              height: 35,
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor:
+                                      gastosAtuais[i].categoria.cor,
+                                  child: Icon(
+                                    gastosAtuais[i].categoria.icon,
+                                    color: Colors.white,
+                                  ))),
+                          SizedBox(width: 8),
+                          Text(
+                            gastosAtuais[i].categoria.nome,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        child: Divider(),
+                      ),
+                      Text(
+                        (diferenca <= 0)
+                            ? "Limite de gasto excedido"
+                            : "Disponível",
+                        style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "${formatarParaReal(diferenca)}",
+                                style: TextStyle(
+                                  color:
+                                      diferenca < 0 ? Colors.red : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    " / ${formatarParaReal(converterValor(gastosAtuais[i].limite))}",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
-                      child: Divider(),
-                    ),
-                    Text(
-                      "Limite de gasto excedido",
-                      style: TextStyle(
-                          color: Colors.grey.shade700,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "${formatarParaReal(diferenca)}",
-                              style: TextStyle(
-                                color:
-                                    diferenca < 0 ? Colors.red : Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            TextSpan(
-                              text:
-                                  " / ${formatarParaReal(converterValor(gastosAtuais[i].limite))}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                height: 100,
-                width: 10,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(1),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(top: barra),
-                  child: SizedBox(
-                    height: 10,
-                    width: 10,
-                    child: Container(
-                      color: diferenca < 0 ? Colors.red : Colors.green,
+                Container(
+                  height: 100,
+                  width: 10,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: barra == 0 && diferenca < 0 ? barra : (100 - barra)),
+                    child: SizedBox(
+                      height: 10,
+                      width: 10,
+                      child: Container(
+                        color: diferenca < 0 ? Colors.red : Colors.green,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
