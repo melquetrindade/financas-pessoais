@@ -3,11 +3,13 @@ import 'package:financas_pessoais/model/bancos.dart';
 import 'package:financas_pessoais/model/cartao.dart';
 import 'package:financas_pessoais/model/conta.dart';
 import 'package:financas_pessoais/model/fatura.dart';
+import 'package:financas_pessoais/model/gastos.dart';
 import 'package:financas_pessoais/model/lancamentos.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/categorias.dart';
 import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/repository/fatura.dart';
+import 'package:financas_pessoais/repository/gastos.dart';
 import 'package:financas_pessoais/repository/lancamentos.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:financas_pessoais/utils/mySnackBar.dart';
@@ -28,6 +30,7 @@ class _LancamentosPageState extends State<LancamentosPage> {
   late RepositoryCategorias repositoryCategorias;
   late RepositoryContas repositoryContas;
   late RepositoryFatura repositoryFatura;
+  late RepositoryGastos repositoryGastos;
   late List<Conta> listaContas = [];
   late RepositoryCartao repositoryCartao;
   final formKey = GlobalKey<FormState>();
@@ -238,6 +241,36 @@ class _LancamentosPageState extends State<LancamentosPage> {
     return false;
   }
 
+  String extrairMesEAno(String data) {
+    List<String> partes = data.split('/');
+    if (partes.length != 3) throw FormatException('Data inválida');
+    String mes = partes[1];
+    String ano = partes[2];
+    return '$mes/$ano';
+  }
+
+  String extrairMesEAno2(String dataCompleta) {
+    List<String> partes = dataCompleta.split("/");
+    String mes = partes[1];
+    String ano = partes[2];
+    return "$mes/$ano";
+  }
+
+  Gastos? hasLimiteGastos(Lancamentos lancamento) {
+    List<Gastos> gastos = repositoryGastos.gastos;
+    Gastos? gasto;
+    gastos.forEach((item) {
+      if (extrairMesEAno2(item.data) == extrairMesEAno2(lancamento.data) &&
+          lancamento.categoria.nome == item.categoria.nome) {
+        gasto = item;
+      }
+    });
+    if (gasto != null) {
+      return gasto;
+    }
+    return null;
+  }
+
   feedback(bool sinal, String message) {
     if (sinal) {
       MySnackBar.mensagem(
@@ -254,10 +287,17 @@ class _LancamentosPageState extends State<LancamentosPage> {
 
   addLancamento(Lancamentos lancamento) async {
     setState(() => loading = true);
+    Gastos? gasto = hasLimiteGastos(lancamento);
     try {
       await context
           .read<RepositoryLancamentos>()
           .saveLancamento(lancamento, feedback);
+      if (gasto != null && lancamento.eDespesa) {
+        print("Entrou para chamar o update valor do gasto");
+        context
+            .read<RepositoryGastos>()
+            .updateSaldoGasto(gasto, lancamento.valor);
+      }
       setState(() {
         loading = false;
         valor.text = "";
@@ -315,16 +355,9 @@ class _LancamentosPageState extends State<LancamentosPage> {
     return '$dia/$mes/$ano';
   }
 
-  String extrairMesEAno(String data) {
-    List<String> partes = data.split('/');
-    if (partes.length != 3) throw FormatException('Data inválida');
-    String mes = partes[1];
-    String ano = partes[2];
-    return '$mes/$ano';
-  }
-
   @override
   Widget build(BuildContext context) {
+    repositoryGastos = context.watch<RepositoryGastos>();
     repositoryCategorias = RepositoryCategorias();
     repositoryContas = context.watch<RepositoryContas>();
     repositoryCartao = context.watch<RepositoryCartao>();
@@ -757,18 +790,21 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                   if (fatura != null) {
                                     if (eDespesa) {
                                       if (possuiSaldoCartao(fatura)) {
-                                        updateFatura(fatura, Lancamentos(
-                                            valor: valor.text,
-                                            descricao: descricao.text,
-                                            data: formatarData("${data!}"),
-                                            eDespesa: eDespesa,
-                                            categoria: categoriaEscolhida,
-                                            conta: contaEscolhida.nome != ""
-                                                ? contaEscolhida
-                                                : null,
-                                            cartao: cartaoEscolhido.nome != ""
-                                                ? cartaoEscolhido
-                                                : null));
+                                        updateFatura(
+                                            fatura,
+                                            Lancamentos(
+                                                valor: valor.text,
+                                                descricao: descricao.text,
+                                                data: formatarData("${data!}"),
+                                                eDespesa: eDespesa,
+                                                categoria: categoriaEscolhida,
+                                                conta: contaEscolhida.nome != ""
+                                                    ? contaEscolhida
+                                                    : null,
+                                                cartao:
+                                                    cartaoEscolhido.nome != ""
+                                                        ? cartaoEscolhido
+                                                        : null));
                                       } else {
                                         MySnackBar.mensagem(
                                             'OK',
@@ -782,21 +818,22 @@ class _LancamentosPageState extends State<LancamentosPage> {
                                       }
                                     } else {
                                       print("chama o updateFatura");
-                                      updateFatura(fatura, Lancamentos(
-                                            valor: valor.text,
-                                            descricao: descricao.text,
-                                            data: formatarData("${data!}"),
-                                            eDespesa: eDespesa,
-                                            categoria: categoriaEscolhida,
-                                            conta: contaEscolhida.nome != ""
-                                                ? contaEscolhida
-                                                : null,
-                                            cartao: cartaoEscolhido.nome != ""
-                                                ? cartaoEscolhido
-                                                : null));
+                                      updateFatura(
+                                          fatura,
+                                          Lancamentos(
+                                              valor: valor.text,
+                                              descricao: descricao.text,
+                                              data: formatarData("${data!}"),
+                                              eDespesa: eDespesa,
+                                              categoria: categoriaEscolhida,
+                                              conta: contaEscolhida.nome != ""
+                                                  ? contaEscolhida
+                                                  : null,
+                                              cartao: cartaoEscolhido.nome != ""
+                                                  ? cartaoEscolhido
+                                                  : null));
                                     }
-                                  }
-                                  else {
+                                  } else {
                                     if (eDespesa) {
                                       if (possuiSaldoCartao2(cartaoEscolhido)) {
                                         addFatura(Fatura(
@@ -974,10 +1011,10 @@ class _LancamentosPageState extends State<LancamentosPage> {
     });
     double conta = receitaTotal + despesaTotal + moduloNum(faturaPagamento);
     if (conta > 0) {
-        disponivelTotal += conta + limite;
-      } else {
-        disponivelTotal = limite + conta;
-      }
+      disponivelTotal += conta + limite;
+    } else {
+      disponivelTotal = limite + conta;
+    }
     if (disponivelTotal >= valorLanc) {
       return true;
     }

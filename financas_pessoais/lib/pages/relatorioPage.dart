@@ -519,7 +519,7 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                       width: MediaQuery.of(context).size.width,
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Column(
                                             children: [
@@ -557,25 +557,6 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
                                               )
                                             ],
                                           ),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "1.000,00",
-                                                style: TextStyle(
-                                                    color:
-                                                        AppColors.azulPrimario,
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                              Text(
-                                                "Saldo",
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.grey),
-                                              )
-                                            ],
-                                          )
                                         ],
                                       ),
                                     ),

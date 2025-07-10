@@ -4,6 +4,7 @@ import 'package:financas_pessoais/model/categoria.dart';
 import 'package:financas_pessoais/model/gastos.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RepositoryGastos extends ChangeNotifier {
   List<Gastos> _gastos = [];
@@ -26,6 +27,13 @@ class RepositoryGastos extends ChangeNotifier {
 
   notifica() {
     notifyListeners();
+  }
+
+  String extrairMesEAno(String dataCompleta) {
+    List<String> partes = dataCompleta.split("/");
+    String mes = partes[1];
+    String ano = partes[2];
+    return "$mes/$ano";
   }
 
   _readGastos() async {
@@ -74,13 +82,6 @@ class RepositoryGastos extends ChangeNotifier {
   }
 
   saveGasto(Gastos gasto, Function feedback) async {
-    String extrairMesEAno(String dataCompleta) {
-      List<String> partes = dataCompleta.split("/");
-      String mes = partes[1];
-      String ano = partes[2];
-      return "$mes/$ano";
-    }
-
     bool existe = _gastos.any((g) =>
         extrairMesEAno(g.data) == extrairMesEAno(gasto.data) &&
         g.categoria.nome == gasto.categoria.nome);
@@ -106,13 +107,6 @@ class RepositoryGastos extends ChangeNotifier {
   }
 
   updateGasto(Gastos gasto, Function feedback) async {
-    String extrairMesEAno(String dataCompleta) {
-      List<String> partes = dataCompleta.split("/");
-      String mes = partes[1];
-      String ano = partes[2];
-      return "$mes/$ano";
-    }
-
     try {
       await db
           .collection('usuarios/${auth.usuario!.uid}/gastos')
@@ -131,21 +125,16 @@ class RepositoryGastos extends ChangeNotifier {
       notifyListeners();
     } on FirebaseException catch (e) {
       print(e);
-      throw AuthException("Erro, não foi possível atualizar o limite de gasto!");
+      throw AuthException(
+          "Erro, não foi possível atualizar o limite de gasto!");
     }
   }
 
   removeGasto(Gastos gasto, Function feedback) async {
-    String extrairMesEAno(String dataCompleta) {
-      List<String> partes = dataCompleta.split("/");
-      String mes = partes[1];
-      String ano = partes[2];
-      return "$mes/$ano";
-    }
-
     try {
-      _gastos.removeWhere((g) => extrairMesEAno(g.data) == extrairMesEAno(gasto.data) &&
-            g.categoria.nome == gasto.categoria.nome);
+      _gastos.removeWhere((g) =>
+          extrairMesEAno(g.data) == extrairMesEAno(gasto.data) &&
+          g.categoria.nome == gasto.categoria.nome);
       await db
           .collection('usuarios/${auth.usuario!.uid}/gastos')
           .doc("${gasto.data.replaceAll('/', '')}&${gasto.categoria.nome}")
@@ -156,6 +145,39 @@ class RepositoryGastos extends ChangeNotifier {
       print(e);
       throw AuthException("Erro, não foi possível excluir o limite de gasto!");
     }
+  }
+
+  updateSaldoGasto(Gastos gasto, String valor) async {
+    String formatarParaReal(double valor) {
+      final formatter = NumberFormat("#,##0.00", "pt_BR");
+      return formatter.format(valor);
+    }
+
+    String valorGastoFormt =
+        gasto.valor.replaceAll('.', '').replaceAll(',', '.');
+    double valorGasto = double.parse(valorGastoFormt);
+
+    String valorBaseFormt = valor.replaceAll('.', '').replaceAll(',', '.');
+    double valorBase = double.parse(valorBaseFormt);
+
+    double conta = valorGasto + valorBase;
+    String result = formatarParaReal(conta);
+    print("Novo Valor do limite de gasto: ${result}");
+
+    await db
+        .collection('usuarios/${auth.usuario!.uid}/gastos')
+        .doc("${gasto.data.replaceAll('/', '')}&${gasto.categoria.nome}")
+        .update({
+      'valor': result,
+    });
+    for (var g in _gastos) {
+      if (extrairMesEAno(g.data) == extrairMesEAno(gasto.data) &&
+          g.categoria.nome == gasto.categoria.nome) {
+        g.valor = result;
+        break;
+      }
+    }
+    notifyListeners();
   }
 
   List<Gastos> get gastos => _gastos;
