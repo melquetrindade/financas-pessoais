@@ -11,6 +11,7 @@ class RepositoryCartao extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool isLoading = true;
+  bool jaCarregou = false;
 
   RepositoryCartao({required this.auth}) {
     _startRepository();
@@ -19,6 +20,7 @@ class RepositoryCartao extends ChangeNotifier {
   _startRepository() async {
     await _startFirestore();
     await _readCartoes();
+    jaCarregou = true;
   }
 
   _startFirestore() {
@@ -27,6 +29,11 @@ class RepositoryCartao extends ChangeNotifier {
 
   notifica() {
     notifyListeners();
+  }
+
+  resetLista() {
+    _cartoes = [];
+    _readCartoes();
   }
 
   _readCartoes() async {

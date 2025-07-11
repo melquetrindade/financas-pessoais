@@ -2,6 +2,7 @@ import 'package:financas_pessoais/constants/app_colors.dart';
 import 'package:financas_pessoais/repository/cartao.dart';
 import 'package:financas_pessoais/repository/contas.dart';
 import 'package:financas_pessoais/repository/fatura.dart';
+import 'package:financas_pessoais/repository/perfil.dart';
 import 'package:financas_pessoais/widgets/home/appBar.dart';
 import 'package:financas_pessoais/widgets/home/cardCartoes.dart';
 import 'package:financas_pessoais/widgets/home/cardContas.dart';
@@ -20,18 +21,20 @@ class _HomeState extends State<Home> {
   late RepositoryContas repositoryContas;
   late RepositoryCartao repositoryCartao;
   late RepositoryFatura repositoryFatura;
+  late RepositoryPerfil repositoryPerfil;
 
   @override
   Widget build(BuildContext context) {
     repositoryFatura = context.watch<RepositoryFatura>();
     repositoryContas = context.watch<RepositoryContas>();
     repositoryCartao = context.watch<RepositoryCartao>();
+    repositoryPerfil = context.watch<RepositoryPerfil>();
 
     return Scaffold(
       backgroundColor: AppColors.backgroundClaro,
       body: CustomScrollView(
         slivers: [
-          MyAppBar(),
+          MyAppBar(nomeUser: repositoryPerfil.nome,),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
@@ -59,7 +62,7 @@ class _HomeState extends State<Home> {
           child: Container(
             child: Column(
               children: [
-                MyHeaderDrawser(),
+                MyHeaderDrawser(nomeUser: repositoryPerfil.nome,),
               ],
             ),
           ),

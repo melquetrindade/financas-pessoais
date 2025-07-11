@@ -11,6 +11,7 @@ class RepositoryContas extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool isLoading = true;
+  bool jaCarregou = false;
 
   RepositoryContas({required this.auth}) {
     _startRepository();
@@ -19,6 +20,7 @@ class RepositoryContas extends ChangeNotifier {
   _startRepository() async {
     await _startFirestore();
     await _readContas();
+    jaCarregou = true;
   }
 
   _startFirestore() {
@@ -43,6 +45,11 @@ class RepositoryContas extends ChangeNotifier {
 
   notifica() {
     notifyListeners();
+  }
+
+  resetLista() {
+    _contas = [];
+    _readContas();
   }
 
   saveContas(Conta conta, Function feedback) async {

@@ -13,6 +13,7 @@ class RepositoryLancamentos extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool isLoading = true;
+  bool jaCarregou = false;
 
   RepositoryLancamentos({required this.auth}) {
     _startRepository();
@@ -21,6 +22,7 @@ class RepositoryLancamentos extends ChangeNotifier {
   _startRepository() async {
     await _startFirestore();
     await _readLancamentos();
+    jaCarregou = true;
   }
 
   _startFirestore() {
@@ -29,6 +31,11 @@ class RepositoryLancamentos extends ChangeNotifier {
 
   notifica() {
     notifyListeners();
+  }
+
+  resetLista() {
+    _lancamentos = [];
+    _readLancamentos();
   }
 
   _readLancamentos() async {
@@ -68,7 +75,10 @@ class RepositoryLancamentos extends ChangeNotifier {
             descricao: item['descricao'],
             data: item['data'],
             eDespesa: item['eDespesa'],
-            categoria: Categorias(nome: item['categoria']['nome'],cor: extrairCor(item['categoria']['cor']),icon: converterUnicodeParaIcone(item['categoria']['icon'])),
+            categoria: Categorias(
+                nome: item['categoria']['nome'],
+                cor: extrairCor(item['categoria']['cor']),
+                icon: converterUnicodeParaIcone(item['categoria']['icon'])),
             conta: item['conta'] != null
                 ? Conta(
                     nome: item['conta']['nome'],
@@ -93,8 +103,7 @@ class RepositoryLancamentos extends ChangeNotifier {
                           img: item['cartao']['conta']['banco']['img']),
                       saldo: item['cartao']['conta']['saldo'],
                     ))
-                : null
-                ));
+                : null));
       });
     }
     isLoading = false;

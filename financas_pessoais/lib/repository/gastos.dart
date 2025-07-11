@@ -11,6 +11,7 @@ class RepositoryGastos extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool isLoading = true;
+  bool jaCarregou = false;
 
   RepositoryGastos({required this.auth}) {
     _startRepository();
@@ -19,10 +20,16 @@ class RepositoryGastos extends ChangeNotifier {
   _startRepository() async {
     await _startFirestore();
     await _readGastos();
+    jaCarregou = true;
   }
 
   _startFirestore() {
     db = DBFirestore.get();
+  }
+
+  resetLista() {
+    _gastos = [];
+    _readGastos();
   }
 
   notifica() {
@@ -63,6 +70,7 @@ class RepositoryGastos extends ChangeNotifier {
       );
     }
 
+    print("Lista de gastos: ${_gastos}");
     if (auth.usuario != null && _gastos.isEmpty) {
       final snapshot =
           await db.collection('usuarios/${auth.usuario!.uid}/gastos').get();

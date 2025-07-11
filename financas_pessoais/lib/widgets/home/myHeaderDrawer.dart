@@ -1,10 +1,12 @@
 import 'package:financas_pessoais/constants/app_colors.dart';
+import 'package:financas_pessoais/pages/editPerfil.dart';
 import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MyHeaderDrawser extends StatefulWidget {
-  const MyHeaderDrawser({super.key});
+  final String nomeUser;
+  const MyHeaderDrawser({super.key, required this.nomeUser});
 
   @override
   State<MyHeaderDrawser> createState() => _MyHeaderDrawserState();
@@ -36,12 +38,12 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
                   ),
                   child: CircleAvatar(
                     radius: 15,
-                    backgroundImage: AssetImage("assets/bancos/melque.png"),
+                    backgroundImage: AssetImage("assets/bancos/perfil.jpg"),
                   )),
               Container(
                 width: double.infinity,
                 child: Text(
-                  'Melque Rodrigues',
+                  widget.nomeUser,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -60,6 +62,10 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
               InkWell(
                 onTap: () {
                   print("abrir pag de editar perfil");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditPerfil(nomeUser: widget.nomeUser,)),
+                    );
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -87,7 +93,6 @@ class _MyHeaderDrawserState extends State<MyHeaderDrawser> {
               Divider(),
               InkWell(
                 onTap: () {
-                  print("Fazer logout");
                   logout();
                 },
                 child: Padding(

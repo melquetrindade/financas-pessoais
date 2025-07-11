@@ -66,7 +66,6 @@ class _EditarContaPageState extends State<EditarContaPage> {
   @override
   void initState() {
     super.initState();
-    //nome.text = widget.nomeConta;
     infoBanco = widget.banco;
     saldo.text = widget.saldo;
     saldo.addListener(_formatSaldo);

@@ -10,10 +10,11 @@ import 'package:financas_pessoais/services/auth_services.dart';
 import 'package:flutter/material.dart';
 
 class RepositoryFatura extends ChangeNotifier {
-  final List<Fatura> _faturas = [];
+  List<Fatura> _faturas = [];
   late FirebaseFirestore db;
   late AuthService auth;
   bool isLoading = true;
+  bool jaCarregou = false;
 
   RepositoryFatura({required this.auth}) {
     _startRepository();
@@ -22,6 +23,7 @@ class RepositoryFatura extends ChangeNotifier {
   _startRepository() async {
     await _startFirestore();
     await _readFaturas();
+    jaCarregou = true;
   }
 
   _startFirestore() {
@@ -30,6 +32,11 @@ class RepositoryFatura extends ChangeNotifier {
 
   notifica() {
     notifyListeners();
+  }
+
+  resetLista() {
+    _faturas = [];
+    _readFaturas();
   }
 
   Color extrairCor(String corTexto) {
