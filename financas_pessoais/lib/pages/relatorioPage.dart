@@ -265,7 +265,7 @@ class _RelatoriosPageState extends State<RelatoriosPage> {
         backgroundColor: AppColors.azulPrimario,
         centerTitle: true,
         title: Text(
-          "Limites de gastos",
+          "Relatórios",
           style: TextStyle(
               color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
         ),
